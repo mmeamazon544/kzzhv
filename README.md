@@ -28,5 +28,10 @@ Netlify build fetches them into site/assets/video/ before publishing
 (scripts/fetch-media.sh), so the deployed site is byte-identical to the
 original.
 
+Marc's weekly touchpoint is https://kzzhv.org/private — password-protected;
+it saves announcements and the week's location straight into bulletin/ as
+commits. Approval and change-request links in each proof email land on
+/approve and /changes, token-bound to that proof.
+
 Nothing is ever published to the site and nothing is ever mailed without
 Marc's explicit approval for that specific bulletin.
