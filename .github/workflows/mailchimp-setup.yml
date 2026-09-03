@@ -1,0 +1,37 @@
+# Step-6 Mailchimp wiring: audience discovery, Proof segment, sending-
+# domain verification. Manually triggered; commits the discovered
+# configuration (no secrets) to program/data/mailchimp.json.
+name: mailchimp-setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      verify_code:
+        description: "Domain verification code from the email (leave empty on first run)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run setup
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        run: |
+          if [ -n "${{ inputs.verify_code }}" ]; then
+            python3 program/mailchimp_setup.py --code "${{ inputs.verify_code }}" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            python3 program/mailchimp_setup.py | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Commit configuration
+        run: |
+          git config user.name "kkzz-bulletin"
+          git config user.email "shabbat@kzzhv.org"
+          git add program/data/mailchimp.json
+          git diff --cached --quiet || { git commit -m "Mailchimp configuration (step 6 setup run)"; git push; }
