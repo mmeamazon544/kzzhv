@@ -36,14 +36,16 @@ End of Shabbat = sunset plus 33.75 seasonal minutes, rounded up to the
 whole minute, where one seasonal minute is one sixtieth of one twelfth of
 that day's sunrise-to-sunset span (standard refracted sunrise and sunset).
 
-Data: 143 independent Shabbatot of Shearith Israel's own published Habdala
-times, October 2020 through September 2026, gathered from their website,
-their weekly handout PDFs, and Wayback Machine snapshots of their pages;
-the dataset is program/data/shearith-times.csv and the verification tool is
+Data: 157 independent Shabbatot of Shearith Israel's own published Habdala
+times, October 2020 through September 2026 (continuous weekly coverage
+August 2024 onward), gathered from their website, their weekly handout
+PDFs, and Wayback Machine snapshots of their pages; the dataset is
+program/data/shearith-times.csv and the verification tool is
 program/calibrate_habdala.py. Computed for New York, the rule reproduces
-their published figure to the minute in 65% of those weeks and to within
+their published figure to the minute in 64% of those weeks and to within
 one minute in 93%, and comes out earlier than their figure in only 12 of
-the 143 (11 of them by a single minute). The residue traces to their own
+the 157 (11 of them by a single minute; the one large residual is a
+misprint on their own 6 February 2021 page). The residue traces to their own
 generator's coarser sunsets, which differ from precise astronomy by a
 minute in roughly a third of the sampled weeks; exact reproduction is
 therefore not attainable in principle. The upward rounding is chosen so the

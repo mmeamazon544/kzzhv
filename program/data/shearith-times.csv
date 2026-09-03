@@ -3,7 +3,7 @@ shabbat_date,candle_lighting,habdala,source_url,notes
 2021-01-09,4:28 pm,5:14 pm,https://web.archive.org/web/20210108103947/https://www.shearithisrael.org/,Friday sunset 4:46 pm; Saturday sunset 4:47 pm
 2021-01-16,4:35 pm,5:22 pm,https://web.archive.org/web/20210113112301/https://www.shearithisrael.org/,Friday sunset 4:53 pm; Saturday sunset 4:55 pm
 2021-01-30,4:52 pm,5:40 pm,https://web.archive.org/web/20210126045111/https://www.shearithisrael.org/,Friday sunset 5:10 pm; Saturday sunset 5:11 pm
-2021-02-06,5:01 pm,5:40 pm,https://web.archive.org/web/20210201143742/https://www.shearithisrael.org/,Friday sunset 5:19 pm; Saturday sunset 5:11 pm
+2021-02-06,5:01 pm,5:40 pm,https://web.archive.org/web/20210201143742/https://www.shearithisrael.org/,Friday sunset 5:19 pm; Saturday sunset 5:11 pm; as printed; note the page's Saturday sunset (5:11 pm) is earlier than its Friday sunset (5:19 pm) and habdala equals the previous week's - apparent misprint in the source
 2021-03-06,5:34 pm,6:26 pm,https://web.archive.org/web/20210303013156/https://shearithisrael.org/calendar,Friday sunset 5:52 pm; Saturday sunset 5:53 pm
 2021-04-17,7:19 pm,8:16 pm,https://web.archive.org/web/20210414173212/https://shearithisrael.org/calendar,Friday sunset 7:37 pm; Saturday sunset 7:38 pm
 2021-05-08,,8:40 pm,https://www.shearithisrael.org/wp-content/uploads/2022/05/5-07-21-Handout-Shabbat-Behar-Behukkothai.pdf,
@@ -24,13 +24,26 @@ shabbat_date,candle_lighting,habdala,source_url,notes
 2021-07-31,,8:54 pm,https://www.shearithisrael.org/wp-content/uploads/2022/05/7-30-21-Handout-Shabbat-Ekeb.pdf,
 2021-07-31,7:56 pm,8:54 pm,https://web.archive.org/web/20210728144217/https://shearithisrael.org/calendar,Friday sunset 8:14 pm; Saturday sunset 8:13 pm; supplements the weekly-handout row for this Shabbat (habdala agree)
 2021-08-07,,8:45 pm,https://www.shearithisrael.org/wp-content/uploads/2022/05/8-6-21-Handout-Shabbat-Reeh.pdf,
+2021-09-18,6:43 pm,7:34 pm,https://web.archive.org/web/20210916145416/https://shearithisrael.org/calendar,Friday sunset 7:01 pm; Saturday sunset 6:59 pm
+2021-10-16,5:57 pm,6:45 pm,https://web.archive.org/web/20211016184317/https://shearithisrael.org/calendar,Friday sunset 6:15 pm; Saturday sunset 6:14 pm
 2021-10-30,5:37 pm,6:24 pm,https://web.archive.org/web/20211025220943/https://shearithisrael.org/calendar,Friday sunset 5:55 pm; Saturday sunset 5:54 pm
+2022-01-29,4:51 pm,5:38 pm,https://web.archive.org/web/20220124041801/https://shearithisrael.org/calendar,Friday sunset 5:09 pm; Saturday sunset 5:10 pm
+2022-02-19,5:16 pm,6:06 pm,https://web.archive.org/web/20220217034737/https://shearithisrael.org/calendar,Friday sunset 5:34 pm; Saturday sunset 5:36 pm
+2022-05-28,7:58 pm,8:59 pm,https://web.archive.org/web/20220523102236/https://shearithisrael.org/calendar,Friday sunset 8:16 pm; Saturday sunset 8:17 pm
+2022-09-24,6:33 pm,7:24 pm,https://web.archive.org/web/20220921221450/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2022-11-05,5:31 pm,6:17 pm,https://web.archive.org/web/20221030171847/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2022-11-26,4:14 pm,4:58 pm,https://web.archive.org/web/20221125123030/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2023-01-07,4:26 pm,5:12 pm,https://web.archive.org/web/20230102140321/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2023-02-11,5:07 pm,5:56 pm,https://web.archive.org/web/20230208001014/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2023-03-11,5:39 pm,6:32 pm,https://web.archive.org/web/20230307172904/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2023-05-13,7:44 pm,8:44 pm,https://web.archive.org/web/20230510001103/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2023-06-03,8:03 pm,9:04 pm,https://web.archive.org/web/20230529181640/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2023-06-10,8:07 pm,9:08 pm,https://web.archive.org/web/20230606191254/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2023-07-01,8:13 pm,9:13 pm,https://web.archive.org/web/20230627222656/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2023-08-12,7:43 pm,8:38 pm,https://web.archive.org/web/20230810172615/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2023-09-09,6:59 pm,7:52 pm,https://web.archive.org/web/20230903140036/https://www.shearithisrael.org/,
+2023-12-02,4:11 pm,4:56 pm,https://web.archive.org/web/20231201190652/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2023-12-16,4:12 pm,4:56 pm,https://web.archive.org/web/20231210225535/https://www.shearithisrael.org/,
 2024-01-06,4:25 pm,5:10 pm,https://web.archive.org/web/20240102021805/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2024-01-13,4:32 pm,5:18 pm,https://web.archive.org/web/20240110235603/https://www.shearithisrael.org/,
 2024-02-03,4:57 pm,5:45 pm,https://web.archive.org/web/20240131013932/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
@@ -40,6 +53,7 @@ shabbat_date,candle_lighting,habdala,source_url,notes
 2024-03-02,5:30 pm,6:21 pm,https://web.archive.org/web/20240301120804/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2024-03-09,5:38 pm,6:30 pm,https://web.archive.org/web/20240305150917/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2024-06-01,8:02 pm,9:03 pm,https://web.archive.org/web/20240601040917/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
+2024-06-08,8:07 pm,9:07 pm,https://web.archive.org/web/20240604013249/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)"""
 2024-08-03,7:53 pm,8:50 pm,https://www.shearithisrael.org/wp-content/uploads/2024/08/8-2-24-Handout-Shabbat-Mattot-Mase-Shimu-A5.pdf,
 2024-08-10,7:45 pm,8:41 pm,https://www.shearithisrael.org/wp-content/uploads/2024/08/8-9-24-Handout-Shabbat-Debarim-Hazon-A5.pdf,
 2024-08-17,7:34 pm,8:29 pm,https://www.shearithisrael.org/wp-content/uploads/2024/08/8-16-24-Handout-Shabbat-Vaethanan-Nahamu-A5.pdf,
@@ -61,7 +75,7 @@ shabbat_date,candle_lighting,habdala,source_url,notes
 2024-12-14,4:11 pm,4:56 pm,https://www.shearithisrael.org/wp-content/uploads/2024/12/12-13-24-Shabbat-Vayishlah-fold.pdf,date printed mid-document
 2024-12-21,4:14 pm,4:58 pm,https://www.shearithisrael.org/wp-content/uploads/2024/12/12-20-24-Shabbat-Vayesheb-fold.pdf,date printed mid-document
 2024-12-28,4:18 pm,5:03 pm,https://www.shearithisrael.org/wp-content/uploads/2024/12/12-27-24-Shabbat-Mikkets-Hanukkah-fold.pdf,candle printed as 'Candle Lighting (3 Hanukkah & Shabbat)'; habdala printed as 'Habdala & 4 Hanukkah Candles'
-2025-01-04,4:24 pm,5:09 pm,https://www.shearithisrael.org/wp-content/uploads/2025/01/1-3-25-Shabbat-Vayiggash-fold.pdf,date printed mid-document; date taken from handouts listing page (no clear printed date)
+2025-01-04,4:24 pm,5:09 pm,https://www.shearithisrael.org/wp-content/uploads/2025/01/1-3-25-Shabbat-Vayiggash-fold.pdf,"handout dateline misprinted as 'January 3-4, 2024' (should be 2025); Saturday date taken from the handouts listing page"
 2025-01-11,4:30 pm,5:16 pm,https://www.shearithisrael.org/wp-content/uploads/2025/01/1-10-25-Shabbat-Vayhee-fold.pdf,date printed mid-document
 2025-01-18,4:38 pm,5:25 pm,https://www.shearithisrael.org/wp-content/uploads/2025/01/1-17-25-Shabbat-Shemoth-fold.pdf,date printed mid-document
 2025-01-25,4:46 pm,5:34 pm,https://www.shearithisrael.org/wp-content/uploads/2025/01/1-24-25-Shabbat-Vaera-fold.pdf,date printed mid-document
@@ -75,7 +89,7 @@ shabbat_date,candle_lighting,habdala,source_url,notes
 2025-03-22,6:52 pm,7:45 pm,https://www.shearithisrael.org/wp-content/uploads/2025/03/3-21-25-Shabbat-Vayaqhel-Parah-fold.pdf,date printed mid-document
 2025-03-29,6:59 pm,7:54 pm,https://www.shearithisrael.org/wp-content/uploads/2025/03/3-27-25-Shabbat-Pekude-HaHodesh-fold.pdf,date printed mid-document
 2025-04-05,7:06 pm,8:02 pm,https://www.shearithisrael.org/wp-content/uploads/2025/04/4-4-25-Shabbat-Vayikra-fold-1.pdf,date printed mid-document
-2025-04-12,7:14 pm,7:59 pm,https://www.shearithisrael.org/wp-content/uploads/2025/04/4-11-25-Shabbat-Tsav-HaGadol-First-Days-Pesah.pdf,date taken from handouts listing page (no clear printed date)
+2025-04-12,7:14 pm,8:10 pm,https://www.shearithisrael.org/wp-content/uploads/2025/04/4-11-25-Shabbat-Tsav-HaGadol-First-Days-Pesah.pdf,"Shabbat HaGadol section printed as April 11-12, 2025; end of Shabbat printed as 'Shabbat Ends & Light Candles | after 8:10 pm' (first seder was Saturday night); adjacent Pesah section prints Habdala 7:59 pm for Monday night (end of yom tob)"
 2025-04-19,7:21 pm,8:18 pm,https://www.shearithisrael.org/wp-content/uploads/2025/04/4-18-25-Shabbat_Last-Days-Pesah.pdf,"7th day Pesah fell on this Shabbat; candle printed as 'Shabbat & Festival Candle Lighting'; end printed as 'Shabbat Ends/Evening Candles | after 8:18 pm' (Shabbat ran into 8th day, no habdala)"
 2025-04-26,7:28 pm,8:26 pm,https://www.shearithisrael.org/wp-content/uploads/2025/04/4-25-25-Shabbat-Shemini-fold.pdf,
 2025-05-03,7:36 pm,8:34 pm,https://www.shearithisrael.org/wp-content/uploads/2025/05/5-2-25-Shabbat-Tazria-Metsora-fold.pdf,
@@ -107,10 +121,8 @@ shabbat_date,candle_lighting,habdala,source_url,notes
 2025-11-01,5:35 pm,6:22 pm,https://www.shearithisrael.org/wp-content/uploads/2025/10/10-31-25-Shabbat-Lekh-Lekha-fold.pdf,date printed mid-document
 2025-11-08,4:27 pm,5:13 pm,https://www.shearithisrael.org/wp-content/uploads/2025/11/11-7-25-Shabbat-Vayera-fold.pdf,date printed mid-document
 2025-11-15,4:21 pm,5:06 pm,https://www.shearithisrael.org/wp-content/uploads/2025/11/11-14-25-Shabbat-Haye-Sarah-fold.pdf,date printed mid-document
-2025-11-15,4:21 pm,5:06 pm,https://web.archive.org/web/20251114171838/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)""; supplements the weekly-handout row for this Shabbat (candle_lighting and habdala agree)"
 2025-11-22,4:16 pm,5:01 pm,https://www.shearithisrael.org/wp-content/uploads/2025/11/11-21-25-Shabbat-Toledoth-fold.pdf,date printed mid-document
 2025-11-29,4:12 pm,4:57 pm,https://www.shearithisrael.org/wp-content/uploads/2025/11/11-28-25-Shabbat-Vayetse-fold.pdf,date printed mid-document
-2025-11-29,4:12 pm,4:57 pm,https://web.archive.org/web/20251125073329/https://www.shearithisrael.org/,"candles printed as ""Candles (18 min. before sunset)""; supplements the weekly-handout row for this Shabbat (candle_lighting and habdala agree)"
 2025-12-06,4:11 pm,4:55 pm,https://www.shearithisrael.org/wp-content/uploads/2025/12/12-5-25-Shabbat-Vayishlah-fold.pdf,date printed mid-document
 2025-12-13,4:11 pm,4:56 pm,https://www.shearithisrael.org/wp-content/uploads/2025/12/12-12-25-Shabbat-Vayesheb-fold.pdf,date printed mid-document
 2025-12-20,4:13 pm,4:58 pm,https://www.shearithisrael.org/wp-content/uploads/2025/12/12-19-25-Shabbat-Mikkets-Rosh-Hodesh-Hanukkah-fold.pdf,date printed mid-document; habdala printed as 'Habdala & Lighting of 7 Candles | after 4:58 pm' (Hanukkah)
