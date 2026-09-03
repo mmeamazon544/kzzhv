@@ -1,0 +1,38 @@
+# Step-6 test send: builds the full bulletin (teachings included) and
+# mails it through Mailchimp to the Proof segment — Marc's address only,
+# never the list. Manually triggered.
+name: test-send
+
+on:
+  workflow_dispatch:
+    inputs:
+      shabbat:
+        description: "Shabbat date (YYYY-MM-DD, a Saturday)"
+        required: true
+        default: "2026-09-05"
+
+permissions:
+  contents: read
+
+jobs:
+  test-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install anthropic
+      - name: Build the bulletin
+        working-directory: program
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python make_samples.py "${{ inputs.shabbat }}"
+      - name: Send proof to Marc only
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        run: |
+          python3 program/mailchimp_send.py --proof \
+            --subject "KKZZ Bulletin test — Shabbat of ${{ inputs.shabbat }}" \
+            --html out/email.html --text out/email.txt | tee -a "$GITHUB_STEP_SUMMARY"
