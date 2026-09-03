@@ -16,11 +16,13 @@ Times print to the minute, 12-hour clock, lowercase am and pm.
 
 Candle lighting
 
-18 minutes before sunset, printed with sunset shown, exactly in this form:
-Candle lighting 7:05 pm (18 minutes before sunset; sunset 7:23 pm)
-The printed sunset is the computed sunset rounded to the nearest minute,
-and the candle time is 18 minutes before the printed sunset, so the
-arithmetic on the page is exact.
+18 minutes before sunset. In the times block, candle lighting and sunset
+are two separate lines of equal weight — candle lighting (noted "18
+minutes to sunset") first, then sunset, then Habdala. The printed sunset
+is the computed sunset rounded to the nearest minute, and the candle time
+is 18 minutes before the printed sunset, so the arithmetic on the page is
+exact. (Layout revised 3 September 2026 at Marc's direction, superseding
+the brief's single-line parenthetical form.)
 
 End of Shabbat and festivals
 
@@ -105,6 +107,17 @@ Addresses
 Secretary, for RSVPs and replies: kehillatzikhronzvi@gmail.com
 Bulletin sending address: shabbat@kzzhv.org (authenticated through
 Mailchimp; no mailbox exists or is needed). Reply-To: the secretary's Gmail.
+
+Bulletin composition (settled 3 September 2026)
+
+Readings show the verse range only — no verse count, no aliyot listing.
+The Sephardic haftarah is noted where it differs from the Ashkenazic.
+
+The Leil Selihot notice reads: "Leil Selihot for Ashkenazim; Sephardim
+have been saying Selihot since 2 Elul."
+
+The two teachings sit under one heading, "Reflections on the Parasha",
+with "Halakha" and "Aggada" as subheads.
 
 Transliteration
 

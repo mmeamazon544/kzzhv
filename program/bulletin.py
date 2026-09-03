@@ -134,26 +134,7 @@ def readings_html(item: dict) -> str:
     out = []
     name = display_name(item["name"]["en"])
     summary = (item.get("summary") or "").replace("-", "–")
-    verses = sum(a.get("v", 0) for k, a in (item.get("fullkriyah") or {}).items() if k != "M")
-    vtxt = f" ({verses} verses)" if verses else ""
-    out.append(f"<p><strong>{name}</strong>, {summary}{vtxt}.</p>")
-
-    fk = item.get("fullkriyah") or {}
-    if fk:
-        parts = []
-        prev = None
-        for i in range(1, 8):
-            a = fk.get(str(i))
-            if not a:
-                continue
-            label = f"{ORDINALS[i-1]} aliya" if i == 1 else ORDINALS[i - 1]
-            parts.append(f"{label}, {compress_ref(prev, a['k'], a['b'], a['e'])}")
-            prev = a["k"]
-        if "M" in fk:
-            a = fk["M"]
-            parts.append(f"maftir, {compress_ref(prev, a['k'], a['b'], a['e'])}")
-        text = "; ".join(parts) + "."
-        out.append("<p>" + text[0].upper() + text[1:] + "</p>")
+    out.append(f"<p><strong>{name}</strong>, {summary}.</p>")
 
     seph = item.get("sephardic")
     haft = item.get("haftara")
@@ -190,11 +171,14 @@ def observances_html(sat: date, events: list[dict]) -> str:
             shown = "Rosh Hodesh " + NAMES.get(month, month)
         if shown is None:
             shown = display_name(base)
+        if base == "Leil Selichot":
+            shown = ("Leil Selihot for Ashkenazim; Sephardim have been saying "
+                     "Selihot since 2 Elul")
         line = f"{long_day(e['date'])} — {shown}."
         if base in YOMTOV_EVES or (e["yomtov"] and e["date"] > sat):
             if base in YOMTOV_EVES:
                 candles, printed = candle_lighting(e["date"])
-                line += f" Candle lighting {format_time(candles)} (18 minutes before sunset; sunset {format_time(printed)})."
+                line += f" Candle lighting {format_time(candles)} (18 minutes to sunset); sunset {format_time(printed)}."
         out.append(f"<p>{line}</p>")
     if not out:
         return ""
@@ -260,9 +244,15 @@ def times_rows(fri: date, sat: date) -> str:
     ends = habdala(sat)
     return f"""            <div class="row">
                 <dt>Candle lighting
-                    <small>Erev Shabbat, {long_day(fri)} &middot; 18 minutes before sunset; sunset {format_time(printed)}</small>
+                    <small>Erev Shabbat, {long_day(fri)} &middot; 18 minutes to sunset</small>
                 </dt>
                 <dd>{format_time(candles)}</dd>
+            </div>
+            <div class="row">
+                <dt>Sunset
+                    <small>Erev Shabbat, {long_day(fri)}</small>
+                </dt>
+                <dd>{format_time(printed)}</dd>
             </div>
             <div class="row row--final">
                 <dt>Habdala
@@ -277,8 +267,9 @@ PLACEHOLDER = ('<p><em style="color: var(--ink-mute);">The {kind} teaching for t
 
 
 def teachings_html() -> str:
-    return ("<h2>Halakha</h2>\n" + PLACEHOLDER.format(kind="halakhic")
-            + "\n<h2>Aggada</h2>\n" + PLACEHOLDER.format(kind="aggadic"))
+    return ("<h2>Reflections on the Parasha</h2>\n"
+            + "<h3>Halakha</h3>\n" + PLACEHOLDER.format(kind="halakhic")
+            + "\n<h3>Aggada</h3>\n" + PLACEHOLDER.format(kind="aggadic"))
 
 
 COLOPHON = (
