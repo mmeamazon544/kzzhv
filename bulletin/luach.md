@@ -18,21 +18,42 @@ Candle lighting
 
 18 minutes before sunset, printed with sunset shown, exactly in this form:
 Candle lighting 7:05 pm (18 minutes before sunset; sunset 7:23 pm)
+The printed sunset is the computed sunset rounded to the nearest minute,
+and the candle time is 18 minutes before the printed sunset, so the
+arithmetic on the page is exact.
 
 End of Shabbat and festivals
 
-PENDING calibration. The congregation follows Congregation Shearith Israel,
-New York, which uses the earliest conventional Orthodox ending. Their
-published figures — Shabbat 4–5 September 2026, candles 7:05 pm, Habdala
-7:58 pm (about 37 minutes after sunset that week); 17 July 2021, Habdala
-9:07 pm — fit a fixed solar depression of roughly 7.5°, not a fixed number
-of minutes. The rule will be calibrated against a full year of their
-published times for New York, then applied to the Poughkeepsie sky. The
-fitted rule and the data used will be recorded here.
+CALIBRATED 3 September 2026. The congregation follows Congregation
+Shearith Israel, New York. Their published times do not fit a fixed solar
+depression (the working hypothesis in the project brief): winter weeks run
+six to nine minutes earlier than any depression that fits the equinoxes.
+They fit a seasonal rule:
 
-Festivals: candle lighting on the eve as above; second-day lighting after
-the stated end of the first day; fast beginning and end per the same
-conventions. PENDING: the exact rules will be stated here once calibrated.
+End of Shabbat = sunset plus 33.75 seasonal minutes, rounded up to the
+whole minute, where one seasonal minute is one sixtieth of one twelfth of
+that day's sunrise-to-sunset span (standard refracted sunrise and sunset).
+
+Data: 143 independent Shabbatot of Shearith Israel's own published Habdala
+times, October 2020 through September 2026, gathered from their website,
+their weekly handout PDFs, and Wayback Machine snapshots of their pages;
+the dataset is program/data/shearith-times.csv and the verification tool is
+program/calibrate_habdala.py. Computed for New York, the rule reproduces
+their published figure to the minute in 65% of those weeks and to within
+one minute in 93%, and comes out earlier than their figure in only 12 of
+the 143 (11 of them by a single minute). The residue traces to their own
+generator's coarser sunsets, which differ from precise astronomy by a
+minute in roughly a third of the sampled weeks; exact reproduction is
+therefore not attainable in principle. The upward rounding is chosen so the
+printed end of Shabbat practically never falls earlier than their
+convention. Both anchor figures in the project brief reproduce exactly
+(4–5 September 2026: Habdala 7:58 pm; 17 July 2021: 9:07 pm).
+
+The same nightfall rule, computed on the Poughkeepsie sky, ends festivals
+and Kippur. Festival candle lighting on the eve is as above; second-day
+lighting is after the stated end of the first day. Fast beginnings (dawn)
+are PENDING calibration against Shearith Israel's published fast times and
+will be recorded here before the first fast-day bulletin.
 
 Calendar scope
 

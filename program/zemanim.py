@@ -91,17 +91,21 @@ def sun_event(
 ) -> datetime:
     """UTC-iterated time the sun crosses the given zenith on local date d."""
     zone = ZoneInfo(tz)
-    # Start from local noon of the civil date, expressed in UTC.
-    guess = datetime.combine(d, time(12, 0), tzinfo=zone).astimezone(timezone.utc)
+    # Fixed reference: 0:00 UTC of the UTC date containing the local noon of
+    # the requested civil date. minutes_utc below may exceed 1440 (an evening
+    # event that falls past midnight UTC, as in American summers) — that is
+    # fine and must NOT shift the reference day between iterations, or the
+    # result drifts a day per pass.
+    ref = datetime.combine(d, time(12, 0), tzinfo=zone).astimezone(timezone.utc)
+    day0 = datetime(ref.year, ref.month, ref.day, tzinfo=timezone.utc)
+    guess = ref
     for _ in range(3):
         jd = _julian_day(guess)
         decl, eqtime = _solar_position(jd)
         ha = _hour_angle(lat, decl, zenith)
         if not evening:
             ha = -ha
-        # Minutes UTC from 0:00 UTC of the guess's UTC date.
         minutes_utc = 720.0 - 4.0 * lon - eqtime + 4.0 * ha
-        day0 = datetime(guess.year, guess.month, guess.day, tzinfo=timezone.utc)
         guess = day0 + timedelta(minutes=minutes_utc)
     return guess.astimezone(zone)
 
@@ -130,6 +134,43 @@ def depression(
 def round_nearest(dt: datetime) -> datetime:
     """To the nearest minute."""
     return (dt + timedelta(seconds=30)).replace(second=0, microsecond=0)
+
+
+def round_up(dt: datetime) -> datetime:
+    """Up to the whole minute (stringent for the end of Shabbat)."""
+    if dt.second == 0 and dt.microsecond == 0:
+        return dt
+    return dt.replace(second=0, microsecond=0) + timedelta(minutes=1)
+
+
+# --- the congregation's rules (calibration in bulletin/luach.md) ---------
+
+# End of Shabbat and festivals: sunset plus 33.75 seasonal minutes (33.75
+# sixtieths of one twelfth of that day's sunrise-to-sunset span), rounded up
+# to the whole minute. Fitted to Congregation Shearith Israel's published
+# Habdala times; see bulletin/luach.md and program/calibrate_habdala.py.
+HABDALA_SEASONAL_MINUTES = 33.75
+
+
+def daylight_minutes(d: date, lat: float = KKZZ_LAT, lon: float = KKZZ_LON, tz: str = KKZZ_TZ) -> float:
+    ss = sunset(d, lat, lon, tz)
+    sr = sunrise(d, lat, lon, tz)
+    return (ss - sr).total_seconds() / 60.0
+
+
+def habdala(d: date, lat: float = KKZZ_LAT, lon: float = KKZZ_LON, tz: str = KKZZ_TZ) -> datetime:
+    """End of Shabbat or festival on the evening of civil date d."""
+    ss = sunset(d, lat, lon, tz)
+    dl = daylight_minutes(d, lat, lon, tz)
+    return round_up(ss + timedelta(minutes=HABDALA_SEASONAL_MINUTES * dl / 720.0))
+
+
+def candle_lighting(eve: date, lat: float = KKZZ_LAT, lon: float = KKZZ_LON, tz: str = KKZZ_TZ) -> tuple[datetime, datetime]:
+    """(candle lighting, printed sunset) for the given eve. Candles are 18
+    minutes before sunset, computed from the rounded sunset so the printed
+    pair is arithmetically exact on the page."""
+    printed_sunset = round_nearest(sunset(eve, lat, lon, tz))
+    return printed_sunset - timedelta(minutes=18), printed_sunset
 
 
 def format_time(dt: datetime) -> str:
