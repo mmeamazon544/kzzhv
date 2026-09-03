@@ -1,0 +1,8 @@
+.DS_Store
+._*
+
+# Stored as assets on the GitHub release tagged "site-media" (the Rome video
+# exceeds GitHub's 100 MB per-file limit); scripts/fetch-media.sh downloads
+# them into place during the Netlify build.
+site/assets/video/yigdal-rome-tempio-maggiore-hoshana-rabbah.mp4
+site/assets/video/yigdal-london-bevis-marks-dweck.mp4

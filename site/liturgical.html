@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liturgical Map &mdash; Kehillah Kedoshah Zikhron Zvi</title>
+    <meta name="description" content="An interactive historical map of Jewish liturgical influence and variation, after Aharon Varady · Open Siddur Project, ending at Kehillah Kedoshah Zikhron Zvi in Poughkeepsie.">
+  <!-- social preview (Open Graph / Twitter) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kehillah Kedoshah Zikhron Zvi">
+  <meta property="og:title" content="Liturgical Map">
+  <meta property="og:description" content="An interactive historical map of Jewish liturgical influence and variation, after Aharon Varady · Open Siddur Project, ending at Kehillah Kedoshah Zikhron Zvi in Poughkeepsie.">
+  <meta property="og:url" content="https://kzzhv.netlify.app/liturgical">
+  <meta property="og:image" content="https://kzzhv.netlify.app/assets/images/ark-poughkeepsie.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Liturgical Map">
+  <meta name="twitter:description" content="An interactive historical map of Jewish liturgical influence and variation, after Aharon Varady · Open Siddur Project, ending at Kehillah Kedoshah Zikhron Zvi in Poughkeepsie.">
+  <meta name="twitter:image" content="https://kzzhv.netlify.app/assets/images/ark-poughkeepsie.jpg">
+
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/png" href="assets/images/logo-deer.png">
+    <style>
+        /* ====================================================================
+           Liturgical Map — page-specific styles
+           Dark deco · era-colored borders on bg-panel · Chelsea Studio labels
+           ==================================================================== */
+
+        :root {
+            /* Era accent colors — chosen to sit on the dark aubergine ground.
+               Each maps to a chart era; thin borders, not fills. */
+            --era-1: #c79f50;   /* 1000 BCE – 586 BCE  (gold/sand) */
+            --era-2: #7fb39b;   /* 586 BCE – 72 CE      (mint) */
+            --era-3: #d68a72;   /* 72 CE – 500 CE       (coral) */
+            --era-4: #6dbcb6;   /* 500 CE – 1000 CE     (aqua) */
+            --era-5: #7a9fcd;   /* 1000 CE – 1492 CE    (dusty blue) */
+            --era-6: #a89bce;   /* 1492 CE – 1666 CE    (lavender) */
+            --era-7: #d76680;   /* 1666 CE – 1870 CE    (rose) */
+            --era-8: #c75889;   /* 1870 CE – Present    (fuchsia) */
+            --era-neg: #b85063; /* negative influence */
+        }
+
+        /* --- Map intro + controls strip ----------------------------------- */
+        .map-intro {
+            max-width: 76rem;
+            margin: 1.5rem auto 0;
+            padding: 0 var(--gutter);
+        }
+        .map-intro p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--ink);
+            margin: 0 0 1em;
+            max-width: var(--measure);
+        }
+        .map-intro p:last-child { margin-bottom: 0; }
+        .map-intro em {
+            color: var(--pink);
+            font-style: italic;
+            font-variation-settings: "opsz" 24, "wght" 400;
+        }
+
+        .map-controls {
+            max-width: 76rem;
+            margin: 2rem auto 1rem;
+            padding: 0 var(--gutter);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem 1.2rem;
+            align-items: center;
+        }
+        .map-btn {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: 0.74rem;
+            background-color: var(--bg-panel);
+            color: var(--ink);
+            border: 1px solid var(--gold);
+            padding: 0.75rem 1.3rem 0.7rem;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+        }
+        .map-btn::before {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border: 1px solid var(--line);
+            pointer-events: none;
+        }
+        .map-btn:hover { background-color: var(--magenta); border-color: var(--gold-pale); }
+        .map-btn.is-active {
+            background-color: var(--wine);
+            border-color: var(--gold-pale);
+        }
+        .map-btn--ghost {
+            border-color: var(--line);
+            color: var(--ink-soft);
+        }
+        .map-btn--ghost:hover { background-color: var(--bg-card); color: var(--ink); }
+
+        .map-controls .help {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-variation-settings: "opsz" 18, "wght" 400;
+            color: var(--ink-mute);
+            font-size: 0.95rem;
+            margin-left: auto;
+        }
+
+        /* --- Map stage: SVG canvas + side panel --------------------------- */
+        .map-stage {
+            max-width: 76rem;
+            margin: 1.5rem auto 1rem;
+            padding: 0 var(--gutter);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 22rem);
+            gap: 1.6rem;
+            align-items: stretch;
+        }
+        @media (max-width: 980px) {
+            .map-stage {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .map-canvas {
+            position: relative;
+            background:
+                radial-gradient(ellipse at 30% 0%, rgba(157, 52, 90, 0.10) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 100%, rgba(199, 159, 80, 0.07) 0%, transparent 55%),
+                var(--bg-panel);
+            border: 1px solid var(--line);
+            box-shadow: inset 0 0 0 1px var(--bg-deep), 0 6px 30px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            min-height: 620px;
+            height: 78vh;
+            max-height: 880px;
+            cursor: grab;
+        }
+        .map-canvas.is-panning { cursor: grabbing; }
+        .map-canvas::before {
+            /* Gold inner rule echoing the framed photographs across the site */
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px solid var(--gold-deep);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .map-canvas .corner {
+            position: absolute;
+            width: 18px; height: 18px;
+            border: 1px solid var(--gold);
+            opacity: 0.55;
+            pointer-events: none;
+            z-index: 4;
+        }
+        .map-canvas .corner.tl { top: 12px; left: 12px; border-right: 0; border-bottom: 0; }
+        .map-canvas .corner.tr { top: 12px; right: 12px; border-left: 0; border-bottom: 0; }
+        .map-canvas .corner.bl { bottom: 12px; left: 12px; border-right: 0; border-top: 0; }
+        .map-canvas .corner.br { bottom: 12px; right: 12px; border-left: 0; border-top: 0; }
+
+        /* The SVG itself fills the canvas; viewBox handles scale, JS handles pan/zoom */
+        #map-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* --- SVG node + edge styles --------------------------------------- */
+        .node-group { cursor: pointer; }
+        .node-rect {
+            fill: var(--bg-deep);
+            stroke: var(--line);
+            stroke-width: 1;
+            transition: stroke 0.18s, filter 0.18s;
+        }
+        .node-accent {
+            /* The colored top-stripe that encodes era */
+            stroke-width: 0;
+        }
+        .node-label {
+            font-family: var(--font-display), "Trade Gothic", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            fill: var(--ink);
+            font-size: 14px;
+            pointer-events: none;
+            dominant-baseline: middle;
+            text-anchor: middle;
+        }
+        .node-sublabel {
+            font-family: var(--font-serif), Georgia, serif;
+            font-style: italic;
+            fill: var(--ink-mute);
+            font-size: 12px;
+            pointer-events: none;
+            dominant-baseline: middle;
+            text-anchor: middle;
+        }
+        .node-group:hover .node-rect { stroke: var(--fuchsia); filter: drop-shadow(0 0 8px rgba(199, 88, 137, 0.5)); }
+        .node-group.is-selected .node-rect { stroke: var(--gold-pale); stroke-width: 1.5; filter: drop-shadow(0 0 10px rgba(230, 199, 128, 0.55)); }
+
+        /* Sephardic-thread emphasis: a gentle gold ring all the time, brilliant during trace */
+        .node-group.is-thread .node-rect { stroke: var(--gold); }
+        .node-group.is-thread .node-label { fill: var(--ink); }
+        .node-group.is-thread-lit .node-rect { stroke: var(--gold-pale); stroke-width: 2; filter: drop-shadow(0 0 14px rgba(230, 199, 128, 0.75)); }
+
+        /* The home minyan endpoint: deep wine fill, gold border — the punchline */
+        .node-group.is-home .node-rect {
+            fill: var(--wine);
+            stroke: var(--gold-pale);
+            stroke-width: 1.5;
+        }
+        .node-group.is-home .node-label { fill: var(--ink); letter-spacing: 0.1em; }
+        .node-group.is-home .node-sublabel { fill: var(--gold-pale); font-style: italic; }
+        .node-group.is-home .node-deer { display: block; }
+
+        /* Dimmed state during trace/filter modes */
+        .node-group.is-dim { opacity: 0.18; transition: opacity 0.5s; }
+        .node-group.is-dim .node-rect { stroke: var(--line); filter: none; }
+        .edge.is-dim { opacity: 0.08; transition: opacity 0.5s; }
+
+        /* Arrival mode: only the home thread plus Torah + Ark photo remain.
+           Everything else is suppressed almost to vanishing. */
+        .node-group.is-arrival-hidden { opacity: 0.04; transition: opacity 0.6s; pointer-events: none; }
+        .node-group.is-arrival-hidden .node-rect { filter: none; }
+        .edge.is-arrival-hidden { opacity: 0.04; transition: opacity 0.6s; }
+
+        /* Torah image: an SVG <image> framed by a thin gold-pale border.
+           Lives inside the viewport group so it pans/zooms with the chart. */
+        .arrival-decor { opacity: 0; pointer-events: none; transition: opacity 0.7s ease 0.15s; }
+        .arrival-decor.is-visible { opacity: 1; }
+        .arrival-decor-frame {
+            fill: none;
+            stroke: var(--gold-pale);
+            stroke-width: 1.5;
+            vector-effect: non-scaling-stroke;
+        }
+        .arrival-decor-shadow {
+            fill: var(--bg-deep);
+            filter: drop-shadow(0 0 24px rgba(0, 0, 0, 0.65));
+        }
+
+        /* Ark photo in the detail panel — only on arrival. */
+        .detail-arrival-photo {
+            margin-top: 1.6rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--line);
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.45s ease, max-height 0.55s ease;
+        }
+        .detail-arrival-photo.is-visible {
+            opacity: 1;
+            max-height: 80rem;
+        }
+        .detail-arrival-photo .photo-frame {
+            position: relative;
+            padding: 6px;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--gold-deep);
+        }
+        .detail-arrival-photo .photo-frame::after {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            border: 1px solid var(--gold-deep);
+            pointer-events: none;
+        }
+        .detail-arrival-photo img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .detail-arrival-photo figcaption {
+            margin-top: 0.85rem;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-variation-settings: "opsz" 18, "wght" 400;
+            color: var(--ink-mute);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* Edges */
+        .edge {
+            fill: none;
+            stroke: var(--line);
+            stroke-width: 1;
+            transition: stroke 0.18s, stroke-width 0.18s, opacity 0.4s;
+        }
+        .edge.kind-indirect { stroke-dasharray: 5 4; }
+        .edge.kind-minor    { stroke-dasharray: 2 4; opacity: 0.7; }
+        .edge.kind-negative { stroke: var(--era-neg); stroke-dasharray: 4 3; opacity: 0.85; }
+        .edge.is-hot        { stroke: var(--fuchsia-hi); stroke-width: 1.8; }
+        .edge.is-thread     { stroke: var(--gold); stroke-width: 1.6; opacity: 0.9; }
+        .edge.is-thread-lit { stroke: var(--gold-pale); stroke-width: 2.6; opacity: 1; filter: drop-shadow(0 0 6px rgba(230, 199, 128, 0.6)); }
+
+        /* Era band labels on the right gutter of the SVG */
+        .era-tick-line { stroke: var(--line); stroke-width: 1; opacity: 0.4; }
+        .era-tick-dot {
+            stroke-width: 1.2;
+            fill: var(--bg-deep);
+        }
+        .era-tick-label {
+            font-family: var(--font-serif), Georgia, serif;
+            font-style: italic;
+            fill: var(--ink-mute);
+            font-size: 11px;
+            text-anchor: end;
+        }
+
+        /* --- Side detail panel -------------------------------------------- */
+        .map-detail {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--line);
+            padding: 1.6rem 1.6rem 1.7rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+        }
+        .map-detail::before {
+            content: "";
+            position: absolute;
+            top: -1px; left: -1px; right: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--magenta), var(--fuchsia), var(--gold));
+            z-index: 2;
+        }
+        .map-detail::after {
+            content: "";
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border: 1px solid var(--line);
+            pointer-events: none;
+        }
+        .map-detail > * { position: relative; z-index: 1; }
+
+        .detail-era {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.32em;
+            font-size: 0.66rem;
+            color: var(--gold);
+            margin: 0 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .detail-era::before {
+            content: "";
+            display: inline-block;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.85;
+        }
+        .detail-name {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 1.35rem;
+            color: var(--ink);
+            margin: 0 0 0.35rem;
+            line-height: 1.15;
+        }
+        .detail-sub {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-variation-settings: "opsz" 24, "wght" 400;
+            color: var(--ink-soft);
+            font-size: 1rem;
+            margin: 0 0 1.2rem;
+            line-height: 1.45;
+        }
+        .detail-section {
+            margin-top: 1rem;
+            border-top: 1px solid var(--line);
+            padding-top: 0.9rem;
+        }
+        .detail-section h4 {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: 0.66rem;
+            color: var(--gold);
+            margin: 0 0 0.6rem;
+            font-weight: 400;
+        }
+        .detail-section ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .detail-section li button {
+            background: none;
+            border: 0;
+            border-left: 2px solid var(--line);
+            color: var(--ink-soft);
+            font-family: var(--font-serif);
+            font-size: 0.97rem;
+            text-align: left;
+            padding: 0.2rem 0 0.2rem 0.7rem;
+            cursor: pointer;
+            transition: color 0.18s, border-color 0.18s, padding-left 0.18s;
+            line-height: 1.35;
+            width: 100%;
+        }
+        .detail-section li button:hover {
+            color: var(--fuchsia-hi);
+            border-left-color: var(--fuchsia);
+            padding-left: 0.95rem;
+        }
+        .detail-section li.is-neg button { color: var(--ink-mute); font-style: italic; }
+        .detail-section li.is-neg button::after { content: " · negative influence"; font-size: 0.84em; color: var(--era-neg); font-style: normal; letter-spacing: 0.05em; }
+        .detail-section li.is-indirect button::after { content: " · indirect"; font-size: 0.84em; color: var(--ink-mute); font-style: italic; }
+        .detail-section li.is-minor button::after { content: " · minor"; font-size: 0.84em; color: var(--ink-mute); font-style: italic; }
+
+        .detail-empty {
+            margin: auto 0;
+            text-align: center;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-variation-settings: "opsz" 24, "wght" 400;
+            color: var(--ink-mute);
+            font-size: 1.05rem;
+            line-height: 1.55;
+            padding: 1rem 0.5rem;
+        }
+        .detail-empty .mark {
+            display: block;
+            margin: 0 auto 1rem;
+            width: 60px;
+            opacity: 0.75;
+        }
+
+        /* Trace mode footer of the detail panel */
+        /* Restore [hidden] semantics — without this, display:flex on
+           .trace-foot below wins over the browser default. */
+        [hidden] { display: none !important; }
+
+        .trace-foot {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .trace-foot .step-count {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 0.62rem;
+            color: var(--gold);
+        }
+        .trace-foot button {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 0.7rem;
+            background: none;
+            border: 1px solid var(--gold);
+            color: var(--ink);
+            padding: 0.55rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.18s;
+        }
+        .trace-foot button:hover { background-color: var(--magenta); }
+        .trace-foot button[disabled] {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background: none !important;
+        }
+
+        /* --- Legend + chronology block ------------------------------------ */
+        .map-keys {
+            max-width: 76rem;
+            margin: 2rem auto 2rem;
+            padding: 0 var(--gutter);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.4rem;
+        }
+        @media (max-width: 720px) {
+            .map-keys { grid-template-columns: 1fr; gap: 1.4rem; }
+        }
+        .keys-panel {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--line);
+            padding: 1.5rem 1.6rem 1.6rem;
+            position: relative;
+        }
+        .keys-panel::after {
+            content: "";
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border: 1px solid var(--line);
+            pointer-events: none;
+        }
+        .keys-panel > * { position: relative; z-index: 1; }
+        .keys-panel h3 {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.32em;
+            color: var(--gold-pale);
+            font-size: 0.85rem;
+            margin: 0 0 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 0.75rem;
+            font-weight: 400;
+        }
+        .keys-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.55rem 1.2rem;
+            font-size: 0.92rem;
+            color: var(--ink-soft);
+            font-family: var(--font-serif);
+        }
+        .keys-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            line-height: 1.3;
+        }
+        .keys-list .swatch {
+            width: 18px;
+            height: 18px;
+            border: 1px solid;
+            background-color: var(--bg-deep);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .keys-list .swatch::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: currentColor;
+        }
+        .keys-list .swatch.era-1 { border-color: var(--era-1); color: var(--era-1); }
+        .keys-list .swatch.era-2 { border-color: var(--era-2); color: var(--era-2); }
+        .keys-list .swatch.era-3 { border-color: var(--era-3); color: var(--era-3); }
+        .keys-list .swatch.era-4 { border-color: var(--era-4); color: var(--era-4); }
+        .keys-list .swatch.era-5 { border-color: var(--era-5); color: var(--era-5); }
+        .keys-list .swatch.era-6 { border-color: var(--era-6); color: var(--era-6); }
+        .keys-list .swatch.era-7 { border-color: var(--era-7); color: var(--era-7); }
+        .keys-list .swatch.era-8 { border-color: var(--era-8); color: var(--era-8); }
+        .keys-list .swatch.era-neg { border-color: var(--era-neg); color: var(--era-neg); }
+        .keys-list .swatch.home {
+            background: var(--wine);
+            border-color: var(--gold-pale);
+            color: var(--gold-pale);
+        }
+        .keys-legend {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            font-size: 0.92rem;
+            color: var(--ink-soft);
+            font-family: var(--font-serif);
+        }
+        .keys-legend li {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            line-height: 1.3;
+        }
+        .keys-legend .line-sample {
+            display: inline-block;
+            width: 56px;
+            height: 14px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .keys-legend .line-sample::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 1.5px;
+            background: var(--ink-soft);
+        }
+        .keys-legend .line-sample::after {
+            content: "";
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0; height: 0;
+            border-left: 6px solid var(--ink-soft);
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+        .keys-legend .line-sample.indirect::before { background: none; border-top: 1.5px dashed var(--ink-soft); }
+        .keys-legend .line-sample.indirect::after { border-left-color: var(--ink-soft); }
+        .keys-legend .line-sample.minor::before { background: none; border-top: 1.5px dotted var(--ink-soft); }
+        .keys-legend .line-sample.minor::after { border-left-color: var(--ink-soft); }
+        .keys-legend .line-sample.neg::before { background: none; border-top: 1.5px dashed var(--era-neg); }
+        .keys-legend .line-sample.neg::after { border-left-color: var(--era-neg); }
+        .keys-legend .line-sample.thread::before { background: var(--gold); height: 2px; }
+        .keys-legend .line-sample.thread::after { border-left-color: var(--gold); }
+
+        /* --- Hebrew display font (UD Venice) ----------------------------- */
+        @font-face {
+            font-family: "UD Venice";
+            src: url("assets/fonts/UDVenice.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* --- Hebrew blessing (Birkat ha-Kahal) ---------------------------
+           Hebrew above, English below, both centered to the same measure
+           so the two scripts read as a single quiet panel. */
+        .blessing {
+            max-width: 76rem;
+            margin: 3rem auto 0;
+            padding: 0 var(--gutter);
+        }
+        .blessing-inner {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--line);
+            padding: 3rem 3rem 2.6rem;
+            position: relative;
+        }
+        .blessing-inner::before {
+            content: "";
+            position: absolute;
+            top: -1px; left: -1px; right: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--magenta), var(--fuchsia), var(--gold));
+            z-index: 2;
+        }
+        .blessing-inner::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border: 1px solid var(--line);
+            pointer-events: none;
+        }
+        .blessing-inner > * { position: relative; z-index: 1; }
+
+        /* Hebrew display header */
+        .blessing-eyebrow {
+            font-family: "UD Venice", "SBL Hebrew", "Frank Ruehl Libre", "David", "Times New Roman", serif;
+            direction: rtl;
+            text-align: center;
+            color: var(--gold-pale);
+            font-size: 2.1rem;
+            line-height: 1;
+            margin: 0 0 1.6rem;
+            letter-spacing: 0.02em;
+            font-weight: normal;
+        }
+        .blessing-eyebrow-rule {
+            display: block;
+            width: 5rem;
+            height: 1px;
+            background: linear-gradient(90deg,
+                rgba(199, 159, 80, 0),
+                var(--gold) 50%,
+                rgba(199, 159, 80, 0));
+            margin: 0 auto 2rem;
+        }
+
+        /* Hebrew body */
+        .blessing-hebrew {
+            font-family: "UD Venice", "SBL Hebrew", "Frank Ruehl Libre", "David", "Times New Roman", serif;
+            direction: rtl;
+            text-align: justify;
+            text-align-last: right;
+            color: var(--ink);
+            line-height: 2.05;
+            font-size: 1.35rem;
+            max-width: 48rem;
+            margin: 0 auto;
+            font-feature-settings: "kern" 1;
+        }
+        .blessing-hebrew .amen {
+            color: var(--fuchsia-hi);
+        }
+
+        /* Diamond rule between scripts */
+        .blessing-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.85rem;
+            margin: 2.4rem auto 2rem;
+            max-width: 48rem;
+        }
+        .blessing-divider::before,
+        .blessing-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg,
+                rgba(133, 106, 46, 0),
+                var(--gold-deep) 50%,
+                rgba(133, 106, 46, 0));
+        }
+        .blessing-divider span {
+            color: var(--gold);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+        }
+
+        /* English translation */
+        .blessing-translation {
+            font-family: var(--font-serif);
+            font-variation-settings: "opsz" 22, "wght" 400;
+            color: var(--ink);
+            font-size: 1.04rem;
+            line-height: 1.72;
+            max-width: 48rem;
+            margin: 0 auto;
+            text-align: justify;
+        }
+        .blessing-translation p {
+            margin: 0 0 1em;
+        }
+        .blessing-translation p:last-child { margin-bottom: 0; }
+        .blessing-translation em {
+            font-style: italic;
+            color: var(--ink-soft);
+        }
+        .blessing-translation .amen {
+            font-style: italic;
+            color: var(--fuchsia-hi);
+        }
+
+        /* --- Credit / colophon -------------------------------------------- */
+        .map-credit {
+            max-width: 76rem;
+            margin: 2.5rem auto 3rem;
+            padding: 0 var(--gutter);
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-variation-settings: "opsz" 18, "wght" 400;
+            font-size: 0.92rem;
+            color: var(--ink-mute);
+            line-height: 1.65;
+            max-width: 44rem;
+        }
+        .map-credit a {
+            color: var(--gold-pale);
+            text-decoration-color: rgba(230, 199, 128, 0.4);
+        }
+
+        /* --- Compact responsive tweaks ------------------------------------ */
+        @media (max-width: 720px) {
+            .map-controls .help { margin-left: 0; flex-basis: 100%; }
+            .map-canvas { min-height: 540px; height: 70vh; }
+            .map-detail { padding: 1.3rem 1.3rem 1.4rem; }
+            .blessing-inner { padding: 2rem 1.4rem 1.8rem; }
+            .blessing-eyebrow { font-size: 1.65rem; }
+            .blessing-hebrew { font-size: 1.15rem; line-height: 1.95; }
+            .blessing-translation { font-size: 0.98rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="index.html" aria-label="Kehillah Kedoshah Zikhron Zvi — home">
+                <img src="assets/images/logo-deer-blush.png" alt="">
+                <span class="brand-text">
+                    <span class="brand-name">Kehillah Kedoshah Zikhron Zvi</span>
+                    <span class="brand-sub">Hudson Valley</span>
+                </span>
+            </a>
+            <nav class="site-nav" aria-label="Primary">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="welcome.html">Welcome</a></li>
+                    <li><a href="clergy.html">Clergy</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="kiddush.html">Kiddush</a></li>
+                    <li><a href="sacred.html">Sacred Seasons</a></li>
+                    <li><a href="liturgical.html" aria-current="page">Liturgical Map</a></li>
+                    <li><a href="our-music.html">Our Music</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="offerings.html">Offerings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="band band--pimpernel" aria-hidden="true"></div>
+
+    <div class="page-head">
+        <p class="eyebrow">A Historical Map</p>
+        <h1 class="page-title">Liturgical Influence<br>Variation</h1>
+        <p class="page-lede">Three millennia of Jewish prayer, branch by branch &mdash; ending here in Poughkeepsie.</p>
+    </div>
+
+    <div class="map-intro">
+        <p>This chart traces the descent of Jewish liturgical traditions from the Hebraic cultic practices of the first millennium before the common era down to the present. Branches diverge under empire, under exile, under reform. Many lines run parallel for centuries before they touch; some never touch at all. Among the eighty or so endpoints of this tree, one matters most to us: <em>Kehillah Kedoshah Zikhron Zvi</em>, in Poughkeepsie, the youngest leaf on the Western Sephardic branch &mdash; Amsterdam, London, New York, Philadelphia, and now here.</p>
+        <p>Click any node to see what it descends from and where it leads. Or follow the gold thread that runs from the First Temple to our own siddur.</p>
+    </div>
+
+    <div class="map-controls" role="region" aria-label="Map controls">
+        <button class="map-btn" id="btn-trace" type="button" aria-pressed="false">Walk the Western Sephardic Thread</button>
+        <button class="map-btn map-btn--ghost" id="btn-fit" type="button">Fit to view</button>
+        <button class="map-btn map-btn--ghost" id="btn-zoom-home" type="button">Zoom to Poughkeepsie</button>
+        <span class="help" id="help-text">Drag to pan · scroll to zoom · click a node for detail</span>
+    </div>
+
+    <div class="map-stage">
+        <div class="map-canvas" id="map-canvas">
+            <div class="corner tl"></div><div class="corner tr"></div>
+            <div class="corner bl"></div><div class="corner br"></div>
+            <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 2080 2380"
+                 preserveAspectRatio="xMidYMid meet"
+                 aria-label="Interactive map of Jewish liturgical influence">
+                <defs>
+                    <marker id="arrow"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                        <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+                    </marker>
+                    <marker id="arrow-thread" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                        <path d="M0,0 L10,5 L0,10 z" fill="#c79f50"/>
+                    </marker>
+                    <marker id="arrow-thread-lit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M0,0 L10,5 L0,10 z" fill="#e6c780"/>
+                    </marker>
+                    <marker id="arrow-neg"     viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                        <path d="M0,0 L10,5 L0,10 z" fill="#b85063"/>
+                    </marker>
+                </defs>
+                <g id="map-viewport">
+                    <g id="g-era-ticks"></g>
+                    <g id="g-edges"></g>
+                    <g id="g-nodes"></g>
+                    <g class="arrival-decor" id="g-arrival">
+                        <image id="arrival-torah"
+                               href="assets/images/torah-scroll.png"
+                               x="1430" y="1730" width="200" height="540"
+                               preserveAspectRatio="xMidYMid meet"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <aside class="map-detail" id="detail" aria-live="polite">
+            <div class="detail-empty" id="detail-empty">
+                <img class="mark" src="assets/images/logo-deer-blush.png" alt="">
+                Select any node on the map to read its place in the lineage &mdash; or press <em>Walk the Western Sephardic Thread</em> to be guided from the First Temple to Poughkeepsie.
+            </div>
+            <div id="detail-body" hidden>
+                <p class="detail-era" id="d-era"><span id="d-era-label">Era</span></p>
+                <h2 class="detail-name" id="d-name">Name</h2>
+                <p class="detail-sub" id="d-sub"></p>
+                <div class="detail-section" id="d-parents-wrap" hidden>
+                    <h4>Flows from</h4>
+                    <ul id="d-parents"></ul>
+                </div>
+                <div class="detail-section" id="d-children-wrap" hidden>
+                    <h4>Flows to</h4>
+                    <ul id="d-children"></ul>
+                </div>
+                <figure class="detail-arrival-photo" id="d-arrival-photo">
+                    <div class="photo-frame">
+                        <img src="assets/images/ark-poughkeepsie.jpg"
+                             alt="The ark of Kehillah Kedoshah Zikhron Zvi: parochet, candles, and a velvet-draped table beneath the inscription &lsquo;Restore us back to You, ADONAY, and we will return. Renew our days as of old.&rsquo;">
+                    </div>
+                </figure>
+                <div class="trace-foot" id="trace-foot" hidden>
+                    <span class="step-count" id="trace-step"></span>
+                    <span>
+                        <button type="button" id="trace-prev">Prev</button>
+                        <button type="button" id="trace-next">Next →</button>
+                    </span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="map-keys">
+        <div class="keys-panel">
+            <h3>Chronology</h3>
+            <ul class="keys-list">
+                <li><span class="swatch era-1"></span>1000 BCE – 586 BCE</li>
+                <li><span class="swatch era-2"></span>586 BCE – 72 CE</li>
+                <li><span class="swatch era-3"></span>72 CE – 500 CE</li>
+                <li><span class="swatch era-4"></span>500 CE – 1000 CE</li>
+                <li><span class="swatch era-5"></span>1000 CE – 1492 CE</li>
+                <li><span class="swatch era-6"></span>1492 CE – 1666 CE</li>
+                <li><span class="swatch era-7"></span>1666 CE – 1870 CE</li>
+                <li><span class="swatch era-8"></span>1870 CE – Present</li>
+                <li><span class="swatch home"></span>Western Sephardic line</li>
+                <li><span class="swatch era-neg"></span>Negative influence</li>
+            </ul>
+        </div>
+        <div class="keys-panel">
+            <h3>Legend</h3>
+            <ul class="keys-legend">
+                <li><span class="line-sample"></span>Direct dependence</li>
+                <li><span class="line-sample indirect"></span>Indirect dependence</li>
+                <li><span class="line-sample minor"></span>Minor or unknown influence</li>
+                <li><span class="line-sample neg"></span>Negative influence</li>
+                <li><span class="line-sample thread"></span>The Western Sephardic thread</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="diamond-rule" aria-hidden="true"><span></span></div>
+
+    <section class="blessing" aria-label="Birkat ha-Kahal">
+        <div class="blessing-inner">
+            <h2 class="blessing-eyebrow">בְּרָכָה לַקָּהָל</h2>
+            <span class="blessing-eyebrow-rule" aria-hidden="true"></span>
+
+            <p class="blessing-hebrew" lang="he">
+                מִי שֶׁבֵּרַךְ אֲבוֹתֵינוּוּ, אַבְרָהָם, יִצְחָק וְיַעֲקֹב, מֹשֶׁה וְאַהֲרֹן, דָּוִד וּשְׁלֹמֹה, וְאִמּוֹתֵינוּ שָׂרָה, רִבְקָה, רָחֵל וְלֵאָה, וְמִרְיָם הַנְּבִיאָה וְאֶסְתֵּר הַמַּלְכָּה, וְכָל־הַקְּהִלּוֹת הַקְּדוֹשׁוֹת וְהַטְּהוֹרוֹת, הוּא יְבָרֵךְ אֶת כָּל־הַקָּהָל הַקָּדוֹשׁ הַזֶּה, גְּדוֹלִים וּקְטַנִּים, הֵם, וּבְנֵיהֶם, וְתַלְמִידֵיהֶם, וְכָל־אֲשֶׁר לָהֶם; מַלְכָּא דְעָלְמָא הוּא יְבָרֵךְ יַתְהוֹן, וִיזַכֶּה יַתְהוֹן, וְיִשְׁמַע בְּקוֹל צְלוֹתְהוֹן, תְּפִקְרוּן וְתוֹשְׁמוּן מִן כָּל־צָרָה וְעָקְתָא, וְיִהֵא מִמְרָא יְיָ בְּסַעְדְּכֶם, וְיָגֵן בְּעַדְּכֶם, וְיִפְרֹשׂ סֻכַּת שְׁלוֹמוֹ עֲלֵיכֶם, וְיִטַּע בֵּינֵיכֶם אַהֲבָה וְאַחְוָה, שָׁלוֹם וְרֵעוּת, וִיסַלֵּק שִׂנְאַת חִנָּם מִבֵּינֵיכֶם, וְיִשְׁבֹּר עֹל גּוֹיִם מֵעַל צַוְּארֵיכֶם, וְיִקֵּם בָּכֶם מִקְרָא שֶׁכָּתוּב: יְיָ אֱלֹהֵי אֲבוֹתֵיכֶם יֹסֵף עֲלֵיכֶם כָּכֶם אֶלֶף פְּעָמִים, וִיבָרֵךְ אֶתְכֶם כַּאֲשֶׁר דִּבֶּר לָכֶם; וְכֵן יְהִי רָצוֹן, וְנֹאמַר <span class="amen">אָמֵן</span>.
+            </p>
+
+            <div class="blessing-divider" aria-hidden="true"><span>&#10070;</span></div>
+
+            <div class="blessing-translation">
+                <p>May the One who blessed our fathers &mdash; Abraham, Isaac, and Jacob; Moses and Aaron; David and Solomon &mdash; and our mothers Sarah, Rebecca, Rachel, and Leah, and Miriam the prophetess and Esther the queen, and all the holy and pure congregations &mdash; bless this entire holy congregation, great and small &mdash; them, their children, their students, and all that belongs to them.</p>
+                <p>May the Sovereign of the Universe bless them, grant them merit, and hear the voice of their prayer. May you be redeemed and delivered from every distress and affliction. May the word of God be your help and shield you, and may God spread over you the canopy of Divine peace. May God plant among you love and family unity, peace and fellowship, and remove baseless hatred from your midst. May God free you from the domination of the nations, and fulfill in you the verse that is written: <em>&ldquo;May ADONAI, God of your ancestor, increase you a thousandfold, and bless you as God has promised you.&rdquo;</em> And so may it be God&rsquo;s will, and let us say <span class="amen">AMEN</span>.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="map-credit">
+        After <a href="https://opensiddur.org/" rel="noopener">Aharon Varady &middot; Open Siddur Project</a>, <em>A Historical Map of Jewish Liturgical Influence &amp; Variation</em>. Used and adapted under Creative Commons BY-SA 4.0. Re-rendered for the web; the Western Sephardic lineage continues here through Amsterdam, London, New York, Philadelphia, and Poughkeepsie. The outlined boxes in the original follow Joseph Heinemann, <em>HaT'filah biT'kufat haTanaim veha'Amoraim</em> (Jerusalem: Hebrew University, 1966). The illustration of birds in the source chart is by Barbara Wolff, after Psalm 104: <em>among the branches they sing</em>.
+    </div>
+
+    <div class="footer-banner" aria-hidden="true"></div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <img class="footer-deer" src="assets/images/logo-deer-blush.png" alt="">
+            <div class="footer-text">
+                <strong>Kehillah Kedoshah Zikhron Zvi</strong>
+                A traditional egalitarian home minyan in the Hudson Valley, in the Western Sephardic liturgical tradition.
+                <div class="footer-meta">
+                    <a href="contact.html">Contact</a> &nbsp;·&nbsp;
+                    <a href="offerings.html">Offerings</a> &nbsp;·&nbsp;
+                    <a href="services.html">Services</a>
+                    <br>© Kehillah Kedoshah Zikhron Zvi
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<script>
+/* ==========================================================================
+   Liturgical Map — data + rendering + interaction
+   ========================================================================== */
+(function () {
+    "use strict";
+
+    /* ---- ERA bands (y-position labels rendered on the right gutter) ----- */
+    const ERAS = {
+        e1: { key: "e1", label: "1000 BCE \u2013 586 BCE",   color: "var(--era-1)", swatch: "era-1" },
+        e2: { key: "e2", label: "586 BCE \u2013 72 CE",       color: "var(--era-2)", swatch: "era-2" },
+        e3: { key: "e3", label: "72 CE \u2013 500 CE",        color: "var(--era-3)", swatch: "era-3" },
+        e4: { key: "e4", label: "500 CE \u2013 1000 CE",      color: "var(--era-4)", swatch: "era-4" },
+        e5: { key: "e5", label: "1000 CE \u2013 1492 CE",     color: "var(--era-5)", swatch: "era-5" },
+        e6: { key: "e6", label: "1492 CE \u2013 1666 CE",     color: "var(--era-6)", swatch: "era-6" },
+        e7: { key: "e7", label: "1666 CE \u2013 1870 CE",     color: "var(--era-7)", swatch: "era-7" },
+        e8: { key: "e8", label: "1870 CE \u2013 Present",     color: "var(--era-8)", swatch: "era-8" },
+        neg:{ key: "neg",label: "Negative Influence",        color: "var(--era-neg)", swatch: "era-neg" },
+        home:{ key: "home", label: "Western Sephardic Line", color: "var(--gold-pale)", swatch: "home" }
+    };
+
+    /* ---- ERA y-centers (in viewBox units) ------------------------------- */
+    const Y = {
+        e1: 130,
+        e1b:230,
+        e2: 360,
+        e2b:460,
+        e3: 560,
+        e3b:660,
+        e4: 760,
+        e4b:860,
+        e5: 960,
+        e5b:1060,
+        e6: 1160,
+        e6b:1260,
+        e7: 1360,
+        e7b:1460,
+        e7c:1560,
+        e8: 1660,
+        homeA:1770,
+        homeB:1860,
+        homeC:1950,
+        homeD:2170,
+        homeE:2260
+    };
+
+    /* ---- NODES ----------------------------------------------------------
+       Each node has:
+         id, label (display title), sub (italic subtitle, optional),
+         era (one of e1..e8 or neg), x, y (viewBox coords for center),
+         w (width, default 200), h (height, default 60),
+         home (boolean: Western Sephardic endpoint),
+         thread (boolean: on the Western Sephardic walk path)
+       --------------------------------------------------------------------- */
+    const NODES = [
+        // --- Era 1: 1000 BCE – 586 BCE -------------------------------------
+        { id:"hebraic_cultic",      label:"Hebraic Cultic", sub:"Traditions",                       era:"e1", x:120,  y:Y.e1,  thread:true },
+        { id:"shir_shel_yam",       label:"Shir shel Yam",  sub:"Shir shel Devora",                 era:"e1", x:340,  y:Y.e1 },
+        { id:"first_temple",        label:"First Temple Era",  sub:"Jerusalemite Priestly & Prophetic", era:"e1", x:560,  y:Y.e1,  w:230, thread:true },
+        { id:"psalms_samuel",       label:"Psalms, Samuel", sub:"Song of Songs",                    era:"e1", x:820,  y:Y.e1 },
+        { id:"post_exilic",         label:"Post-Exilic",    sub:"Angelological, Demonological, Gnostic", era:"e1", x:1080, y:Y.e1,  w:240 },
+        { id:"lemba",               label:"Lemba",          sub:null,                               era:"e1", x:120,  y:Y.e1b, w:140 },
+        { id:"judean_samaritan",    label:"Judean / Samaritan", sub:"Priestly Traditions",          era:"e1", x:340,  y:Y.e1b, w:210 },
+
+        // --- Era 2: 586 BCE – 72 CE ---------------------------------------
+        { id:"elephantine",         label:"Elephantine",    sub:"Temple",                           era:"e3", x:120,  y:Y.e2,  w:160 },
+        { id:"pre_mac",             label:"Pre-Maccabean",  sub:"Second Temple Era · Priestly & Prophetic", era:"e2", x:560,  y:Y.e2,  w:240 },
+        { id:"daniel_ezra",         label:"Daniel, Ezra",   sub:"Neḥemia, Ben-Sira",                era:"e2", x:820,  y:Y.e2 },
+        { id:"qumran",              label:"Qumran",         sub:"Essenes",                          era:"e1", x:1080, y:Y.e2 },
+        { id:"ancient_n_african",   label:"Ancient",        sub:"N. African Judaic Influence",      era:"e3", x:120,  y:Y.e2b, w:200 },
+        { id:"samaritan",           label:"Samaritan",      sub:null,                               era:"e2", x:340,  y:Y.e2b, w:160 },
+        { id:"leontopolis",         label:"Leontopolis",    sub:"Temple",                           era:"e2", x:560,  y:Y.e2b, w:170 },
+        { id:"alex_therapeutae",    label:"Alexandrian",    sub:"Therapeutae",                      era:"e2", x:760,  y:Y.e2b, w:170 },
+        { id:"midrashic_herm",      label:"Midrashic",      sub:"Hermeneutics",                     era:"e2", x:945,  y:Y.e2b, w:170 },
+        { id:"post_mac_priestly",   label:"Post-Maccabaean", sub:"Priestly Traditions",              era:"e3", x:1140, y:Y.e2b, w:220, thread:true },
+        { id:"pharisaic",           label:"Pharisaic",      sub:null,                               era:"e3", x:1400, y:Y.e2b, w:170, thread:true },
+
+        // --- Karaite branch (far right column, eras 1 & 4) ----------------
+        { id:"sadducaic",           label:"Sadducaic",      sub:null,                               era:"e3", x:1740, y:Y.e2,  w:140 },
+        { id:"masoretic",           label:"Masoretic",      sub:"Tradition",                        era:"e3", x:1740, y:Y.e2b, w:160 },
+        { id:"karaite",             label:"Karaite",        sub:null,                               era:"e3", x:1740, y:Y.e3,  w:140 },
+        { id:"aharon_elder",        label:"Aharon",         sub:"the Elder",                        era:"e4", x:1740, y:Y.e3b, w:140 },
+        { id:"eretz_yisroel_piyy",  label:"Eretz Yisroel",  sub:"Piyyutim · Yannai, etc.",          era:"e3", x:1480, y:Y.e3b, w:200 },
+
+        // --- Era 3 / 4: 72 – 1000 CE --------------------------------------
+        { id:"post2nd_synagogal",   label:"Post-2nd Temple",sub:"Synagogal Traditions",             era:"e3", x:340,  y:Y.e3,  w:220 },
+        { id:"greek_synagogal",     label:"Greek Synagogal", sub:"Texts",                            era:"e3", x:600,  y:Y.e3,  w:200 },
+        { id:"rabbinic",            label:"Rabbinic Tradition", sub:null,                            era:"e3", x:1080, y:Y.e3,  w:220, thread:true },
+        { id:"anim_shamanic",       label:"Animistic, Shamanic",sub:"Neoplatonic, Magical",          era:"e3", x:1380, y:Y.e3,  w:230 },
+
+        { id:"palestinian_yeshivot",label:"Palestinian",    sub:"Yeshivot",                         era:"e3", x:880,  y:Y.e3b, w:180 },
+        { id:"babylonian_yeshivot", label:"Babylonian",     sub:"Yeshivot",                         era:"e3", x:1100, y:Y.e3b, w:180, thread:true },
+
+        { id:"agau_prayers",        label:"Agau (Agaw)",    sub:"Prayers",                          era:"e4", x:120,  y:Y.e3b, w:170 },
+        { id:"judaizing_ethiopian", label:"Judaizing",      sub:"Ethiopian Christianity",           era:"neg", x:330, y:Y.e3,  w:200 },
+
+        { id:"tractate_sopherim",   label:"Tractate",       sub:"Sopherim",                         era:"e4", x:340,  y:Y.e4,  w:170 },
+        { id:"egyptian_geniza",     label:"Egyptian Rite",  sub:"Cairo Geniza",                     era:"e4", x:560,  y:Y.e4,  w:200 },
+        { id:"saadiah_gaon",        label:"Saadiah Gaon",   sub:"d. 942 CE",                        era:"e4", x:780,  y:Y.e4,  w:170 },
+        { id:"amram_gaon",          label:"Amram ben",      sub:"Sheshna Gaon · d. 875 CE",         era:"e4", x:990,  y:Y.e4,  w:190, thread:true },
+        { id:"kabbalists",          label:"Kabbalists",     sub:"Acre / Gerona School",             era:"e5", x:1380, y:Y.e4,  w:200 },
+
+        { id:"abba_sabra",          label:"Abba Sabra",     sub:"& Sagga Amlak · Judaized Ethiopian Orth. monasticism", era:"e5", x:120, y:Y.e4,  w:240 },
+        { id:"geonic_eretz_y",      label:"Geonic Eretz Yisroel", sub:"Halakhic Texts",             era:"e4", x:340,  y:Y.e4b, w:220 },
+
+        // --- Era 5: 1000 – 1492 CE ----------------------------------------
+        { id:"seder_hibbur",        label:"Seder",          sub:"Ḥibbur Berakhot",                  era:"e5", x:340,  y:Y.e5,  w:180 },
+        { id:"italian_roma",        label:"Italian",        sub:"Roma",                             era:"e5", x:560,  y:Y.e5,  w:160, thread:true },
+        { id:"byzantine",           label:"Byzantine",      sub:"Romaniote",                        era:"e5", x:760,  y:Y.e5,  w:170, thread:true },
+        { id:"rhineland",           label:"Rhineland",      sub:"Ashkenaz",                         era:"e5", x:960,  y:Y.e5,  w:170 },
+        { id:"maimonides",          label:"Maimonides",     sub:"Seder Tefillot · ca. 1180 CE",     era:"e5", x:1160, y:Y.e5,  w:220 },
+        { id:"yemen_teman",         label:"Yemen",          sub:"Teman",                            era:"e5", x:1380, y:Y.e5,  w:160 },
+        { id:"iberian_peninsula",   label:"Iberian Peninsula", sub:"Sepharad",                       era:"e5", x:1570, y:Y.e5,  w:200, thread:true },
+
+        { id:"persia",              label:"Persia",         sub:"Farsi",                            era:"e5", x:1770, y:Y.e4b, w:140 },
+        { id:"bucharia",            label:"Bucharia",       sub:"Dagestan",                         era:"e5", x:1770, y:Y.e5,  w:140 },
+        { id:"cochin",              label:"Cochin",         sub:"India",                            era:"e5", x:1770, y:Y.e5b, w:140 },
+        { id:"kai_feng",            label:"Kai Feng",       sub:"China",                            era:"e5", x:1770, y:Y.e6,  w:140 },
+
+        { id:"crimean_karaites",    label:"Crimean Karaites", sub:"Abraham Firkovich",              era:"e5", x:1770, y:Y.e7,  w:200 },
+
+        // --- Era 5b/6: 1492 – 1666 CE ------------------------------------
+        { id:"n_italy_appam",       label:"N. Italy",       sub:"Appam",                            era:"e5", x:440,  y:Y.e5b, w:160 },
+        { id:"england_hazzan",      label:"England",        sub:"Jacob Ben Jehudah · Hazzan of London", era:"e5", x:630, y:Y.e5b, w:230 },
+        { id:"old_french_rashi",    label:"Old French",     sub:"RaSHI",                            era:"e5", x:880,  y:Y.e5b, w:180 },
+        { id:"hassidei_ashkenaz",   label:"Ḥassidei",       sub:"Ashkenaz",                         era:"e5", x:1080, y:Y.e5b, w:160 },
+        { id:"baladi",              label:"Baladi",         sub:null,                               era:"e6", x:1320, y:Y.e5b, w:140 },
+        { id:"shami",               label:"Shami",          sub:null,                               era:"e6", x:1460, y:Y.e5b, w:140 },
+        { id:"lisbon_portugal",     label:"Lisbon, Portugal", sub:null,                              era:"e6", x:1610, y:Y.e5b, w:180, thread:true },
+
+        { id:"ari",                 label:"ARI",            sub:"d. 1572",                          era:"e6", x:680,  y:Y.e6,  w:160 },
+        { id:"ramak",               label:"RaMaK",          sub:"d. 1570",                          era:"e6", x:870,  y:Y.e6,  w:160 },
+        { id:"meir_ibn_gabbai",     label:"Meir ibn",       sub:"Gabbai · d. after 1540",           era:"e6", x:1060, y:Y.e6,  w:200 },
+        { id:"castilian",           label:"Castilian",      sub:null,                               era:"e6", x:1380, y:Y.e6,  w:130 },
+        { id:"provencal",           label:"Provençal",      sub:null,                               era:"e6", x:1510, y:Y.e6,  w:130 },
+        { id:"catalonia",           label:"Catalonia",      sub:null,                               era:"e6", x:1640, y:Y.e6,  w:130 },
+        { id:"aleppo_syria",        label:"Aleppo, Syria",  sub:"Aram Tsoba · 1527",                era:"e6", x:1500, y:Y.e6b, w:200, thread:true },
+
+        // --- Era 7: 1666 – 1870 CE ---------------------------------------
+        { id:"germany_germania",    label:"Germany",        sub:"Germania",                         era:"e7", x:720,  y:Y.e6b, w:160 },
+        { id:"poland_polin",        label:"Poland",         sub:"Polin",                            era:"e7", x:900,  y:Y.e6b, w:140 },
+        { id:"isaiah_horowitz",     label:"Isaiah Horowitz",sub:"d. 1630",                          era:"e7", x:1080, y:Y.e6b, w:170 },
+        { id:"livorno",             label:"Livorno, Italy", sub:null,                               era:"e7", x:1290, y:Y.e6b, w:180 },
+
+        { id:"wolf_heidenheim",     label:"Wolf Heidenheim",sub:"ca. 1800",                         era:"e7", x:540,  y:Y.e7,  w:200 },
+        { id:"seder_tkhines",       label:"Seder",          sub:"Tkhines",                          era:"e7", x:740,  y:Y.e7,  w:140 },
+        { id:"hagra",               label:"HaGRA",          sub:"d. 1797",                          era:"e7", x:890,  y:Y.e7,  w:140 },
+        { id:"habad",               label:"HaBaD",          sub:"Siddur Torah Ohr",                 era:"e7", x:1040, y:Y.e7,  w:170 },
+        { id:"berditchev",          label:"Berditchev",     sub:"Siddur Tefilah Yesharah",          era:"e7", x:1230, y:Y.e7,  w:200 },
+        { id:"ben_ish_chai",        label:"Ben Ish Chai",   sub:null,                               era:"e7", x:1430, y:Y.e7,  w:160 },
+        { id:"rashash",             label:"RaShaSh",        sub:"Siddur Edut leYehosef",            era:"e7", x:1590, y:Y.e7,  w:200 },
+
+        { id:"seligman_baer",       label:"Seligman Baer",  sub:"Seder Avodat Yisroel · 1868",      era:"e7", x:430,  y:Y.e7b, w:230 },
+        { id:"frankfurt_am_main",   label:"Frankfurt",      sub:"Am Main",                          era:"e7", x:680,  y:Y.e7b, w:150 },
+        { id:"arnaud_aron",         label:"R' Arnaud Aron", sub:null,                               era:"e7", x:840,  y:Y.e7b, w:160 },
+        { id:"fanny_schmiedl",      label:"Fanny",          sub:"Schmiedl-Neuda",                   era:"e7", x:1000, y:Y.e7b, w:170 },
+        { id:"british_chief",       label:"British Chief",  sub:"Rabbis",                           era:"e7", x:1180, y:Y.e7b, w:170 },
+        { id:"hamburg_liberal",     label:"Hamburg",        sub:"Liberal",                          era:"e7", x:1350, y:Y.e7b, w:150 },
+        { id:"artscroll_sfard",     label:"Artscroll",      sub:"“Sfard”",                          era:"e7", x:1500, y:Y.e7b, w:150 },
+        { id:"edot_hamizrah",       label:"Edot Hamizraḥ",  sub:null,                               era:"e7", x:1650, y:Y.e7b, w:170 },
+
+        { id:"amsterdam_esnoga",    label:"Amsterdam",      sub:"Esnoga",                           era:"e7", x:1830, y:Y.e7b, w:170, home:true, thread:true },
+
+        // --- Era 8: 1870 – Present ---------------------------------------
+        { id:"ethiopian_beta",      label:"Ethiopian Beta Israel", sub:"Ḥabashim",                  era:"e8", x:120,  y:Y.e7c, w:240 },
+        { id:"modern_samaritan",    label:"Modern Samaritan", sub:null,                              era:"e8", x:340,  y:Y.e8,  w:200 },
+        { id:"yair_shaki",          label:"Yair Shaki's",   sub:"Nusaḥ Eretz Yisroel",              era:"e8", x:560,  y:Y.e8,  w:200 },
+        { id:"koren_sacks",         label:"Koren-Sacks",    sub:null,                               era:"e8", x:760,  y:Y.e8,  w:150 },
+        { id:"artscroll_ashk",      label:"Artscroll",      sub:"Ashkenaz",                         era:"e8", x:920,  y:Y.e8,  w:150 },
+        { id:"conservative",        label:"Conservative",   sub:"Siddur Sim Shalom",                era:"e8", x:1080, y:Y.e8,  w:200 },
+        { id:"reconstructionist",   label:"Reconstructionist", sub:"Kol Haneshama",                  era:"e8", x:1290, y:Y.e8,  w:230 },
+        { id:"reform_union",        label:"Reform Union",   sub:null,                               era:"e8", x:1510, y:Y.e8,  w:170 },
+        { id:"syrian_sephardim",    label:"Syrian Sephardim", sub:null,                              era:"e8", x:1660, y:Y.e8,  w:170 },
+        { id:"modern_karaites",     label:"Modern Karaites", sub:null,                               era:"e8", x:1830, y:Y.e8,  w:170 },
+
+        // --- Western Sephardic descent (the home thread) -----------------
+        { id:"london_bevis",        label:"London",         sub:"KK Sha'ar HaShamayim · Bevis Marks · Lauderdale Road", era:"e8", x:1830, y:Y.homeA, w:260, home:true, thread:true, h:80 },
+        { id:"new_york_shearith",   label:"New York",       sub:"KK Shearith Israel",               era:"e8", x:1830, y:Y.homeB, w:240, home:true, thread:true },
+        { id:"philadelphia_mikveh", label:"Philadelphia",   sub:"KK Mikveh Israel",                 era:"e8", x:1830, y:Y.homeC, w:240, home:true, thread:true },
+        { id:"poughkeepsie_kzz",    label:"Poughkeepsie",   sub:"Kehillah Kedoshah Zikhron Zvi",    era:"e8", x:1830, y:Y.homeD, w:300, home:true, thread:true, h:192, terminus:true, logo:"assets/images/kzz-logo-full.jpg" }
+    ];
+
+    /* ---- EDGES -----------------------------------------------------------
+       kind: direct (default) | indirect | minor | negative
+       --------------------------------------------------------------------- */
+    const EDGES = [
+        // From the Hebraic root
+        ["hebraic_cultic",    "shir_shel_yam"],
+        ["hebraic_cultic",    "lemba", "minor"],
+        ["hebraic_cultic",    "judean_samaritan"],
+        ["shir_shel_yam",     "first_temple"],
+        ["first_temple",      "psalms_samuel"],
+        ["first_temple",      "pre_mac"],
+        ["first_temple",      "samaritan", "indirect"],
+        ["psalms_samuel",     "post_exilic", "indirect"],
+        ["judean_samaritan",  "samaritan"],
+        ["judean_samaritan",  "pre_mac"],
+        ["lemba",             "elephantine"],
+        ["elephantine",       "ancient_n_african"],
+        ["ancient_n_african", "agau_prayers"],
+        ["agau_prayers",      "abba_sabra"],
+        ["abba_sabra",        "ethiopian_beta"],
+        ["judaizing_ethiopian","agau_prayers","negative"],
+        ["judaizing_ethiopian","abba_sabra","negative"],
+        ["judaizing_ethiopian","ethiopian_beta","negative"],
+
+        // Second Temple group
+        ["pre_mac",            "daniel_ezra"],
+        ["pre_mac",            "leontopolis"],
+        ["pre_mac",            "alex_therapeutae","indirect"],
+        ["pre_mac",            "post_mac_priestly"],
+        ["pre_mac",            "qumran"],
+        ["daniel_ezra",        "post_exilic","indirect"],
+        ["qumran",             "post_mac_priestly","indirect"],
+        ["post_exilic",        "post_mac_priestly","indirect"],
+        ["leontopolis",        "post2nd_synagogal"],
+        ["alex_therapeutae",   "post2nd_synagogal","indirect"],
+        ["alex_therapeutae",   "midrashic_herm","indirect"],
+        ["midrashic_herm",     "post_mac_priestly"],
+        ["post_mac_priestly",  "pharisaic"],
+        ["pharisaic",          "rabbinic"],
+        ["post2nd_synagogal",  "greek_synagogal"],
+        ["greek_synagogal",    "rabbinic","indirect"],
+        ["greek_synagogal",    "palestinian_yeshivot","indirect"],
+        ["anim_shamanic",      "rabbinic","minor"],
+        ["anim_shamanic",      "kabbalists","indirect"],
+        ["rabbinic",           "palestinian_yeshivot"],
+        ["rabbinic",           "babylonian_yeshivot"],
+
+        // Karaite branch
+        ["first_temple",        "sadducaic","indirect"],
+        ["sadducaic",           "masoretic","minor"],
+        ["masoretic",           "karaite","indirect"],
+        ["karaite",             "aharon_elder"],
+        ["aharon_elder",        "crimean_karaites","indirect"],
+        ["crimean_karaites",    "modern_karaites","indirect"],
+        ["aharon_elder",        "modern_karaites","indirect"],
+        ["eretz_yisroel_piyy",  "karaite","minor"],
+        ["palestinian_yeshivot","eretz_yisroel_piyy"],
+
+        // Geonic
+        ["palestinian_yeshivot","tractate_sopherim"],
+        ["babylonian_yeshivot", "saadiah_gaon"],
+        ["babylonian_yeshivot", "amram_gaon"],
+        ["tractate_sopherim",   "egyptian_geniza"],
+        ["egyptian_geniza",     "saadiah_gaon"],
+        ["saadiah_gaon",        "amram_gaon"],
+        ["amram_gaon",          "italian_roma"],
+        ["amram_gaon",          "rhineland"],
+        ["amram_gaon",          "maimonides","indirect"],
+        ["amram_gaon",          "geonic_eretz_y","indirect"],
+        ["geonic_eretz_y",      "seder_hibbur"],
+        ["seder_hibbur",        "italian_roma","indirect"],
+        ["italian_roma",        "byzantine"],
+        ["italian_roma",        "n_italy_appam"],
+        ["byzantine",           "rhineland","indirect"],
+        ["rhineland",           "old_french_rashi"],
+        ["rhineland",           "hassidei_ashkenaz"],
+        ["old_french_rashi",    "hassidei_ashkenaz"],
+        ["england_hazzan",      "old_french_rashi","indirect"],
+        ["maimonides",          "yemen_teman"],
+        ["maimonides",          "iberian_peninsula"],
+        ["amram_gaon",          "iberian_peninsula","indirect"],
+        ["yemen_teman",         "baladi"],
+        ["yemen_teman",         "shami","indirect"],
+        ["iberian_peninsula",   "lisbon_portugal"],
+        ["iberian_peninsula",   "castilian"],
+        ["iberian_peninsula",   "provencal"],
+        ["iberian_peninsula",   "catalonia"],
+        ["iberian_peninsula",   "persia","indirect"],
+        ["persia",              "bucharia","indirect"],
+        ["persia",              "cochin","minor"],
+        ["persia",              "kai_feng","minor"],
+
+        // Mystical / kabbalistic & continuation
+        ["kabbalists",          "ari"],
+        ["kabbalists",          "ramak"],
+        ["kabbalists",          "meir_ibn_gabbai","indirect"],
+        ["ari",                 "isaiah_horowitz"],
+        ["ramak",               "isaiah_horowitz","indirect"],
+        ["meir_ibn_gabbai",     "aleppo_syria","indirect"],
+        ["aleppo_syria",        "livorno"],
+        ["aleppo_syria",        "edot_hamizrah"],
+        ["aleppo_syria",        "ben_ish_chai"],
+        ["aleppo_syria",        "rashash"],
+        ["aleppo_syria",        "amsterdam_esnoga","indirect"],
+        ["lisbon_portugal",     "aleppo_syria","indirect"],
+        ["lisbon_portugal",     "amsterdam_esnoga"],
+        ["livorno",             "amsterdam_esnoga","indirect"],
+        ["hassidei_ashkenaz",   "germany_germania"],
+        ["hassidei_ashkenaz",   "poland_polin"],
+        ["germany_germania",    "wolf_heidenheim"],
+        ["germany_germania",    "frankfurt_am_main"],
+        ["poland_polin",        "hagra"],
+        ["poland_polin",        "habad"],
+        ["poland_polin",        "berditchev"],
+        ["isaiah_horowitz",     "habad","indirect"],
+        ["isaiah_horowitz",     "berditchev","indirect"],
+        ["isaiah_horowitz",     "ben_ish_chai","indirect"],
+        ["wolf_heidenheim",     "seligman_baer"],
+        ["seligman_baer",       "koren_sacks","indirect"],
+        ["wolf_heidenheim",     "seder_tkhines","minor"],
+        ["hagra",               "artscroll_ashk","indirect"],
+        ["habad",               "artscroll_sfard","indirect"],
+        ["berditchev",          "artscroll_sfard","indirect"],
+        ["frankfurt_am_main",   "british_chief","indirect"],
+        ["arnaud_aron",         "hamburg_liberal","indirect"],
+        ["fanny_schmiedl",      "hamburg_liberal","minor"],
+        ["british_chief",       "koren_sacks","indirect"],
+        ["hamburg_liberal",     "reform_union"],
+        ["artscroll_sfard",     "artscroll_ashk","indirect"],
+        ["seder_tkhines",       "conservative","minor"],
+        ["seligman_baer",       "conservative","indirect"],
+        ["reform_union",        "reconstructionist","minor"],
+        ["conservative",        "reconstructionist","indirect"],
+        ["ben_ish_chai",        "edot_hamizrah"],
+        ["rashash",             "edot_hamizrah","indirect"],
+        ["edot_hamizrah",       "syrian_sephardim"],
+
+        // Modern Samaritan / Israeli
+        ["samaritan",           "modern_samaritan","indirect"],
+        ["palestinian_yeshivot","yair_shaki","minor"],
+        ["babylonian_yeshivot", "yair_shaki","minor"],
+
+        // The home thread (Western Sephardic) — Amsterdam → London → NY → Phila → Poughkeepsie
+        ["amsterdam_esnoga",    "london_bevis"],
+        ["london_bevis",        "new_york_shearith"],
+        ["new_york_shearith",   "philadelphia_mikveh"],
+        ["philadelphia_mikveh", "poughkeepsie_kzz"],
+        ["new_york_shearith",   "poughkeepsie_kzz","indirect"]
+    ];
+
+    /* ---- The Western Sephardic walk (ordered) -------------------------- */
+    const THREAD = [
+        "hebraic_cultic",
+        "first_temple",
+        "post_mac_priestly",
+        "pharisaic",
+        "rabbinic",
+        "babylonian_yeshivot",
+        "amram_gaon",
+        "italian_roma",
+        "byzantine",
+        "iberian_peninsula",
+        "lisbon_portugal",
+        "aleppo_syria",
+        "amsterdam_esnoga",
+        "london_bevis",
+        "new_york_shearith",
+        "philadelphia_mikveh",
+        "poughkeepsie_kzz"
+    ];
+
+    /* ====================================================================
+       Build node + edge lookup tables
+       ==================================================================== */
+    const NODE_BY_ID = {};
+    NODES.forEach(n => {
+        n.w = n.w || 200;
+        n.h = n.h || 64;
+        NODE_BY_ID[n.id] = n;
+    });
+
+    // Mark thread on edges for nice rendering
+    const THREAD_SET = new Set(THREAD);
+    const THREAD_EDGES = new Set();
+    for (let i = 0; i < THREAD.length - 1; i++) {
+        THREAD_EDGES.add(THREAD[i] + "|" + THREAD[i + 1]);
+    }
+
+    // For each node compute parents/children
+    const PARENTS  = {};
+    const CHILDREN = {};
+    NODES.forEach(n => { PARENTS[n.id] = []; CHILDREN[n.id] = []; });
+    EDGES.forEach(e => {
+        const [from, to, kind] = e;
+        const k = kind || "direct";
+        if (!CHILDREN[from] || !PARENTS[to]) return;
+        CHILDREN[from].push({ id: to, kind: k });
+        PARENTS[to].push({ id: from, kind: k });
+    });
+
+    /* ====================================================================
+       SVG rendering
+       ==================================================================== */
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const VIEW_W = 2080;
+    const VIEW_H = 2380;
+
+    const gEdges = document.getElementById("g-edges");
+    const gNodes = document.getElementById("g-nodes");
+    const gEraTicks = document.getElementById("g-era-ticks");
+
+    function el(tag, attrs) {
+        const e = document.createElementNS(SVG_NS, tag);
+        if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+        return e;
+    }
+
+    /* ---- Render era tick marks on the right gutter --------------------- */
+    const TICK_X = 1900;
+    const TICK_DATA = [
+        { y: Y.e1,  color: "var(--era-1)", label: "1000 BCE – 586 BCE" },
+        { y: Y.e2,  color: "var(--era-2)", label: "586 BCE – 72 CE" },
+        { y: Y.e3,  color: "var(--era-3)", label: "72 CE – 500 CE" },
+        { y: Y.e4,  color: "var(--era-4)", label: "500 CE – 1000 CE" },
+        { y: Y.e5,  color: "var(--era-5)", label: "1000 CE – 1492 CE" },
+        { y: Y.e6,  color: "var(--era-6)", label: "1492 CE – 1666 CE" },
+        { y: Y.e7,  color: "var(--era-7)", label: "1666 CE – 1870 CE" },
+        { y: Y.e8,  color: "var(--era-8)", label: "1870 CE – Present" }
+    ];
+    // vertical track line
+    gEraTicks.appendChild(el("line", {
+        x1: TICK_X, x2: TICK_X, y1: Y.e1 - 40, y2: Y.homeD + 60,
+        class: "era-tick-line"
+    }));
+    TICK_DATA.forEach(t => {
+        const c = el("circle", {
+            cx: TICK_X, cy: t.y, r: 6,
+            class: "era-tick-dot"
+        });
+        c.setAttribute("stroke", t.color);
+        gEraTicks.appendChild(c);
+        const lbl = el("text", {
+            x: TICK_X - 14, y: t.y + 3,
+            class: "era-tick-label"
+        });
+        lbl.textContent = t.label;
+        gEraTicks.appendChild(lbl);
+    });
+    // home anchor
+    const homeTick = el("circle", { cx: TICK_X, cy: Y.homeD, r: 7, class: "era-tick-dot" });
+    homeTick.setAttribute("stroke", "var(--gold-pale)");
+    homeTick.setAttribute("fill", "var(--wine)");
+    gEraTicks.appendChild(homeTick);
+    const homeTickLabel = el("text", { x: TICK_X - 14, y: Y.homeD + 3, class: "era-tick-label" });
+    homeTickLabel.setAttribute("fill", "var(--gold-pale)");
+    homeTickLabel.textContent = "Poughkeepsie";
+    gEraTicks.appendChild(homeTickLabel);
+
+    /* ---- Edge path geometry ------------------------------------------- */
+    function nodeAnchor(node, side) {
+        // returns {x, y} for an edge anchor on the given side of the node
+        const halfW = node.w / 2;
+        const halfH = node.h / 2;
+        if (side === "top")    return { x: node.x, y: node.y - halfH };
+        if (side === "bottom") return { x: node.x, y: node.y + halfH };
+        if (side === "left")   return { x: node.x - halfW, y: node.y };
+        if (side === "right")  return { x: node.x + halfW, y: node.y };
+        return { x: node.x, y: node.y };
+    }
+    function pickAnchors(a, b) {
+        // Choose two anchors that yield a clean path between rectangles
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        // Mostly vertical
+        if (Math.abs(dy) > Math.abs(dx) * 0.7) {
+            if (dy > 0) return { p1: nodeAnchor(a, "bottom"), p2: nodeAnchor(b, "top") };
+            else        return { p1: nodeAnchor(a, "top"),    p2: nodeAnchor(b, "bottom") };
+        }
+        // Mostly horizontal
+        if (dx > 0) return { p1: nodeAnchor(a, "right"), p2: nodeAnchor(b, "left") };
+        return { p1: nodeAnchor(a, "left"), p2: nodeAnchor(b, "right") };
+    }
+    function edgePath(a, b) {
+        const { p1, p2 } = pickAnchors(a, b);
+        // Smooth cubic Bezier that curves gently between the two anchors
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const absdy = Math.abs(dy);
+        const absdx = Math.abs(dx);
+        let c1x, c1y, c2x, c2y;
+        if (absdy >= absdx) {
+            // mostly vertical: curve gently in x
+            const flex = Math.max(20, absdy * 0.35);
+            c1x = p1.x; c1y = p1.y + Math.sign(dy) * flex;
+            c2x = p2.x; c2y = p2.y - Math.sign(dy) * flex;
+        } else {
+            // mostly horizontal: curve gently in y
+            const flex = Math.max(20, absdx * 0.35);
+            c1x = p1.x + Math.sign(dx) * flex; c1y = p1.y;
+            c2x = p2.x - Math.sign(dx) * flex; c2y = p2.y;
+        }
+        return `M ${p1.x},${p1.y} C ${c1x},${c1y} ${c2x},${c2y} ${p2.x},${p2.y}`;
+    }
+
+    /* ---- Render edges first (so they sit behind nodes) ----------------- */
+    const edgeEls = {};
+    EDGES.forEach(e => {
+        const [from, to, kindRaw] = e;
+        const kind = kindRaw || "direct";
+        const a = NODE_BY_ID[from];
+        const b = NODE_BY_ID[to];
+        if (!a || !b) return;
+        const path = el("path", {
+            d: edgePath(a, b),
+            class: "edge kind-" + kind,
+            "data-from": from,
+            "data-to": to
+        });
+        // Markers
+        if (kind === "negative")    path.setAttribute("marker-end", "url(#arrow-neg)");
+        else                         path.setAttribute("marker-end", "url(#arrow)");
+
+        // Thread emphasis
+        if (THREAD_EDGES.has(from + "|" + to)) {
+            path.classList.add("is-thread");
+            path.setAttribute("marker-end", "url(#arrow-thread)");
+        }
+        gEdges.appendChild(path);
+        edgeEls[from + "|" + to] = path;
+    });
+
+    /* ---- Render nodes -------------------------------------------------- */
+    const nodeEls = {};
+    NODES.forEach(n => {
+        const g = el("g", {
+            class: "node-group" + (n.thread ? " is-thread" : "") + (n.home ? " is-home" : ""),
+            "data-id": n.id,
+            transform: `translate(${n.x - n.w / 2},${n.y - n.h / 2})`,
+            tabindex: 0,
+            role: "button",
+            "aria-label": n.label + (n.sub ? " — " + n.sub : "")
+        });
+
+        // Background rect
+        g.appendChild(el("rect", {
+            class: "node-rect",
+            x: 0, y: 0, width: n.w, height: n.h, rx: 4, ry: 4
+        }));
+
+        // Logo terminus: full-bleed image, no era stripe, no text labels
+        if (n.logo) {
+            const img = el("image", {
+                href: n.logo,
+                x: 0, y: 0,
+                width: n.w, height: n.h,
+                preserveAspectRatio: "xMidYMid meet"
+            });
+            // Some older SVG renderers want xlink:href as well
+            img.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", n.logo);
+            g.appendChild(img);
+
+            // Inner gold frame, drawn over the image so it always reads as a node
+            g.appendChild(el("rect", {
+                class: "node-rect-frame",
+                x: 0, y: 0, width: n.w, height: n.h, rx: 4, ry: 4,
+                fill: "none",
+                stroke: "var(--gold-pale)",
+                "stroke-width": 1.5,
+                "vector-effect": "non-scaling-stroke"
+            }));
+
+            gNodes.appendChild(g);
+            nodeEls[n.id] = g;
+
+            g.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                selectNode(n.id, true);
+            });
+            g.addEventListener("keydown", (ev) => {
+                if (ev.key === "Enter" || ev.key === " ") {
+                    ev.preventDefault();
+                    selectNode(n.id, true);
+                }
+            });
+            return; // skip the standard text rendering below
+        }
+
+        // Era accent stripe (top)
+        const accent = el("rect", {
+            class: "node-accent",
+            x: 0, y: 0, width: n.w, height: 4
+        });
+        accent.setAttribute("fill", `var(--${n.era === "neg" ? "era-neg" : (n.era)})`);
+        if (n.home) accent.setAttribute("fill", "var(--gold-pale)");
+        g.appendChild(accent);
+
+        // Label (single or two lines)
+        if (n.sub) {
+            const t1 = el("text", { class: "node-label", x: n.w / 2, y: n.h / 2 - 9 });
+            t1.textContent = n.label;
+            g.appendChild(t1);
+            const t2 = el("text", { class: "node-sublabel", x: n.w / 2, y: n.h / 2 + 14 });
+            t2.textContent = n.sub;
+            g.appendChild(t2);
+        } else {
+            const t1 = el("text", { class: "node-label", x: n.w / 2, y: n.h / 2 + 4 });
+            t1.textContent = n.label;
+            g.appendChild(t1);
+        }
+
+        // Tiny home accent (deer) for the Poughkeepsie endpoint
+        if (n.terminus) {
+            const star = el("text", {
+                x: n.w / 2, y: n.h - 4,
+                "text-anchor": "middle",
+                "font-size": "10",
+                fill: "var(--gold-pale)",
+                "letter-spacing": "0.3em"
+            });
+            star.textContent = "✦";
+            g.appendChild(star);
+        }
+
+        gNodes.appendChild(g);
+        nodeEls[n.id] = g;
+
+        g.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            selectNode(n.id, true);
+        });
+        g.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter" || ev.key === " ") {
+                ev.preventDefault();
+                selectNode(n.id, true);
+            }
+        });
+    });
+
+    /* ====================================================================
+       Pan / zoom
+       ==================================================================== */
+    const canvas = document.getElementById("map-canvas");
+    const svg = document.getElementById("map-svg");
+    const viewport = document.getElementById("map-viewport");
+
+    const View = {
+        scale: 1,
+        tx: 0,
+        ty: 0
+    };
+
+    function applyView() {
+        viewport.setAttribute("transform",
+            `translate(${View.tx}, ${View.ty}) scale(${View.scale})`);
+    }
+
+    function fitToView(animate) {
+        // Default: fit entire viewBox into canvas with a small padding
+        // Because the svg uses preserveAspectRatio="xMidYMid meet", the
+        // identity transform already fits. So this resets pan/zoom.
+        animateTo(1, 0, 0, animate);
+    }
+
+    function focusOnNode(id, scale, animate) {
+        const n = NODE_BY_ID[id];
+        if (!n) return;
+        scale = scale || 1.7;
+        const rect = canvas.getBoundingClientRect();
+        // CSS pixels per SVG unit at scale 1
+        const baseScaleX = rect.width / VIEW_W;
+        const baseScaleY = rect.height / VIEW_H;
+        const baseScale = Math.min(baseScaleX, baseScaleY); // "meet"
+        // SVG units visible per CSS pixel at zoom S = 1 / (baseScale * S)
+        // Compute translate so node center lands at canvas center.
+        // The SVG content (viewport group) is transformed within an SVG that
+        // itself maps viewBox->canvas via baseScale. The combined map is:
+        //    screen.x = baseScale * (View.tx + scale * node.x) + offsetX
+        // where offsetX accounts for centering due to preserveAspectRatio.
+        // To simplify, we want View.tx + scale*node.x = VIEW_W/2 (the center
+        // of the viewBox), and similarly for y.
+        const newTx = VIEW_W / 2 - scale * n.x;
+        const newTy = VIEW_H / 2 - scale * n.y;
+        animateTo(scale, newTx, newTy, animate);
+    }
+
+    // The arrival view: Torah and home thread paired side-by-side. Zoom and
+    // center selected so they fill the visible area together.
+    function focusArrival(animate) {
+        const scale = 2.3;
+        const cx = 1720; // midpoint of Torah (x=1430-1630) + chain (x=1680-1980)
+        const cy = 1998; // vertical center of the four chain boxes
+        const newTx = VIEW_W / 2 - scale * cx;
+        const newTy = VIEW_H / 2 - scale * cy;
+        animateTo(scale, newTx, newTy, animate);
+    }
+
+    let animFrame = null;
+    function animateTo(targetScale, targetTx, targetTy, animate) {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        if (!animate) {
+            View.scale = targetScale; View.tx = targetTx; View.ty = targetTy;
+            applyView();
+            return;
+        }
+        const startScale = View.scale;
+        const startTx = View.tx;
+        const startTy = View.ty;
+        const startTime = performance.now();
+        const duration = 650;
+        function step(now) {
+            const t = Math.min(1, (now - startTime) / duration);
+            // ease-in-out cubic
+            const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            View.scale = startScale + (targetScale - startScale) * e;
+            View.tx = startTx + (targetTx - startTx) * e;
+            View.ty = startTy + (targetTy - startTy) * e;
+            applyView();
+            if (t < 1) animFrame = requestAnimationFrame(step);
+        }
+        animFrame = requestAnimationFrame(step);
+    }
+
+    // Mouse pan
+    let panning = false, panStartX = 0, panStartY = 0, panOrigTx = 0, panOrigTy = 0;
+    canvas.addEventListener("mousedown", (e) => {
+        if (e.target.closest(".node-group")) return;
+        panning = true;
+        canvas.classList.add("is-panning");
+        panStartX = e.clientX; panStartY = e.clientY;
+        panOrigTx = View.tx; panOrigTy = View.ty;
+    });
+    window.addEventListener("mousemove", (e) => {
+        if (!panning) return;
+        // Convert screen pixels to SVG units
+        const rect = canvas.getBoundingClientRect();
+        const baseScale = Math.min(rect.width / VIEW_W, rect.height / VIEW_H);
+        const dx = (e.clientX - panStartX) / baseScale;
+        const dy = (e.clientY - panStartY) / baseScale;
+        View.tx = panOrigTx + dx;
+        View.ty = panOrigTy + dy;
+        applyView();
+    });
+    window.addEventListener("mouseup", () => {
+        panning = false;
+        canvas.classList.remove("is-panning");
+    });
+
+    // Wheel zoom (centered on cursor)
+    canvas.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const baseScale = Math.min(rect.width / VIEW_W, rect.height / VIEW_H);
+        // Compute SVG coords of cursor before zoom
+        const offsetX = (rect.width - VIEW_W * baseScale) / 2;
+        const offsetY = (rect.height - VIEW_H * baseScale) / 2;
+        const svgX = (e.clientX - rect.left - offsetX) / baseScale;
+        const svgY = (e.clientY - rect.top - offsetY) / baseScale;
+        // Cursor in viewport coords (pre-transform)
+        const vpX = (svgX - View.tx) / View.scale;
+        const vpY = (svgY - View.ty) / View.scale;
+        const factor = Math.exp(-e.deltaY * 0.0018);
+        const newScale = Math.max(0.6, Math.min(4, View.scale * factor));
+        // Keep the point under the cursor stable
+        View.tx = svgX - vpX * newScale;
+        View.ty = svgY - vpY * newScale;
+        View.scale = newScale;
+        applyView();
+    }, { passive: false });
+
+    // Touch (single-finger pan + pinch zoom)
+    let touchState = null;
+    canvas.addEventListener("touchstart", (e) => {
+        if (e.target.closest(".node-group")) return;
+        if (e.touches.length === 1) {
+            touchState = { mode: "pan",
+                x: e.touches[0].clientX, y: e.touches[0].clientY,
+                tx: View.tx, ty: View.ty };
+        } else if (e.touches.length === 2) {
+            const t0 = e.touches[0], t1 = e.touches[1];
+            const dx = t1.clientX - t0.clientX, dy = t1.clientY - t0.clientY;
+            touchState = { mode: "pinch",
+                dist: Math.hypot(dx, dy),
+                cx: (t0.clientX + t1.clientX) / 2,
+                cy: (t0.clientY + t1.clientY) / 2,
+                tx: View.tx, ty: View.ty, scale: View.scale };
+        }
+    }, { passive: true });
+    canvas.addEventListener("touchmove", (e) => {
+        if (!touchState) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const baseScale = Math.min(rect.width / VIEW_W, rect.height / VIEW_H);
+        if (touchState.mode === "pan" && e.touches.length === 1) {
+            const dx = (e.touches[0].clientX - touchState.x) / baseScale;
+            const dy = (e.touches[0].clientY - touchState.y) / baseScale;
+            View.tx = touchState.tx + dx;
+            View.ty = touchState.ty + dy;
+            applyView();
+        } else if (touchState.mode === "pinch" && e.touches.length === 2) {
+            const t0 = e.touches[0], t1 = e.touches[1];
+            const dx = t1.clientX - t0.clientX, dy = t1.clientY - t0.clientY;
+            const newDist = Math.hypot(dx, dy);
+            const factor = newDist / touchState.dist;
+            const newScale = Math.max(0.6, Math.min(4, touchState.scale * factor));
+            // Keep midpoint stable
+            const offsetX = (rect.width - VIEW_W * baseScale) / 2;
+            const offsetY = (rect.height - VIEW_H * baseScale) / 2;
+            const svgX = (touchState.cx - rect.left - offsetX) / baseScale;
+            const svgY = (touchState.cy - rect.top - offsetY) / baseScale;
+            const vpX = (svgX - touchState.tx) / touchState.scale;
+            const vpY = (svgY - touchState.ty) / touchState.scale;
+            View.tx = svgX - vpX * newScale;
+            View.ty = svgY - vpY * newScale;
+            View.scale = newScale;
+            applyView();
+        }
+    }, { passive: false });
+    canvas.addEventListener("touchend", () => { touchState = null; });
+
+    // Click on canvas background clears selection
+    canvas.addEventListener("click", (e) => {
+        if (e.target.closest(".node-group")) return;
+        if (!traceMode) clearSelection();
+    });
+
+    /* ====================================================================
+       Selection + detail panel
+       ==================================================================== */
+    const detailEmpty = document.getElementById("detail-empty");
+    const detailBody = document.getElementById("detail-body");
+    const dEra = document.getElementById("d-era");
+    const dEraLabel = document.getElementById("d-era-label");
+    const dName = document.getElementById("d-name");
+    const dSub = document.getElementById("d-sub");
+    const dParentsWrap = document.getElementById("d-parents-wrap");
+    const dChildrenWrap = document.getElementById("d-children-wrap");
+    const dParents = document.getElementById("d-parents");
+    const dChildren = document.getElementById("d-children");
+    const traceFoot = document.getElementById("trace-foot");
+    const traceStep = document.getElementById("trace-step");
+    const traceNext = document.getElementById("trace-next");
+    const tracePrev = document.getElementById("trace-prev");
+
+    let selectedId = null;
+
+    /* ====================================================================
+       Arrival mode — Poughkeepsie is the destination. Show the Torah on
+       the left of the canvas, the ark photo in the detail panel, and
+       suppress all elements not on the Western Sephardic home descent.
+       ==================================================================== */
+    const HOME_IDS = new Set([
+        "amsterdam_esnoga",
+        "london_bevis",
+        "new_york_shearith",
+        "philadelphia_mikveh",
+        "poughkeepsie_kzz"
+    ]);
+    const arrivalDecor = document.getElementById("g-arrival");
+    const arrivalPhoto = document.getElementById("d-arrival-photo");
+    let arrivalMode = false;
+
+    function enterArrivalMode() {
+        if (arrivalMode) return;
+        arrivalMode = true;
+        // Hide all non-home nodes
+        document.querySelectorAll(".node-group").forEach(g => {
+            const id = g.getAttribute("data-id");
+            if (!HOME_IDS.has(id)) g.classList.add("is-arrival-hidden");
+        });
+        // Hide all edges except those joining two home nodes
+        document.querySelectorAll(".edge").forEach(p => {
+            const from = p.getAttribute("data-from");
+            const to = p.getAttribute("data-to");
+            if (!(HOME_IDS.has(from) && HOME_IDS.has(to))) {
+                p.classList.add("is-arrival-hidden");
+            }
+        });
+        arrivalDecor.classList.add("is-visible");
+        arrivalPhoto.classList.add("is-visible");
+    }
+
+    function exitArrivalMode() {
+        if (!arrivalMode) return;
+        arrivalMode = false;
+        document.querySelectorAll(".is-arrival-hidden").forEach(el => {
+            el.classList.remove("is-arrival-hidden");
+        });
+        arrivalDecor.classList.remove("is-visible");
+        arrivalPhoto.classList.remove("is-visible");
+    }
+
+    function clearSelection() {
+        if (selectedId && nodeEls[selectedId]) {
+            nodeEls[selectedId].classList.remove("is-selected");
+        }
+        selectedId = null;
+        // Reset edge highlights
+        document.querySelectorAll(".edge.is-hot").forEach(p => p.classList.remove("is-hot"));
+        detailEmpty.hidden = false;
+        detailBody.hidden = true;
+        exitArrivalMode();
+    }
+
+    function selectNode(id, doFocus) {
+        const node = NODE_BY_ID[id];
+        if (!node) return;
+        if (selectedId && nodeEls[selectedId]) {
+            nodeEls[selectedId].classList.remove("is-selected");
+        }
+        selectedId = id;
+        nodeEls[id].classList.add("is-selected");
+
+        // Highlight incoming and outgoing edges
+        document.querySelectorAll(".edge.is-hot").forEach(p => p.classList.remove("is-hot"));
+        EDGES.forEach(e => {
+            const [from, to] = e;
+            if (from === id || to === id) {
+                const k = from + "|" + to;
+                if (edgeEls[k]) edgeEls[k].classList.add("is-hot");
+            }
+        });
+
+        // Populate detail panel
+        detailEmpty.hidden = true;
+        detailBody.hidden = false;
+        const era = node.era === "neg" ? ERAS.neg : ERAS[node.era];
+        dEra.style.color = era ? era.color : "var(--gold)";
+        if (node.home) {
+            dEraLabel.textContent = "Western Sephardic Line";
+            dEra.style.color = "var(--gold-pale)";
+        } else {
+            dEraLabel.textContent = era ? era.label : "";
+        }
+        dName.textContent = node.label;
+        dSub.textContent = node.sub || "";
+        dSub.style.display = node.sub ? "" : "none";
+
+        // Parents
+        const ps = PARENTS[id];
+        if (ps && ps.length) {
+            dParentsWrap.hidden = false;
+            dParents.innerHTML = "";
+            ps.forEach(p => {
+                const li = document.createElement("li");
+                if (p.kind === "negative") li.classList.add("is-neg");
+                else if (p.kind === "indirect") li.classList.add("is-indirect");
+                else if (p.kind === "minor") li.classList.add("is-minor");
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = NODE_BY_ID[p.id].label + (NODE_BY_ID[p.id].sub ? " · " + NODE_BY_ID[p.id].sub : "");
+                btn.addEventListener("click", () => selectNode(p.id, true));
+                li.appendChild(btn);
+                dParents.appendChild(li);
+            });
+        } else {
+            dParentsWrap.hidden = true;
+        }
+
+        // Children
+        const cs = CHILDREN[id];
+        if (cs && cs.length) {
+            dChildrenWrap.hidden = false;
+            dChildren.innerHTML = "";
+            cs.forEach(c => {
+                const li = document.createElement("li");
+                if (c.kind === "negative") li.classList.add("is-neg");
+                else if (c.kind === "indirect") li.classList.add("is-indirect");
+                else if (c.kind === "minor") li.classList.add("is-minor");
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = NODE_BY_ID[c.id].label + (NODE_BY_ID[c.id].sub ? " · " + NODE_BY_ID[c.id].sub : "");
+                btn.addEventListener("click", () => selectNode(c.id, true));
+                li.appendChild(btn);
+                dChildren.appendChild(li);
+            });
+        } else {
+            dChildrenWrap.hidden = true;
+        }
+
+        // Arrival composition for the terminal node (Poughkeepsie). When
+        // selected outside of trace mode, dim everything but the home
+        // descent, reveal the Torah image, and reveal the ark photo in
+        // the detail panel.
+        if (id === "poughkeepsie_kzz" && !traceMode) {
+            enterArrivalMode();
+        } else if (arrivalMode) {
+            exitArrivalMode();
+        }
+
+        if (doFocus) {
+            if (id === "poughkeepsie_kzz" && !traceMode) {
+                focusArrival(true);
+            } else {
+                focusOnNode(id, Math.max(1.2, View.scale), true);
+            }
+        }
+    }
+
+    /* ====================================================================
+       Trace mode: walk the Western Sephardic Thread
+       ==================================================================== */
+    const btnTrace = document.getElementById("btn-trace");
+    const btnFit = document.getElementById("btn-fit");
+    const btnZoomHome = document.getElementById("btn-zoom-home");
+    const helpText = document.getElementById("help-text");
+
+    let traceMode = false;
+    let traceIndex = 0;
+
+    function enterTraceMode() {
+        if (arrivalMode) exitArrivalMode();
+        traceMode = true;
+        traceIndex = 0;
+        btnTrace.textContent = "Exit thread";
+        btnTrace.classList.add("is-active");
+        btnTrace.setAttribute("aria-pressed", "true");
+        helpText.innerHTML = "<em>Following the gold thread &mdash; the Western Sephardic rite as it flows toward Poughkeepsie</em>";
+        document.body.classList.add("trace-mode");
+        // Dim everything not on the thread
+        document.querySelectorAll(".node-group").forEach(g => {
+            const id = g.getAttribute("data-id");
+            if (!THREAD_SET.has(id)) g.classList.add("is-dim");
+        });
+        document.querySelectorAll(".edge").forEach(p => {
+            const from = p.getAttribute("data-from");
+            const to = p.getAttribute("data-to");
+            if (!THREAD_EDGES.has(from + "|" + to)) p.classList.add("is-dim");
+        });
+        traceFoot.hidden = false;
+        gotoTraceStep(0);
+    }
+    function exitTraceMode() {
+        traceMode = false;
+        btnTrace.textContent = "Walk the Western Sephardic Thread";
+        btnTrace.classList.remove("is-active");
+        btnTrace.setAttribute("aria-pressed", "false");
+        helpText.innerHTML = "Drag to pan &middot; scroll to zoom &middot; click a node for detail";
+        document.body.classList.remove("trace-mode");
+        document.querySelectorAll(".is-dim").forEach(p => p.classList.remove("is-dim"));
+        document.querySelectorAll(".is-thread-lit").forEach(p => p.classList.remove("is-thread-lit"));
+        traceFoot.hidden = true;
+        // Reset markers we modified
+        Object.keys(edgeEls).forEach(k => {
+            const p = edgeEls[k];
+            if (THREAD_EDGES.has(k)) p.setAttribute("marker-end", "url(#arrow-thread)");
+        });
+        clearSelection();
+        fitToView(true);
+    }
+    function gotoTraceStep(i) {
+        if (i < 0 || i >= THREAD.length) return;
+        traceIndex = i;
+        const id = THREAD[i];
+        // Light up the thread up to and including i; dim the rest
+        document.querySelectorAll(".is-thread-lit").forEach(p => p.classList.remove("is-thread-lit"));
+        for (let j = 0; j <= i; j++) {
+            const nid = THREAD[j];
+            if (nodeEls[nid]) nodeEls[nid].classList.add("is-thread-lit");
+            if (j > 0) {
+                const k = THREAD[j-1] + "|" + THREAD[j];
+                if (edgeEls[k]) {
+                    edgeEls[k].classList.add("is-thread-lit");
+                    edgeEls[k].setAttribute("marker-end", "url(#arrow-thread-lit)");
+                }
+            }
+        }
+        // Reset later edges
+        for (let j = i + 1; j < THREAD.length; j++) {
+            const k = THREAD[j-1] + "|" + THREAD[j];
+            if (edgeEls[k]) edgeEls[k].setAttribute("marker-end", "url(#arrow-thread)");
+        }
+        selectNode(id, false);
+        focusOnNode(id, 1.9, true);
+        traceStep.textContent = `Step ${i + 1} of ${THREAD.length}`;
+        tracePrev.disabled = (i === 0);
+        traceNext.disabled = false;
+        if (i === THREAD.length - 1) {
+            traceNext.textContent = "Begin again";
+        } else {
+            traceNext.textContent = "Next →";
+        }
+    }
+    btnTrace.addEventListener("click", () => {
+        if (traceMode) exitTraceMode();
+        else enterTraceMode();
+    });
+    traceNext.addEventListener("click", () => {
+        if (traceIndex === THREAD.length - 1) gotoTraceStep(0);
+        else gotoTraceStep(traceIndex + 1);
+    });
+    tracePrev.addEventListener("click", () => {
+        if (traceIndex > 0) gotoTraceStep(traceIndex - 1);
+    });
+
+    btnFit.addEventListener("click", () => {
+        if (traceMode) exitTraceMode();
+        else { clearSelection(); fitToView(true); }
+    });
+    btnZoomHome.addEventListener("click", () => {
+        if (traceMode) exitTraceMode();
+        selectNode("poughkeepsie_kzz", true);
+    });
+
+    // Keyboard arrows for trace mode
+    window.addEventListener("keydown", (e) => {
+        if (!traceMode) return;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+            e.preventDefault();
+            if (traceIndex < THREAD.length - 1) gotoTraceStep(traceIndex + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+            e.preventDefault();
+            if (traceIndex > 0) gotoTraceStep(traceIndex - 1);
+        } else if (e.key === "Escape") {
+            exitTraceMode();
+        }
+    });
+
+    // Initial state: fit + select nothing
+    applyView();
+
+})();
+</script>
+
+</body>
+</html>

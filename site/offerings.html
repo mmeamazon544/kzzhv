@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offerings — Kehillah Kedoshah Zikhron Zvi</title>
+  <!-- social preview (Open Graph / Twitter) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kehillah Kedoshah Zikhron Zvi">
+  <meta property="og:title" content="Offerings">
+  <meta property="og:description" content="">
+  <meta property="og:url" content="https://kzzhv.netlify.app/offerings">
+  <meta property="og:image" content="https://kzzhv.netlify.app/assets/images/tzedakah.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Offerings">
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content="https://kzzhv.netlify.app/assets/images/tzedakah.jpg">
+
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/png" href="assets/images/logo-deer.png">
+    <script defer src="https://www.paypal.com/sdk/js?client-id=BAAjTreqV4Otj4XnTNsqIOOlEJZtlOljXD1ge3c4sM5vPtzYs3vElC6vcDBHkotXdez0c_2bY3D6rszLLA&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="index.html" aria-label="Kehillah Kedoshah Zikhron Zvi — home">
+                <img src="assets/images/logo-deer-blush.png" alt="">
+                <span class="brand-text">
+                    <span class="brand-name">Kehillah Kedoshah Zikhron Zvi</span>
+                    <span class="brand-sub">Hudson Valley</span>
+                </span>
+            </a>
+            <nav class="site-nav" aria-label="Primary">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="welcome.html">Welcome</a></li>
+                    <li><a href="clergy.html">Clergy</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="kiddush.html">Kiddush</a></li>
+                    <li><a href="sacred.html">Sacred Seasons</a></li>
+                    <li><a href="liturgical.html">Liturgical Map</a></li>
+                    <li><a href="our-music.html">Our Music</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="offerings.html" aria-current="page">Offerings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="band band--pimpernel" aria-hidden="true"></div>
+
+    <div class="page-head">
+        <p class="eyebrow">501(c)(3) Nonprofit</p>
+        <h1 class="page-title">Offerings</h1>
+        <p class="page-lede">If you'd like to support the Kehillah, or make a donation in honor or in memory of someone, you may do so here.</p>
+    </div>
+
+    <article class="prose">
+        <p>Kehillah Kedoshah Zikhron Zvi is a nonprofit organization recognized as tax-exempt under Section 501(c)(3) of the Internal Revenue Code. Offerings are tax-deductible to the extent permitted by law.</p>
+    </article>
+
+    <div class="panel-with-image">
+        <section class="donation-frame" aria-label="Donation">
+            <h2>Make an Offering</h2>
+            <p style="font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 1.4rem; font-style: italic; font-variation-settings: 'opsz' 18, 'wght' 400;">PayPal · Venmo · Card</p>
+
+            <!-- PayPal Hosted Button -->
+            <div id="paypal-container-HGEL458SR7CYU" aria-label="PayPal donation button"></div>
+
+            <!-- Always-visible direct link to PayPal — works even if the embedded
+                 button fails to load. -->
+            <p class="paypal-direct-link">
+                <a href="https://www.paypal.com/ncp/payment/HGEL458SR7CYU" target="_blank" rel="noopener" class="btn">
+                    Donate via PayPal
+                </a>
+            </p>
+
+            <p class="small">
+                A receipt for tax purposes can be provided on request &mdash; please <a href="contact.html">be in touch</a>.
+            </p>
+
+            <script>
+            (function () {
+                // Try to render the PayPal hosted button as soon as the SDK is available.
+                // If the SDK never loads, or rendering fails for any reason, the
+                // direct "Donate via PayPal" link above continues to work.
+                var BUTTON_ID = "HGEL458SR7CYU";
+                var SELECTOR = "#paypal-container-" + BUTTON_ID;
+                var attempts = 0;
+
+                function tryRender() {
+                    attempts++;
+                    if (window.paypal && window.paypal.HostedButtons) {
+                        try {
+                            window.paypal.HostedButtons({
+                                hostedButtonId: BUTTON_ID
+                            }).render(SELECTOR);
+                        } catch (err) {
+                            console.warn("PayPal button render failed:", err);
+                        }
+                        return;
+                    }
+                    if (attempts < 40) {  // poll for ~10 seconds
+                        setTimeout(tryRender, 250);
+                    } else {
+                        console.warn("PayPal SDK did not load; using direct link fallback.");
+                    }
+                }
+
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", tryRender);
+                } else {
+                    tryRender();
+                }
+            })();
+            </script>
+        </section>
+
+        <figure class="panel-image">
+            <img src="assets/images/tzedakah.jpg" alt="">
+        </figure>
+    </div>
+
+    <article class="prose" style="margin-top: 1rem;">
+        <p>To discuss other ways of supporting the community &mdash; recurring offerings, memorial dedications, sponsoring a Kiddush, or honoring a learning or life-cycle event &mdash; please <a href="contact.html">write to us</a>.</p>
+    </article>
+
+
+    <div class="footer-banner" aria-hidden="true"></div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <img class="footer-deer" src="assets/images/logo-deer-blush.png" alt="">
+            <div class="footer-text">
+                <strong>Kehillah Kedoshah Zikhron Zvi</strong>
+                A traditional egalitarian home minyan in the Hudson Valley, in the Western Sephardic liturgical tradition.
+                <div class="footer-meta">
+                    <a href="contact.html">Contact</a> &nbsp;·&nbsp;
+                    <a href="offerings.html">Offerings</a> &nbsp;·&nbsp;
+                    <a href="services.html">Services</a>
+                    <br>© Kehillah Kedoshah Zikhron Zvi
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
