@@ -1,0 +1,38 @@
+# Step-4 sample generation: drafts the two teachings and renders the full
+# bulletin with them, as an artifact for review. Publishes nothing, sends
+# nothing. Manually triggered only.
+name: samples
+
+on:
+  workflow_dispatch:
+    inputs:
+      shabbat:
+        description: "Shabbat date (YYYY-MM-DD, a Saturday)"
+        required: true
+        default: "2026-09-05"
+
+permissions:
+  contents: read
+
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install anthropic
+      - name: Generate teachings and render bulletin
+        working-directory: program
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python make_samples.py "${{ inputs.shabbat }}"
+      - name: Job summary
+        if: always()
+        run: cat out/preview.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sample-bulletin
+          path: out/
