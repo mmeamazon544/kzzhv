@@ -80,11 +80,12 @@ Second-day Yom Tob is observed (diaspora).
 
 Schedule
 
-Shabbat: proof to Marc at 6:00 am Thursday, America/New_York. Publish and
-send at 6:00 pm Thursday once approved; if approval comes later, publish and
-send immediately on approval. Reminder to Marc at 5:00 pm Thursday if not
-yet approved. Festivals and fasts: same pattern, proof at 6:00 am two days
-before the eve. Nothing is ever published or sent without approval.
+Shabbat: proof to Marc at 6:00 am Wednesday, America/New_York. Publish and
+send at 6:00 pm Wednesday once approved; if approval comes later, publish
+and send immediately on approval. Reminder to Marc at 5:00 pm Wednesday if
+not yet approved. (Moved from Thursday to Wednesday at Marc's direction,
+3 September 2026.) Festivals and fasts: same pattern, proof at 6:00 am two
+days before the eve. Nothing is ever published or sent without approval.
 
 Sister congregations
 
@@ -102,7 +103,9 @@ Standing lines
 
 Home weeks carry this line verbatim:
 To RSVP and to register food issues and avoidances, kindly contact the
-Congregation's secretary at kehillatzikhronzvi@gmail.com
+Congregation's secretary at kehillatzikhronzvi@gmail.com by Thursday night
+at 10:00 pm
+(Deadline added at Marc's direction, 3 September 2026.)
 
 Addresses
 

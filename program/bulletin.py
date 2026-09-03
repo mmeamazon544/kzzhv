@@ -215,7 +215,7 @@ def build_context(sat: date) -> dict:
             "We meet in a private home; our address is shared by message. If prayer "
             "is not your thing, you are welcome to join only for the Kiddush and the company.",
             "To RSVP and to register food issues and avoidances, kindly contact the "
-            f"Congregation's secretary at {SECRETARY}",
+            f"Congregation's secretary at {SECRETARY} by Thursday night at 10:00 pm",
         ]
 
     return {
