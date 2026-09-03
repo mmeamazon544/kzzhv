@@ -142,3 +142,5 @@ Whether the archive of past bulletins should be public.
 Deviations from the brief, with reasons
 
 The Rome Yigdal video (assets/video/yigdal-rome-tempio-maggiore-hoshana-rabbah.mp4, 157 MB) exceeds GitHub's hard 100 MB per-file limit and cannot be pushed. Both large Yigdal mp4s therefore live as assets on the GitHub release tagged site-media, and the Netlify build downloads them into site/assets/video/ before publishing (scripts/fetch-media.sh, wired in netlify.toml). The deployed site is byte-identical to the original. Git LFS was rejected because its free bandwidth quota (1 GB/month) would be exhausted by weekly builds.
+
+The repository is public (mmeamazon544/kzzhv). Nothing secret is ever written to a file, the site content is public anyway, and a public repository gives unlimited GitHub Actions minutes and lets the Netlify build download the release assets without a token — no expiring credential that could silently break an unattended build. Marc approved the reasoning by not objecting when it was reported; make it private only if he asks.
