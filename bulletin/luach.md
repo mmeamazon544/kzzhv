@@ -115,8 +115,17 @@ Mailchimp; no mailbox exists or is needed). Reply-To: the secretary's Gmail.
 
 Bulletin composition (settled 3 September 2026)
 
-Readings show the verse range only — no verse count, no aliyot listing.
-The Sephardic haftarah is noted where it differs from the Ashkenazic.
+Readings show the verse range — no verse count, no aliyot listing —
+followed by a one-paragraph summary of the parashah's highlights, then
+the haftarah with its own one-paragraph summary. The Sephardic haftarah
+is noted where it differs from the Ashkenazic.
+
+The teachings: plain, loving, humane language; citations as numbered
+footnotes, never in the prose; the halakhic teaching is one Mishneh Torah
+paragraph on the season plus one short Keter Shem Tob paragraph on lived
+custom, the aggadic one short paragraph of parshanut or midrash; nothing
+that reflects negative attitudes toward women or toward non-Jews. The
+full brief is bulletin/voice.md (revised 3 September 2026).
 
 The Leil Selihot notice reads: "Leil Selihot for Ashkenazim; Sephardim
 have been saying Selihot since 2 Elul."

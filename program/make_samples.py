@@ -37,13 +37,27 @@ def strip_tags(html: str) -> str:
     return re.sub(r"<[^>]+>", "", html)
 
 
+def reading_refs(ctx: dict) -> tuple | None:
+    r = ctx.get("reading")
+    if not r:
+        return None
+    return (r.get("range_raw") or "", r.get("haftarah_raw") or "")
+
+
+def apply_teachings(ctx: dict, t: dict) -> None:
+    ctx["halakha"] = t["halakha_html"]
+    ctx["aggada"] = t["aggada_html"]
+    if ctx.get("reading"):
+        ctx["reading"]["parashah_summary"] = t.get("parashah_summary")
+        ctx["reading"]["haftarah_summary"] = t.get("haftarah_summary")
+
+
 def main() -> None:
     sat = date.fromisoformat(sys.argv[1])
     ctx = bulletin.build_context(sat)
-    t = teachings.generate(week_description(ctx))
+    t = teachings.generate(week_description(ctx), reading_refs=reading_refs(ctx))
 
-    ctx["halakha"] = t["halakha_html"]
-    ctx["aggada"] = t["aggada_html"]
+    apply_teachings(ctx, t)
 
     out = ROOT / "out"
     out.mkdir(exist_ok=True)
@@ -63,6 +77,8 @@ def main() -> None:
         f"Halakhic topic: {t['plan']['halakhic_topic']}",
         f"Aggadic topic: {t['plan']['aggadic_topic']}",
         "",
+        "## Parashah summary", "", t.get("parashah_summary", ""), "",
+        "## Haftarah summary", "", t.get("haftarah_summary", ""), "",
         "## Halakha",
         "",
         strip_tags(t["halakha_html"]),

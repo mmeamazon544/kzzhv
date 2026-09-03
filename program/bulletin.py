@@ -201,7 +201,11 @@ def build_context(sat: date) -> dict:
         reading = {
             "name": parashah,
             "range": (item.get("summary") or "").replace("-", "–"),
+            "range_raw": item.get("summary") or "",
             "haftarah": haft_line,
+            "haftarah_raw": seph or haft or "",
+            "parashah_summary": None,   # filled by the teachings pipeline
+            "haftarah_summary": None,
         }
 
     announcements = [p.strip() for p in
@@ -277,8 +281,12 @@ def render_web(ctx: dict) -> Path:
         r = ctx["reading"]
         body.append('<h2>Torah Reading <span class="amp">&amp;</span> Haftarah</h2>')
         body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
+        if r.get("parashah_summary"):
+            body.append(f"<p>{r['parashah_summary']}</p>")
         if r["haftarah"]:
             body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
+        if r.get("haftarah_summary"):
+            body.append(f"<p>{r['haftarah_summary']}</p>")
     if ctx["observances"]:
         body.append("<h2>In the Week Ahead</h2>")
         body += [f"<p>{o}</p>" for o in ctx["observances"]]
@@ -380,9 +388,13 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         r = ctx["reading"]
         sections.append(e_h2("Torah Reading &amp; Haftarah"))
         sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
+        if r.get("parashah_summary"):
+            sections.append(e_p(r["parashah_summary"]))
         if r["haftarah"]:
             sections.append(e_p(r["haftarah"].replace(
                 "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
+        if r.get("haftarah_summary"):
+            sections.append(e_p(r["haftarah_summary"]))
     if ctx["observances"]:
         sections.append(e_h2("In the Week Ahead"))
         for o in ctx["observances"]:
@@ -459,8 +471,12 @@ def render_text(ctx: dict) -> str:
     if ctx["reading"]:
         r = ctx["reading"]
         lines += ["TORAH READING & HAFTARAH", f"{r['name']}, {r['range']}."]
+        if r.get("parashah_summary"):
+            lines.append(r["parashah_summary"])
         if r["haftarah"]:
             lines.append(r["haftarah"])
+        if r.get("haftarah_summary"):
+            lines.append(r["haftarah_summary"])
         lines.append("")
     if ctx["observances"]:
         lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]

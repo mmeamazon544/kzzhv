@@ -115,13 +115,18 @@ def plan(week: str) -> dict:
             "You plan the two weekly teachings (one halakhic, one aggadic) for the "
             "bulletin of Kehillah Kedoshah Zikhron Zvi, a traditional egalitarian "
             "congregation in the Western Sephardic rite. Choose topics that arise "
-            "directly from this week's reading or season. The halakhic topic should "
-            "concern lived practice or custom; prefer topics where the Keter Shem Tob "
-            "index below has a bearing entry, and where the Mishneh Torah is a natural "
-            "first recourse. Sefaria references must be precise, existing passages in "
-            "Sefaria's canonical citation style (e.g. 'Mishneh Torah, Repentance 2:4', "
-            "'Zohar, Bereshit 1:1', 'Deuteronomy 30:19'). Never request anything from "
-            "the excluded literature.\n\n--- source policy ---\n" + sources_policy
+            "directly from this week's reading or season. The halakhic teaching is "
+            "always built from the Mishneh Torah (a paragraph on the time and season) "
+            "plus Keter Shem Tob (a short paragraph on lived custom) — so the topic "
+            "MUST have a bearing Keter Shem Tob index entry below, and Mishneh Torah "
+            "passages must lead your halakhic reference list. The aggadic teaching is "
+            "one short paragraph of parshanut or midrash on the reading — request the "
+            "commentator or midrash passages for it. Avoid sources that speak "
+            "negatively of women or of non-Jews. Sefaria references must be precise, "
+            "existing passages in Sefaria's canonical citation style (e.g. 'Mishneh "
+            "Torah, Repentance 2:4', 'Rashi on Deuteronomy 30:12:1', 'Devarim Rabbah "
+            "8:6'). Never request anything from the excluded literature.\n"
+            "\n--- source policy ---\n" + sources_policy
         ),
         messages=[{
             "role": "user",
@@ -254,8 +259,10 @@ DRAFT_SCHEMA = {
             "required": ["html", "citations"],
             "additionalProperties": False,
         },
+        "parashah_summary": {"type": "string"},
+        "haftarah_summary": {"type": "string"},
     },
-    "required": ["halakha", "aggada"],
+    "required": ["halakha", "aggada", "parashah_summary", "haftarah_summary"],
     "additionalProperties": False,
 }
 
@@ -267,24 +274,43 @@ def draft_system() -> str:
         + "\n\n--- operational rules for this draft ---\n"
         "Write BOTH teachings now, from the source material supplied in the "
         "user message and nothing else. Rules:\n"
-        "- 150 to 250 words each. HTML: <p> paragraphs; <em> for italics; no "
-        "other tags, no headings (the page supplies them).\n"
-        "- Cite ONLY sources whose text or scanned pages are supplied. Name "
-        "each citation in the prose exactly as it appears in the 'display' "
-        "field you give for it. For Sefaria sources, sefaria_ref must repeat "
-        "the exact reference as supplied. For Keter Shem Tob (supplied as "
-        "scanned Hebrew pages), cite as: Keter Shem Tob, vol. N, p. P, se'if S "
-        "— only pages actually supplied, and only if you actually read the "
-        "se'if there; kst=true, sefaria_ref=null.\n"
-        "- If a supplied source does not support the point, do not cite it.\n"
-        "- Biblical verses inside the week's reading may be quoted from the "
-        "supplied reading text and cited by chapter and verse.\n"
+        "- Structure. The halakhic teaching ('halakha'): exactly two <p> "
+        "paragraphs — first a paragraph from the Mishneh Torah on the time "
+        "and season, then a SHORT paragraph from Keter Shem Tob on lived "
+        "custom. The aggadic teaching ('aggada'): ONE short <p> paragraph "
+        "of parshanut or midrash. Keep paragraphs short — 60 to 120 words; "
+        "plain, loving, humane; readable aloud.\n"
+        "- HTML: <p> paragraphs, <em> for italics, <sup>N</sup> for footnote "
+        "markers; nothing else. No headings.\n"
+        "- Citations are FOOTNOTES. The prose never carries a reference — it "
+        "says 'the Talmud teaches' or 'the Rambam rules', with a marker like "
+        "<sup>1</sup>. The citations array holds the footnotes IN ORDER: "
+        "citation 1 is marker 1, and every citation must have exactly one "
+        "marker in the prose. At most 4 citations per teaching.\n"
+        "- 'display' is the footnote text, e.g. 'Mishneh Torah, Repentance "
+        "2:6' or 'Keter Shem Tob, vol. 2, p. 711, se'if 1' or 'Berakhot 10a'.\n"
+        "- Cite ONLY sources whose text or scanned pages are supplied. For "
+        "Sefaria sources, sefaria_ref must repeat the exact reference as "
+        "supplied. For Keter Shem Tob (supplied as scanned Hebrew pages), "
+        "cite only pages actually supplied and only what you read there; "
+        "kst=true, sefaria_ref=null.\n"
+        "- If a supplied source does not support the point, do not cite it. "
+        "Biblical verses inside the week's reading may be cited by chapter "
+        "and verse.\n"
+        "- Never quote, cite, or paraphrase material that reflects negative "
+        "attitudes toward women or toward non-Jews; choose other material.\n"
+        "- Also write parashah_summary and haftarah_summary: one paragraph "
+        "each, plain text (no tags, no footnotes, no citations), summarizing "
+        "the highlights of the week's Torah reading and of the haftarah, "
+        "grounded in the reading texts supplied. Same voice: plain, warm, "
+        "readable aloud; 60 to 110 words each.\n"
         "- Transliteration follows the congregation's Sephardic style "
         "(Shabbat, Habdala, Selihot, Kippur, Shabuot, Tish'a Be'Ab).\n"
     )
 
 
-def build_draft_content(week: str, plan_out: dict, sef_h, sef_a, kst_descs, kst_docs) -> list:
+def build_draft_content(week: str, plan_out: dict, sef_h, sef_a, kst_descs, kst_docs,
+                        reading_texts: str = "") -> list:
     def block(srcs, label):
         if not srcs:
             return f"({label}: none available)\n"
@@ -303,7 +329,9 @@ def build_draft_content(week: str, plan_out: dict, sef_h, sef_a, kst_descs, kst_
     )
     if kst_descs:
         text += "\nKeter Shem Tob material supplied as scanned pages (in the order attached):\n" + "\n".join(kst_descs) + "\n"
-    text += "\nWrite the two teachings."
+    if reading_texts:
+        text += "\nThe week's reading texts (for the summaries):\n" + reading_texts + "\n"
+    text += "\nWrite the two teachings and the two summaries."
     content.append({"type": "text", "text": text})
     return content
 
@@ -345,8 +373,12 @@ def check(teaching: dict, supplied_refs: set[str], kst_ranges: list[dict]) -> li
             problems.append(f"does not verify on Sefaria: {disp} ({ref}): {v['reason']}")
         elif v["ref"] not in supplied_refs and not _is_bible(v["ref"]):
             problems.append(f"cites a source that was not supplied: {disp} ({v['ref']})")
-        if disp not in teaching["html"]:
-            problems.append(f"citation display text not found in the teaching: {disp}")
+    markers = sorted(int(m) for m in re.findall(r"<sup>(\d+)</sup>", teaching["html"]))
+    want = list(range(1, len(teaching["citations"]) + 1))
+    if markers != want:
+        problems.append(
+            f"footnote markers {markers} do not match the citations "
+            f"(expected exactly one each of {want})")
     return problems
 
 
@@ -364,31 +396,48 @@ def _is_bible(ref: str) -> bool:
     return ref.startswith(_BIBLE_BOOKS)
 
 
-def linkify(teaching: dict) -> str:
+def with_footnotes(teaching: dict) -> str:
+    """The teaching's HTML with its numbered footnote block appended;
+    Sefaria references become links."""
     html = teaching["html"]
-    for c in teaching["citations"]:
-        if c["kst"] or not c["sefaria_ref"]:
-            continue
-        v = verify_ref(c["sefaria_ref"])
-        if v["ok"] and c["display"] in html:
-            html = html.replace(
-                c["display"], f'<a href="{v["url"]}">{c["display"]}</a>', 1
-            )
+    notes = []
+    for i, c in enumerate(teaching["citations"], 1):
+        disp = c["display"]
+        if not c["kst"] and c["sefaria_ref"]:
+            v = verify_ref(c["sefaria_ref"])
+            if v["ok"]:
+                disp = f'<a href="{v["url"]}">{disp}</a>'
+        notes.append(f"{i}. {disp}")
+    if notes:
+        html += ('\n<p style="font-size:12px; opacity:0.75;">'
+                 + " &nbsp; ".join(notes) + "</p>")
     return html
 
 
 # ------------------------------------------------------------------- main --
 
-def generate(week_description: str) -> dict:
+def generate(week_description: str, reading_refs: tuple | None = None) -> dict:
     p = plan(week_description)
     print("plan:", json.dumps({k: p[k] for k in ("halakhic_topic", "aggadic_topic")}), file=sys.stderr)
     sef_h = gather_sefaria(p["sefaria_refs_halakha"])
     sef_a = gather_sefaria(p["sefaria_refs_aggada"])
     kst_descs, kst_docs, kst_ranges = gather_kst(p["kst_queries"])
-    print(f"gathered: {len(sef_h)}+{len(sef_a)} sefaria, {len(kst_docs)} KST pages", file=sys.stderr)
+
+    reading_texts = ""
+    if reading_refs:
+        for label, ref in (("Torah reading", reading_refs[0]),
+                           ("Haftarah", reading_refs[1])):
+            if not ref:
+                continue
+            t = fetch_text(ref, max_chars=9000)
+            if t:
+                reading_texts += f"[{label}: {ref}]\n{t}\n\n"
+    print(f"gathered: {len(sef_h)}+{len(sef_a)} sefaria, {len(kst_docs)} KST pages, "
+          f"{len(reading_texts)} chars of reading text", file=sys.stderr)
 
     supplied = {s["ref"] for s in sef_h} | {s["ref"] for s in sef_a}
-    content = build_draft_content(week_description, p, sef_h, sef_a, kst_descs, kst_docs)
+    content = build_draft_content(week_description, p, sef_h, sef_a, kst_descs,
+                                  kst_docs, reading_texts)
     d = draft(content)
     for attempt in range(2):
         problems = check(d["halakha"], supplied, kst_ranges) + check(d["aggada"], supplied, kst_ranges)
@@ -419,10 +468,12 @@ def generate(week_description: str) -> dict:
 
     return {
         "plan": p,
-        "halakha_html": linkify(d["halakha"]),
-        "aggada_html": linkify(d["aggada"]),
+        "halakha_html": with_footnotes(d["halakha"]),
+        "aggada_html": with_footnotes(d["aggada"]),
         "halakha_citations": d["halakha"]["citations"],
         "aggada_citations": d["aggada"]["citations"],
+        "parashah_summary": d["parashah_summary"].strip(),
+        "haftarah_summary": d["haftarah_summary"].strip(),
     }
 
 
