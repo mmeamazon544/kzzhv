@@ -1,0 +1,76 @@
+# Publication (build order step 7). An Approve click dispatches here and is
+# recorded; publication happens at 6:00 pm New York on Wednesday (both
+# candidate UTC hours, guarded), or immediately when approval arrives after
+# that hour. Publishing commits the proofed page to the site (the push
+# deploys it) and then sends the email — to the Proof segment only, until
+# the repository variable BULLETIN_DRY_RUN is set to "false".
+name: publish
+
+on:
+  schedule:
+    - cron: "0 22 * * 3"
+    - cron: "0 23 * * 3"
+  repository_dispatch:
+    types: [bulletin-approve]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: bulletin
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "18" ]; then
+            echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 pm in New York"
+          else
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+  run:
+    needs: gate
+    if: needs.gate.outputs.go == 'yes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record approval
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          git config user.name "kkzz-bulletin"
+          git config user.email "shabbat@kzzhv.org"
+          python3 program/publish.py --record-approval "${{ github.event.client_payload.id }}" "${{ github.event.client_payload.rev }}" | tee rec.log -a "$GITHUB_STEP_SUMMARY"
+          git add bulletin/state/current.json
+          git commit -m "Approve ${{ github.event.client_payload.id }}" || true
+          git pull --rebase origin main
+          git push
+      - name: Publish and send when due
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          BULLETIN_DRY_RUN: ${{ vars.BULLETIN_DRY_RUN }}
+        run: |
+          git config user.name "kkzz-bulletin"
+          git config user.email "shabbat@kzzhv.org"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python3 program/publish.py --publish | tee pub.log -a "$GITHUB_STEP_SUMMARY"
+          else
+            python3 program/publish.py --publish --if-due | tee pub.log -a "$GITHUB_STEP_SUMMARY"
+          fi
+          if grep -q "^published" pub.log; then
+            git add -f site/bulletin
+            git add bulletin
+            git commit -m "Publish $(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['id'])")"
+            git pull --rebase origin main
+            git push
+            python3 program/publish.py --send | tee -a "$GITHUB_STEP_SUMMARY"
+            git add bulletin/state/current.json
+            git commit -m "Record send"
+            git pull --rebase origin main
+            git push
+          fi

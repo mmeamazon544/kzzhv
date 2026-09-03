@@ -1,0 +1,37 @@
+# The 5:00 pm Wednesday nudge (build order step 7): if the week's proof is
+# still unapproved an hour before sending time, Marc gets the links again.
+name: reminder
+
+on:
+  schedule:
+    - cron: "0 21 * * 3"
+    - cron: "0 22 * * 3"
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        run: |
+          if [ "$(TZ=America/New_York date +%H)" != "17" ]; then
+            echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 5 pm in New York"
+          else
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+  remind:
+    needs: gate
+    if: needs.gate.outputs.go == 'yes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          PRIVATE_PAGE_PASSWORD: ${{ secrets.PRIVATE_PAGE_PASSWORD }}
+        run: python3 program/publish.py --remind | tee -a "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,100 @@
+# The weekly proof (build order step 7). Fires at 6:00 am New York on
+# Wednesdays (both candidate UTC hours; a guard checks local time), on a
+# Request-changes dispatch from the site, or by hand. Builds the bulletin,
+# stores it under bulletin/state/<id>/, commits, then mails the proof —
+# always and only to the Proof segment (Marc).
+name: proof
+
+on:
+  schedule:
+    - cron: "0 10 * * 3"
+    - cron: "0 11 * * 3"
+  workflow_dispatch:
+    inputs:
+      shabbat:
+        description: "Shabbat date (YYYY-MM-DD); empty = next Saturday"
+        required: false
+        default: ""
+  repository_dispatch:
+    types: [bulletin-changes]
+
+permissions:
+  contents: write
+
+concurrency: bulletin
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "06" ]; then
+            echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 am in New York"
+          else
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+  proof:
+    needs: gate
+    if: needs.gate.outputs.go == 'yes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          pip install anthropic playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Decide the bulletin and any instructions
+        id: decide
+        env:
+          PAYLOAD_ID: ${{ github.event.client_payload.id }}
+          PAYLOAD_REV: ${{ github.event.client_payload.rev }}
+          INPUT_SHABBAT: ${{ inputs.shabbat }}
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            CUR_REV=$(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['rev'])" 2>/dev/null || echo "")
+            if [ "$PAYLOAD_REV" != "$CUR_REV" ]; then
+              echo "stale change-request (rev $PAYLOAD_REV vs current $CUR_REV); ignoring"
+              echo "id=" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            echo "id=$PAYLOAD_ID" >> "$GITHUB_OUTPUT"
+          elif [ -n "$INPUT_SHABBAT" ]; then
+            echo "id=$INPUT_SHABBAT" >> "$GITHUB_OUTPUT"
+          else
+            echo "id=$(TZ=America/New_York python3 -c 'from datetime import date,timedelta;t=date.today();print((t+timedelta(days=(5-t.weekday())%7)).isoformat())')" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build the proof
+        if: steps.decide.outputs.id != ''
+        working-directory: program
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PRIVATE_PAGE_PASSWORD: ${{ secrets.PRIVATE_PAGE_PASSWORD }}
+          INSTRUCTIONS: ${{ github.event.client_payload.instructions }}
+        run: |
+          if [ -n "$INSTRUCTIONS" ]; then
+            python make_proof.py "${{ steps.decide.outputs.id }}" --instructions "$INSTRUCTIONS" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            python make_proof.py "${{ steps.decide.outputs.id }}" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Commit the proof state
+        if: steps.decide.outputs.id != ''
+        run: |
+          git config user.name "kkzz-bulletin"
+          git config user.email "shabbat@kzzhv.org"
+          git add bulletin/state
+          git commit -m "Proof ${{ steps.decide.outputs.id }}"
+          git pull --rebase origin main
+          git push
+      - name: Send the proof to Marc
+        if: steps.decide.outputs.id != ''
+        working-directory: program
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          PRIVATE_PAGE_PASSWORD: ${{ secrets.PRIVATE_PAGE_PASSWORD }}
+        run: python make_proof.py --send-only | tee -a "$GITHUB_STEP_SUMMARY"
