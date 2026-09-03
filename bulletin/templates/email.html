@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PAGE_TITLE}}</title>
+<style>
+  @font-face {
+    font-family: "Chelsea Studio";
+    src: url("{{BASE}}/assets/fonts/ChelseaStudioA_Normal.ttf") format("truetype");
+    font-weight: 400; font-style: normal;
+  }
+  @font-face {
+    font-family: "Fraunces";
+    src: url("{{BASE}}/assets/fonts/Fraunces-Regular.ttf") format("truetype");
+    font-weight: 400; font-style: normal;
+  }
+  .display { font-family: "Chelsea Studio", Georgia, "Times New Roman", serif !important; }
+  a { color: #e376a3; }
+</style>
+</head>
+<body style="margin:0; padding:0; background-color:#170611;">
+<center>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#170611" style="background-color:#170611;">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px;">
+
+  <tr><td style="border-top:4px solid #856a2e; padding:20px 26px 16px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td style="padding-right:14px;" valign="middle">
+          <img src="{{BASE}}/assets/images/logo-deer-blush.png" width="46" alt="" style="display:block; width:46px; height:auto;">
+        </td>
+        <td valign="middle">
+          <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:15px; letter-spacing:2px; color:#f1dccc; text-transform:uppercase;">Kehillah Kedoshah Zikhron Zvi</div>
+          <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:9px; letter-spacing:5px; color:#c79f50; text-transform:uppercase; padding-top:5px;">Hudson Valley</div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:0;">
+    <img src="{{BASE}}/bulletin/assets/band-pimpernel.jpg" width="600" alt="" style="display:block; width:100%; height:auto; border-top:3px solid #856a2e; border-bottom:3px solid #856a2e;">
+  </td></tr>
+
+  <tr><td style="padding:30px 26px 4px;">
+    <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:10px; letter-spacing:4px; color:#c79f50; text-transform:uppercase;">&mdash;&nbsp;&nbsp;{{EYEBROW}}</div>
+    <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:30px; line-height:1.1; letter-spacing:1px; color:#f1dccc; text-transform:uppercase; padding-top:12px;">{{TITLE}}</div>
+    <div style="font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:15px; color:#d6b1a6; padding-top:10px;">{{LEDE}}</div>
+  </td></tr>
+{{GUEST_NOTICE}}
+  <tr><td style="padding:22px 26px 0;">
+    <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:10px; letter-spacing:2px; color:#c79f50; text-transform:uppercase; padding-bottom:4px;">Shabbat times for Poughkeepsie, NY (41.70<span style="font-family:Georgia,serif;">&deg;</span> N, 73.92<span style="font-family:Georgia,serif;">&deg;</span> W)</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+{{TIMES_ROWS}}
+    </table>
+  </td></tr>
+
+  <tr><td align="center" style="padding:26px 0 6px; color:#c79f50; font-size:9px; letter-spacing:7px;">&#9670;&nbsp;&#9670;&nbsp;&#9670;</td></tr>
+
+{{SECTIONS}}
+
+  <tr><td align="center" style="padding:22px 0 4px; color:#c79f50; font-size:9px; letter-spacing:7px;">&#9670;&nbsp;&#9670;&nbsp;&#9670;</td></tr>
+
+  <tr><td style="padding:16px 26px 26px;">
+    <div style="font-family:Georgia,'Times New Roman',serif; font-size:11px; line-height:1.6; color:#9a7273;">{{COLOPHON}}</div>
+  </td></tr>
+
+  <tr><td style="padding:0;">
+    <img src="{{BASE}}/bulletin/assets/band-strawberry.jpg" width="600" alt="" style="display:block; width:100%; height:auto; border-top:3px solid #856a2e; border-bottom:3px solid #856a2e;">
+  </td></tr>
+
+  <tr><td style="padding:22px 26px 26px; border-bottom:4px solid #856a2e;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td style="padding-right:14px;" valign="top">
+          <img src="{{BASE}}/assets/images/logo-deer-blush.png" width="54" alt="" style="display:block; width:54px; height:auto;">
+        </td>
+        <td valign="top">
+          <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:2px; color:#f1dccc; text-transform:uppercase;">Kehillah Kedoshah Zikhron Zvi</div>
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:12px; line-height:1.6; color:#d6b1a6; padding-top:6px;">A traditional egalitarian home minyan in the Hudson Valley, in the Western Sephardic liturgical tradition.</div>
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:11px; color:#9a7273; padding-top:8px;">{{FOOTER_META}}</div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:14px 0 26px;"></td></tr>
+
+</table>
+</td></tr>
+</table>
+</center>
+</body>
+</html>

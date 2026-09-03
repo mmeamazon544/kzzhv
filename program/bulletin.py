@@ -2,10 +2,17 @@
 
 Gathers the week's data (calendar and readings from Hebcal, times from the
 congregation's own luach in zemanim.py, location and announcements from
-bulletin/), renders the web page from bulletin/templates/web.html, and
-writes site/bulletin/index.html.
+bulletin/), and renders three artifacts from one context:
 
-Usage: python3 program/bulletin.py [YYYY-MM-DD]   (a Saturday; default: next)
+  site/bulletin/index.html   the web page (bulletin/templates/web.html)
+  out/email.html             the congregational email (templates/email.html)
+  out/email.txt              its plain-text alternative
+
+out/ is not committed; the publish workflow regenerates and places these.
+
+Usage: python3 program/bulletin.py [YYYY-MM-DD] [--base URL]
+       (a Saturday; default next Saturday. --base overrides the image/font
+        host in the email, e.g. a local mirror when proofing.)
 """
 
 from __future__ import annotations
@@ -23,8 +30,7 @@ from zemanim import candle_lighting, format_time, habdala
 
 ROOT = Path(__file__).resolve().parent.parent
 SECRETARY = "kehillatzikhronzvi@gmail.com"
-
-ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh"]
+SITE = "https://kzzhv.org"
 
 # ---------------------------------------------------------------- names.md --
 
@@ -42,21 +48,12 @@ NAMES = load_names()
 
 
 def display_name(hebcal_name: str) -> str:
-    """Map a Hebcal name to the congregation's spelling; combined
-    parashiyot are mapped part by part."""
     if hebcal_name in NAMES:
         return NAMES[hebcal_name]
     if "-" in hebcal_name:
         parts = [NAMES.get(p.strip(), p.strip()) for p in hebcal_name.split("-")]
         return "–".join(parts)
     return hebcal_name
-
-
-def display_title(hebcal_name: str) -> str:
-    """As display_name, but with the en dash wrapped for the display face,
-    which lacks the glyph (site convention: span.mid)."""
-    name = display_name(hebcal_name)
-    return name.replace("–", '<span class="mid">–</span>')
 
 
 # ------------------------------------------------------------------ hebcal --
@@ -111,96 +108,7 @@ def long_day(d: date) -> str:
     return f"{d.strftime('%A')}, {d.day} {MONTHS[d.month]}"
 
 
-# ---------------------------------------------------------------- readings --
-
-def format_ref(book: str, b: str, e: str) -> str:
-    """Deuteronomy 29:9-29:28 -> Deuteronomy 29:9–28; keeps the chapter when
-    it changes."""
-    bch, bv = b.split(":")
-    ech, ev = e.split(":")
-    if bch == ech:
-        return f"{book} {bch}:{bv}–{ev}"
-    return f"{book} {bch}:{bv}–{ech}:{ev}"
-
-
-def compress_ref(prev_book: str | None, book: str, b: str, e: str) -> str:
-    r = format_ref(book, b, e)
-    if prev_book == book:
-        return r[len(book) + 1:]
-    return r
-
-
-def readings_html(item: dict) -> str:
-    out = []
-    name = display_name(item["name"]["en"])
-    summary = (item.get("summary") or "").replace("-", "–")
-    out.append(f"<p><strong>{name}</strong>, {summary}.</p>")
-
-    seph = item.get("sephardic")
-    haft = item.get("haftara")
-    if seph:
-        out.append(
-            f"<p><strong>Haftarah:</strong> {seph.replace('-', '–')}, the Sephardic reading "
-            f"(Ashkenazim read {haft.replace('-', '–')}).</p>"
-        )
-    elif haft:
-        out.append(f"<p><strong>Haftarah:</strong> {haft.replace('-', '–')}. Ashkenazim and Sephardim read the same passage.</p>")
-    return "\n".join(out)
-
-
-# -------------------------------------------------------------- observances --
-
-YOMTOV_EVES = {"Erev Rosh Hashana", "Erev Yom Kippur", "Erev Sukkot",
-               "Erev Shavuot", "Erev Pesach", "Erev Simchat Torah"}
-
-
-def observances_html(sat: date, events: list[dict]) -> str:
-    """Observances from motzaei Shabbat through the coming Friday, plus Rosh
-    Hodesh announcement for the week after (announced the preceding
-    Shabbat)."""
-    out = []
-    window = [e for e in holidays(events) if sat <= e["date"] <= sat + timedelta(days=7)]
-    for e in sorted(window, key=lambda x: x["date"]):
-        title = e["title"]
-        base = re.sub(r" \d{4,5}$", "", title)  # strip year from "Rosh Hashana 5787"
-        if e["date"] == sat and e["category"] != "roshchodesh" and base not in NAMES and not title.startswith("Leil"):
-            continue  # the Shabbat itself is the page's subject
-        shown = NAMES.get(base, None)
-        if base.startswith("Rosh Chodesh"):
-            month = base.removeprefix("Rosh Chodesh ").strip()
-            shown = "Rosh Hodesh " + NAMES.get(month, month)
-        if shown is None:
-            shown = display_name(base)
-        if base == "Leil Selichot":
-            shown = ("Leil Selihot for Ashkenazim; Sephardim have been saying "
-                     "Selihot since 2 Elul")
-        line = f"{long_day(e['date'])} — {shown}."
-        if base in YOMTOV_EVES or (e["yomtov"] and e["date"] > sat):
-            if base in YOMTOV_EVES:
-                candles, printed = candle_lighting(e["date"])
-                line += f" Candle lighting {format_time(candles)} (18 minutes to sunset); sunset {format_time(printed)}."
-        out.append(f"<p>{line}</p>")
-    if not out:
-        return ""
-    return "<h2>In the Week Ahead</h2>\n" + "\n".join(out)
-
-
-# ---------------------------------------------------------------- sections --
-
-def announcements_html() -> str:
-    raw = (ROOT / "bulletin" / "announcements.md").read_text()
-    raw = re.sub(r"<!--.*?-->", "", raw, flags=re.S).strip()
-    if not raw:
-        return ""
-    paras = [f"<p>{p.strip()}</p>" for p in raw.split("\n\n") if p.strip()]
-    return "<h2>Announcements</h2>\n" + "\n".join(paras)
-
-
-def location_line() -> str:
-    raw = (ROOT / "bulletin" / "location.md").read_text()
-    raw = re.sub(r"<!--.*?-->", "", raw, flags=re.S).strip()
-    return raw or "Poughkeepsie"
-
+# ----------------------------------------------------------------- context --
 
 GUESTS = {
     "Shearith Israel, New York":
@@ -213,76 +121,39 @@ GUESTS = {
         "Congregation Mikveh Israel, Philadelphia",
 }
 
-
-def guest_notice(loc: str) -> str:
-    if loc == "Poughkeepsie":
-        return ""
-    if loc == "Poughkeepsie, no services this week":
-        text = "There are no services this week."
-    else:
-        text = f"This Shabbat the congregation is guests of {GUESTS.get(loc, loc)}."
-    return f'''
-    <section class="schedule" aria-label="Where we are this week">
-        <div class="upcoming-dates">
-            <p class="upcoming-list" style="font-family: var(--font-serif); text-transform: none; letter-spacing: 0; font-style: italic;">{text}</p>
-        </div>
-    </section>
-'''
+YOMTOV_EVES = {"Erev Rosh Hashana", "Erev Yom Kippur", "Erev Sukkot",
+               "Erev Shavuot", "Erev Pesach", "Erev Simchat Torah"}
 
 
-def home_block(loc: str) -> str:
-    if loc != "Poughkeepsie":
-        return ""
-    return f"""<h2>Kiddush</h2>
-<p>Kiddush follows the service. Meals are dairy and vegetarian.</p>
-<p>We meet in a private home; our address is shared by message. If prayer is not your thing, you are welcome to join only for the Kiddush and the company.</p>
-<p>To RSVP and to register food issues and avoidances, kindly contact the Congregation's secretary at <a href="mailto:{SECRETARY}">{SECRETARY}</a></p>"""
+def strip_comments(text: str) -> str:
+    return re.sub(r"<!--.*?-->", "", text, flags=re.S).strip()
 
 
-def times_rows(fri: date, sat: date) -> str:
-    candles, printed = candle_lighting(fri)
-    ends = habdala(sat)
-    return f"""            <div class="row">
-                <dt>Candle lighting
-                    <small>Erev Shabbat, {long_day(fri)} &middot; 18 minutes to sunset</small>
-                </dt>
-                <dd>{format_time(candles)}</dd>
-            </div>
-            <div class="row">
-                <dt>Sunset
-                    <small>Erev Shabbat, {long_day(fri)}</small>
-                </dt>
-                <dd>{format_time(printed)}</dd>
-            </div>
-            <div class="row row--final">
-                <dt>Habdala
-                    <small>{long_day(sat)} &middot; end of Shabbat</small>
-                </dt>
-                <dd>{format_time(ends)}</dd>
-            </div>"""
-
-
-PLACEHOLDER = ('<p><em style="color: var(--ink-mute);">The {kind} teaching for the week '
-               "will appear here; the teachings pipeline is build-order step 4.</em></p>")
-
-
-def teachings_html() -> str:
-    return ("<h2>Reflections on the Parasha</h2>\n"
-            + "<h3>Halakha</h3>\n" + PLACEHOLDER.format(kind="halakhic")
-            + "\n<h3>Aggada</h3>\n" + PLACEHOLDER.format(kind="aggadic"))
-
-
-COLOPHON = (
-    'Torah readings and calendar data by <a href="https://www.hebcal.com">Hebcal.com</a> '
-    "(CC BY 4.0). Times are computed for Poughkeepsie by the congregation's luach; "
-    "the end of Shabbat follows the convention of Congregation Shearith Israel, New York."
-)
-
-
-# -------------------------------------------------------------------- main --
-
-def next_saturday(today: date) -> date:
-    return today + timedelta(days=(5 - today.weekday()) % 7)
+def observance_lines(sat: date, events: list[dict]) -> list[str]:
+    out = []
+    for e in sorted(
+        (e for e in holidays(events) if sat <= e["date"] <= sat + timedelta(days=7)),
+        key=lambda x: x["date"],
+    ):
+        base = re.sub(r" \d{4,5}$", "", e["title"])
+        if e["date"] == sat and e["category"] != "roshchodesh" and base not in NAMES and not e["title"].startswith("Leil"):
+            continue
+        shown = NAMES.get(base)
+        if base.startswith("Rosh Chodesh"):
+            month = base.removeprefix("Rosh Chodesh ").strip()
+            shown = "Rosh Hodesh " + NAMES.get(month, month)
+        if shown is None:
+            shown = display_name(base)
+        if base == "Leil Selichot":
+            shown = ("Leil Selihot for Ashkenazim; Sephardim have been saying "
+                     "Selihot since 2 Elul")
+        line = f"{long_day(e['date'])} — {shown}."
+        if base in YOMTOV_EVES:
+            candles, printed = candle_lighting(e["date"])
+            line += (f" Candle lighting {format_time(candles)} (18 minutes to sunset); "
+                     f"sunset {format_time(printed)}.")
+        out.append(line)
+    return out
 
 
 def special_shabbat(sat: date, events: list[dict]) -> str | None:
@@ -294,46 +165,157 @@ def special_shabbat(sat: date, events: list[dict]) -> str | None:
     return None
 
 
-def generate(sat: date) -> Path:
+def build_context(sat: date) -> dict:
     fri = sat - timedelta(days=1)
     item = leyning(sat)
     events = fetch_events(sat - timedelta(days=1), sat + timedelta(days=8))
-    loc = location_line()
+    loc = strip_comments((ROOT / "bulletin" / "location.md").read_text()) or "Poughkeepsie"
 
-    parashah = item["name"]["en"] if item else None
-    title = f"Shabbat {display_title(parashah)}" if parashah else "Shabbat"
+    candles, printed = candle_lighting(fri)
+    ends = habdala(sat)
+
+    parashah = display_name(item["name"]["en"]) if item else None
     lede_bits = [span_gregorian(fri, sat), span_hebrew(fri, sat)]
     special = special_shabbat(sat, events)
     if special:
         lede_bits.insert(0, special)
-    lede = ' <span class="mid">·</span> '.join(lede_bits)
+
+    guest_text = None
+    if loc == "Poughkeepsie, no services this week":
+        guest_text = "There are no services this week."
+    elif loc != "Poughkeepsie":
+        guest_text = f"This Shabbat the congregation is guests of {GUESTS.get(loc, loc)}."
+
+    reading = None
+    if item:
+        seph = item.get("sephardic")
+        haft = item.get("haftara")
+        if seph:
+            haft_line = (f"Haftarah: {seph.replace('-', '–')}, the Sephardic reading "
+                         f"(Ashkenazim read {haft.replace('-', '–')}).")
+        elif haft:
+            haft_line = (f"Haftarah: {haft.replace('-', '–')}. "
+                         "Ashkenazim and Sephardim read the same passage.")
+        else:
+            haft_line = None
+        reading = {
+            "name": parashah,
+            "range": (item.get("summary") or "").replace("-", "–"),
+            "haftarah": haft_line,
+        }
+
+    announcements = [p.strip() for p in
+                     strip_comments((ROOT / "bulletin" / "announcements.md").read_text()).split("\n\n")
+                     if p.strip()]
+
+    kiddush = []
+    if loc == "Poughkeepsie":
+        kiddush = [
+            "Kiddush follows the service. Meals are dairy and vegetarian.",
+            "We meet in a private home; our address is shared by message. If prayer "
+            "is not your thing, you are welcome to join only for the Kiddush and the company.",
+            "To RSVP and to register food issues and avoidances, kindly contact the "
+            f"Congregation's secretary at {SECRETARY}",
+        ]
+
+    return {
+        "sat": sat, "fri": fri,
+        "parashah": parashah,
+        "title": f"Shabbat {parashah}" if parashah else "Shabbat",
+        "lede": " · ".join(lede_bits),
+        "guest_text": guest_text,
+        "times": [
+            ("Candle lighting", f"Erev Shabbat, {long_day(fri)} · 18 minutes to sunset",
+             format_time(candles), False),
+            ("Sunset", f"Erev Shabbat, {long_day(fri)}", format_time(printed), False),
+            ("Habdala", f"{long_day(sat)} · end of Shabbat", format_time(ends), True),
+        ],
+        "reading": reading,
+        "observances": observance_lines(sat, events),
+        "kiddush": kiddush,
+        "announcements": announcements,
+        "halakha": None,   # filled by the teachings pipeline (step 4)
+        "aggada": None,
+    }
+
+
+# --------------------------------------------------------------- rendering --
+
+COLOPHON_WEB = (
+    'Torah readings and calendar data by <a href="https://www.hebcal.com">Hebcal.com</a> '
+    "(CC BY 4.0). Times are computed for Poughkeepsie by the congregation's luach; "
+    "the end of Shabbat follows the convention of Congregation Shearith Israel, New York."
+)
+
+PLACEHOLDER = ('The {kind} teaching for the week will appear here; '
+               "the teachings pipeline is build-order step 4.")
+
+
+def linkify(text: str) -> str:
+    return text.replace(SECRETARY, f'<a href="mailto:{SECRETARY}">{SECRETARY}</a>')
+
+
+def mid(text: str) -> str:
+    """Wrap glyphs the display face lacks (– · °) for site markup."""
+    return (text.replace("–", '<span class="mid">–</span>')
+                .replace("·", '<span class="mid">·</span>'))
+
+
+def render_web(ctx: dict) -> Path:
+    times = []
+    for i, (label, small, value, final) in enumerate(ctx["times"]):
+        cls = ' class="row row--final"' if final else ' class="row"'
+        times.append(f"""            <div{cls}>
+                <dt>{label}
+                    <small>{small.replace("·", "&middot;")}</small>
+                </dt>
+                <dd>{value}</dd>
+            </div>""")
 
     body = []
-    if item:
+    if ctx["reading"]:
+        r = ctx["reading"]
         body.append('<h2>Torah Reading <span class="amp">&amp;</span> Haftarah</h2>')
-        body.append(readings_html(item))
-    obs = observances_html(sat, events)
-    if obs:
-        body.append(obs)
-    hb = home_block(loc)
-    if hb:
-        body.append(hb)
-    ann = announcements_html()
-    if ann:
-        body.append(ann)
-    body.append(teachings_html())
+        body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
+        if r["haftarah"]:
+            body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
+    if ctx["observances"]:
+        body.append("<h2>In the Week Ahead</h2>")
+        body += [f"<p>{o}</p>" for o in ctx["observances"]]
+    if ctx["kiddush"]:
+        body.append("<h2>Kiddush</h2>")
+        body += [f"<p>{linkify(k)}</p>" for k in ctx["kiddush"]]
+    if ctx["announcements"]:
+        body.append("<h2>Announcements</h2>")
+        body += [f"<p>{a}</p>" for a in ctx["announcements"]]
+    body.append("<h2>Reflections on the Parasha</h2>")
+    for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
+        body.append(f"<h3>{head}</h3>")
+        if ctx[key]:
+            body.append(ctx[key])
+        else:
+            body.append(f'<p><em style="color: var(--ink-mute);">{PLACEHOLDER.format(kind=kind)}</em></p>')
+
+    guest = ""
+    if ctx["guest_text"]:
+        guest = f'''
+    <section class="schedule" aria-label="Where we are this week">
+        <div class="upcoming-dates">
+            <p class="upcoming-list" style="font-family: var(--font-serif); text-transform: none; letter-spacing: 0; font-style: italic;">{ctx["guest_text"]}</p>
+        </div>
+    </section>
+'''
 
     tpl = (ROOT / "bulletin" / "templates" / "web.html").read_text()
-    page_title = f"Shabbat {display_name(parashah)}" if parashah else "Weekly Bulletin"
     html = (
-        tpl.replace("{{PAGE_TITLE}}", page_title)
+        tpl.replace("{{PAGE_TITLE}}", ctx["title"])
         .replace("{{EYEBROW}}", "Weekly Bulletin")
-        .replace("{{TITLE}}", title)
-        .replace("{{LEDE}}", lede)
-        .replace("{{GUEST_NOTICE}}", guest_notice(loc))
-        .replace("{{TIMES_ROWS}}", times_rows(fri, sat))
+        .replace("{{TITLE}}", mid(ctx["title"]))
+        .replace("{{LEDE}}", mid(ctx["lede"]))
+        .replace("{{GUEST_NOTICE}}", guest)
+        .replace("{{TIMES_ROWS}}", "\n".join(times))
         .replace("{{BODY_SECTIONS}}", "\n\n".join(body))
-        .replace("{{COLOPHON}}", COLOPHON)
+        .replace("{{COLOPHON}}", COLOPHON_WEB)
     )
     out = ROOT / "site" / "bulletin" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -341,8 +323,181 @@ def generate(sat: date) -> Path:
     return out
 
 
+# email palette
+E_INK, E_SOFT, E_MUTE = "#f1dccc", "#d6b1a6", "#9a7273"
+E_GOLD, E_GOLD_PALE, E_FUCHSIA, E_LINE = "#c79f50", "#e6c780", "#e376a3", "#5a2a48"
+SERIF = "Georgia,'Times New Roman',serif"
+
+
+def e_disp(text: str) -> str:
+    """Glyphs the display face lacks (– & · °) set in the serif instead,
+    the email counterpart of the site's .amp/.mid spans."""
+    span = '<span style="font-family:Georgia,serif; font-style:italic;">{}</span>'
+    for glyph in ("–", "&amp;", "·", "°"):
+        text = text.replace(glyph, span.format(glyph))
+    return text
+
+
+def e_h2(text: str) -> str:
+    text = e_disp(text)
+    return (f'  <tr><td style="padding:20px 26px 2px;">'
+            f'<div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:2px; '
+            f'color:{E_GOLD_PALE}; text-transform:uppercase; border-bottom:1px solid {E_LINE}; '
+            f'padding-bottom:7px;">{text}</div></td></tr>\n')
+
+
+def e_h3(text: str) -> str:
+    text = e_disp(text)
+    return (f'  <tr><td style="padding:14px 26px 0;">'
+            f'<div class="display" style="font-family:{SERIF}; font-size:12px; letter-spacing:2px; '
+            f'color:{E_FUCHSIA}; text-transform:uppercase;">{text}</div></td></tr>\n')
+
+
+def e_p(html_text: str, color: str = E_INK, italic: bool = False, size: int = 14) -> str:
+    style = f"font-family:{SERIF}; font-size:{size}px; line-height:1.65; color:{color};"
+    if italic:
+        style += " font-style:italic;"
+    return f'  <tr><td style="padding:10px 26px 0;"><div style="{style}">{html_text}</div></td></tr>\n'
+
+
+def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
+    times = []
+    for label, small, value, final in ctx["times"]:
+        color = E_GOLD_PALE if final else E_INK
+        vcolor = E_GOLD_PALE if final else E_FUCHSIA
+        times.append(f"""      <tr>
+        <td style="padding:13px 0 3px; border-bottom:1px solid {E_LINE};">
+          <div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:1px; color:{color}; text-transform:uppercase;">{label}</div>
+          <div style="font-family:{SERIF}; font-style:italic; font-size:11px; color:{E_MUTE}; padding:3px 0 9px;">{small}</div>
+        </td>
+        <td align="right" valign="top" style="padding:13px 0 3px; border-bottom:1px solid {E_LINE};">
+          <div class="display" style="font-family:{SERIF}; font-size:16px; letter-spacing:1px; color:{vcolor};">{value}</div>
+        </td>
+      </tr>""")
+
+    sections = []
+    if ctx["reading"]:
+        r = ctx["reading"]
+        sections.append(e_h2("Torah Reading &amp; Haftarah"))
+        sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
+        if r["haftarah"]:
+            sections.append(e_p(r["haftarah"].replace(
+                "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
+    if ctx["observances"]:
+        sections.append(e_h2("In the Week Ahead"))
+        for o in ctx["observances"]:
+            sections.append(e_p(o))
+    if ctx["kiddush"]:
+        sections.append(e_h2("Kiddush"))
+        for k in ctx["kiddush"]:
+            sections.append(e_p(linkify(k)))
+    if ctx["announcements"]:
+        sections.append(e_h2("Announcements"))
+        for a in ctx["announcements"]:
+            sections.append(e_p(a))
+    sections.append(e_h2("Reflections on the Parasha"))
+    for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
+        sections.append(e_h3(head))
+        if ctx[key]:
+            sections.append(e_p(ctx[key]))
+        else:
+            sections.append(e_p(PLACEHOLDER.format(kind=kind), color=E_MUTE, italic=True))
+
+    guest = ""
+    if ctx["guest_text"]:
+        guest = (f'  <tr><td style="padding:18px 26px 0;">'
+                 f'<div style="font-family:{SERIF}; font-style:italic; font-size:15px; line-height:1.6; '
+                 f'color:{E_INK}; border:1px solid {E_LINE}; border-left:3px solid {E_GOLD}; '
+                 f'background-color:#240a1c; padding:14px 16px;">{ctx["guest_text"]}</div></td></tr>\n')
+
+    colophon = (
+        'Torah readings and calendar data by <a href="https://www.hebcal.com" '
+        f'style="color:{E_GOLD_PALE};">Hebcal.com</a> (CC BY 4.0). Times are computed for '
+        "Poughkeepsie by the congregation's luach; the end of Shabbat follows the convention "
+        "of Congregation Shearith Israel, New York.<br><br>"
+        f'You receive this bulletin as a friend of the congregation. '
+        f'<a href="*|UNSUB|*" style="color:{E_GOLD_PALE};">Unsubscribe</a> &nbsp;·&nbsp; *|LIST:ADDRESSLINE|*'
+    )
+
+    footer_meta = (f'<a href="{SITE}/contact.html" style="color:{E_GOLD_PALE};">Contact</a> &nbsp;·&nbsp; '
+                   f'<a href="{SITE}/services.html" style="color:{E_GOLD_PALE};">Services</a> &nbsp;·&nbsp; '
+                   f'<a href="{SITE}/kiddush.html" style="color:{E_GOLD_PALE};">Kiddush</a>'
+                   f"<br>© Kehillah Kedoshah Zikhron Zvi")
+
+    tpl = (ROOT / "bulletin" / "templates" / "email.html").read_text()
+    html = (
+        tpl.replace("{{BASE}}", base)
+        .replace("{{PAGE_TITLE}}", ctx["title"])
+        .replace("{{EYEBROW}}", "Weekly Bulletin")
+        .replace("{{TITLE}}", e_disp(ctx["title"]))
+        .replace("{{LEDE}}", ctx["lede"])
+        .replace("{{GUEST_NOTICE}}", guest)
+        .replace("{{TIMES_ROWS}}", "\n".join(times))
+        .replace("{{SECTIONS}}", "".join(sections))
+        .replace("{{COLOPHON}}", colophon)
+        .replace("{{FOOTER_META}}", footer_meta)
+    )
+
+    outdir = ROOT / "out"
+    outdir.mkdir(exist_ok=True)
+    html_path = outdir / "email.html"
+    html_path.write_text(html)
+
+    text_path = outdir / "email.txt"
+    text_path.write_text(render_text(ctx))
+    return html_path, text_path
+
+
+def render_text(ctx: dict) -> str:
+    lines = ["KEHILLAH KEDOSHAH ZIKHRON ZVI — WEEKLY BULLETIN", "", ctx["title"], ctx["lede"], ""]
+    if ctx["guest_text"]:
+        lines += [ctx["guest_text"], ""]
+    lines.append("Shabbat times for Poughkeepsie, NY (41.70 N, 73.92 W)")
+    for label, small, value, _final in ctx["times"]:
+        lines.append(f"{label}: {value}  ({small})")
+    lines.append("")
+    if ctx["reading"]:
+        r = ctx["reading"]
+        lines += ["TORAH READING & HAFTARAH", f"{r['name']}, {r['range']}."]
+        if r["haftarah"]:
+            lines.append(r["haftarah"])
+        lines.append("")
+    if ctx["observances"]:
+        lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]
+    if ctx["kiddush"]:
+        lines += ["KIDDUSH"] + ctx["kiddush"] + [""]
+    if ctx["announcements"]:
+        lines += ["ANNOUNCEMENTS"] + ctx["announcements"] + [""]
+    lines.append("REFLECTIONS ON THE PARASHA")
+    for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
+        lines.append(head)
+        lines.append(re.sub(r"<[^>]+>", "", ctx[key]) if ctx[key] else f"({PLACEHOLDER.format(kind=kind)})")
+        lines.append("")
+    lines += [
+        "Torah readings and calendar data by Hebcal.com (CC BY 4.0). Times are",
+        "computed for Poughkeepsie by the congregation's luach; the end of Shabbat",
+        "follows the convention of Congregation Shearith Israel, New York.",
+        "",
+        "Unsubscribe: *|UNSUB|*",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+# -------------------------------------------------------------------- main --
+
+def next_saturday(today: date) -> date:
+    return today + timedelta(days=(5 - today.weekday()) % 7)
+
+
 if __name__ == "__main__":
-    sat = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else next_saturday(date.today())
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    base = SITE
+    if "--base" in sys.argv:
+        base = sys.argv[sys.argv.index("--base") + 1]
+    sat = date.fromisoformat(args[0]) if args else next_saturday(date.today())
     if sat.weekday() != 5:
         sys.exit("date must be a Saturday")
-    print(generate(sat))
+    ctx = build_context(sat)
+    print(render_web(ctx))
+    for p in render_email(ctx, base):
+        print(p)

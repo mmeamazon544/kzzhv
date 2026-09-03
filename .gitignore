@@ -6,3 +6,9 @@
 # them into place during the Netlify build.
 site/assets/video/yigdal-rome-tempio-maggiore-hoshana-rabbah.mp4
 site/assets/video/yigdal-london-bevis-marks-dweck.mp4
+
+# Generated bulletins and email artifacts are never committed from a working
+# machine: nothing publishes without Marc's approval. The publish workflow
+# commits the approved page with git add -f.
+/site/bulletin/index.html
+/out/
