@@ -78,10 +78,10 @@ PLAN_SCHEMA = {
     "type": "object",
     "properties": {
         "halakhic_topic": {"type": "string"},
-        "kst_queries": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
-        "sefaria_refs_halakha": {"type": "array", "items": {"type": "string"}, "maxItems": 6},
+        "kst_queries": {"type": "array", "items": {"type": "string"}},
+        "sefaria_refs_halakha": {"type": "array", "items": {"type": "string"}},
         "aggadic_topic": {"type": "string"},
-        "sefaria_refs_aggada": {"type": "array", "items": {"type": "string"}, "maxItems": 6},
+        "sefaria_refs_aggada": {"type": "array", "items": {"type": "string"}},
     },
     "required": ["halakhic_topic", "kst_queries", "sefaria_refs_halakha",
                  "aggadic_topic", "sefaria_refs_aggada"],
@@ -133,7 +133,11 @@ def plan(week: str) -> dict:
         }],
         output_config={"format": {"type": "json_schema", "schema": PLAN_SCHEMA}},
     )
-    return _json_out(resp)
+    out = _json_out(resp)
+    out["kst_queries"] = out["kst_queries"][:3]
+    out["sefaria_refs_halakha"] = out["sefaria_refs_halakha"][:6]
+    out["sefaria_refs_aggada"] = out["sefaria_refs_aggada"][:6]
+    return out
 
 
 # ----------------------------------------------------------------- gather --
