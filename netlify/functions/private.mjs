@@ -92,19 +92,28 @@ export default async function handler(req) {
       const chosen = LOCATIONS.includes(loc) ? loc : "Poughkeepsie";
 
       const annFile = await readFile("bulletin/announcements.md");
-      await writeFile(
+      const w1 = await writeFile(
         "bulletin/announcements.md",
         ANN_HEADER + (ann ? ann + "\n" : ""),
         "Private page: announcements",
         annFile.sha
       );
       const locFile = await readFile("bulletin/location.md");
-      await writeFile(
+      const w2 = await writeFile(
         "bulletin/location.md",
         LOC_HEADER + chosen + "\n",
         "Private page: location",
         locFile.sha
       );
+      const bad = [w1, w2].find((w) => !w.ok);
+      if (bad) {
+        return page("Private page", `
+<h1>This Week's Bulletin</h1>
+<p class='note'>NOT saved — the repository refused the write
+(HTTP ${bad.status}${bad.detail ? ": " + bad.detail : ""}).
+Tell Claude; this usually means the GitHub token lacks access.</p>
+<p><a href="/private">Back</a></p>`);
+      }
       return formPage(true);
     }
   }

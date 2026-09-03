@@ -72,7 +72,15 @@ export async function writeFile(path, text, message, sha) {
     method: "PUT",
     body: JSON.stringify(body),
   });
-  return res.ok;
+  let detail = "";
+  if (!res.ok) {
+    try {
+      detail = (await res.json()).message || "";
+    } catch {
+      /* keep empty */
+    }
+  }
+  return { ok: res.ok, status: res.status, detail };
 }
 
 export async function dispatch(eventType, payload) {
