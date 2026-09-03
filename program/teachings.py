@@ -51,15 +51,18 @@ def client() -> anthropic.Anthropic:
 
 
 def _create(**kw):
-    """messages.create with the server-side refusal fallback; falls back to
-    a plain call only if the fallback parameter itself is rejected."""
+    """Streaming messages call (long drafts exceed the non-streaming
+    timeout) with the server-side refusal fallback; falls back to a plain
+    call only if the fallback parameter itself is rejected."""
     try:
-        return client().beta.messages.create(
+        with client().beta.messages.stream(
             model=MODEL, betas=FALLBACK_BETA, fallbacks="default", **kw
-        )
+        ) as s:
+            return s.get_final_message()
     except anthropic.BadRequestError as e:
         if "fallback" in str(e).lower() or "beta" in str(e).lower():
-            return client().messages.create(model=MODEL, **kw)
+            with client().messages.stream(model=MODEL, **kw) as s:
+                return s.get_final_message()
         raise
 
 
