@@ -10,6 +10,8 @@ Citations go in footnotes, never in the flow of the prose. The prose says "the T
 
 Nothing that reflects negative attitudes toward women or toward non-Jews is quoted, cited, or paraphrased. If a source at hand carries such material, choose different material.
 
+Read Scripture as Israel reads it. Nothing crypto-messianic; nothing that echoes Christian, missionary, or "Hebrew Christian" readings of Tanakh. Where a prophetic image describes the Holy One — the one who comes up from Edom in crimsoned garments, the arm of the Eternal, and their like — say plainly that God is being described in metaphor; never leave an unnamed "figure" walking through a summary or a teaching. The servant of Isaiah is Israel or the prophet, as Jewish tradition reads it. When in doubt, name the referent as the tradition names it. Before finishing, reread every summary and teaching for phrasing a missionary pamphlet could quote approvingly, and recast it. (Added 4 September 2026, after "a figure comes up from Edom" appeared in a haftarah summary.)
+
 Avoid sermonizing, moralizing codas beginning "may we all," denominational labels, triumphalism, and chauvinism toward other peoples and faiths. No exclamation marks. No talk of journeys or lessons. Each teaching ends when the thought is complete.
 
 Marc's voice — ironclad rules, distilled from his canonical style sheet; when any other habit conflicts with these, these win.
