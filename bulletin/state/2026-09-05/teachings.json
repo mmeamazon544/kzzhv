@@ -1,0 +1,65 @@
+{
+ "plan": {
+  "halakhic_topic": "Selihot in the closing days of Elul: rising before dawn, the Thirteen Attributes as a devar shebikdushah requiring a minyan, and the Western Sephardic practice of saying Selihot from 2 Elul rather than beginning on Motsa'ei Shabbat Nitzavim (this Saturday night, 5 September) as Ashkenazim do",
+  "kst_queries": [
+   "Selihot before the High Holy Days",
+   "Selihot, Shubu Banim Shobebim, Hazanim",
+   "The week before Rosh Hashana, and Hazanim with Tallet"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Repentance 3:4",
+   "Mishneh Torah, Repentance 2:6",
+   "Mishneh Torah, Repentance 2:2",
+   "Mishneh Torah, Repentance 2:4",
+   "Mishneh Torah, Repentance 2:7",
+   "Mishneh Torah, Prayer and the Priestly Blessing 8:1"
+  ],
+  "aggadic_topic": "\"Lo bashamayim hi\" (Deut. 30:11-14): teshuvah is not distant or beyond reach but \"very near to you, in your mouth and in your heart\" \u2014 a fitting word for the week before Rosh Hashana",
+  "sefaria_refs_aggada": [
+   "Deuteronomy 30:11-14",
+   "Rashi on Deuteronomy 30:12:1",
+   "Rashi on Deuteronomy 30:14:1",
+   "Ramban on Deuteronomy 30:11:1",
+   "Ibn Ezra on Deuteronomy 30:14:1",
+   "Devarim Rabbah 8:6"
+  ]
+ },
+ "halakha_html": "<p>Elul is nearly gone, and the Rambam records what these days look like in a congregation: everyone rises while it is still night and prays in the synagogues with words that break the heart, until daybreak.<sup>1</sup> He also rules that repentance and calling out are welcome at every hour of the year, and that in the days near Rosh Hashana they are welcomed more readily still; a community that turns with a whole heart is answered at once.<sup>2</sup> Selihot are that rising put into words. The hour is early, the room is dark, and the prayer is public.</p><p>The Sephardic custom is to rise in the last watch of the night from Rosh Hodesh Elul until Kippur, while Ashkenazim begin on the Sunday before Rosh Hashana, and a week earlier when Rosh Hashana falls early in the week.<sup>3</sup> London and Amsterdam long said Selihot in the evening, before Kadish Titkabbal, since few could rise before dawn in these cold countries and more people came to the synagogue at minha and arbit; the Hida objected sharply, holding that the Thirteen Attributes belong to an hour of favour.<sup>4</sup> The Attributes wait for a minyan. Ours is made of women and men, counted alike.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Repentance.3:4\">Mishneh Torah, Repentance 3:4</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Repentance.2:6\">Mishneh Torah, Repentance 2:6</a> &nbsp; 3. Keter Shem Tob, vol. 6, p. 8 &nbsp; 4. Keter Shem Tob, vol. 2, pp. 711\u2013712</p>",
+ "aggada_html": "<p>The Ramban takes \u201cthis commandment\u201d in Moses' mouth to be teshuvah itself. Nothing about it is hard or far off. It can be done at any time and in any place: the mouth confesses, the heart turns.<sup>1</sup> The midrash makes the same point as a question. They asked Moses: you tell us it is not in the heavens and not across the sea; then where is it? He answered, in a place that is near.<sup>2</sup> Moses gives no address for it beyond the mouth and the heart. In the week before Rosh Hashana that is close enough to reach.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Ramban.on.Deuteronomy.30:11:1\">Ramban on Deuteronomy 30:11</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Devarim.Rabbah.8:6\">Devarim Rabbah 8:6</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Repentance 3:4",
+   "sefaria_ref": "Mishneh Torah, Repentance 3:4",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Repentance 2:6",
+   "sefaria_ref": "Mishneh Torah, Repentance 2:6",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 6, p. 8",
+   "sefaria_ref": null,
+   "kst": true
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, pp. 711\u2013712",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Ramban on Deuteronomy 30:11",
+   "sefaria_ref": "Ramban on Deuteronomy 30:11:1",
+   "kst": false
+  },
+  {
+   "display": "Devarim Rabbah 8:6",
+   "sefaria_ref": "Devarim Rabbah 8:6",
+   "kst": false
+  }
+ ],
+ "parashah_summary": "Moses gathers everyone before the Eternal: leaders and elders, women and children, the stranger in the camp, the one who cuts the wood and the one who draws the water. The covenant includes those standing there and those not there that day. He speaks of exile and of return, and promises that a heart turned back will be gathered from the far ends of the sky. The commandment is not in the heavens and not across the sea. Life and blessing are set out plainly, and Israel is told to choose life. Then Moses, at a hundred and twenty, hands the work to Joshua, writes the Torah down, and teaches the song that will stand as a witness.",
+ "haftarah_summary": "The last of the seven consolations before Rosh Hashana. Isaiah rejoices in garments of salvation, dressed like a bride and bridegroom on the day itself. For Zion's sake the prophet will not keep silent until her vindication shines out like a torch and she is given a new name. Watchmen are posted on the walls and told to give the Holy One no rest. A figure comes up from Edom in crimsoned garments, having trodden the winepress alone. The passage closes with the kindnesses of the Eternal recalled aloud: in all their trouble there was trouble, and they were lifted and carried all their days."
+}
