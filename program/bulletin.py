@@ -837,6 +837,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
             'font-size:10px; letter-spacing:4px; color:#c79f50; text-transform:uppercase;">'
             "&mdash;&nbsp;&nbsp;" + ctx.get("eyebrow", "Weekly Bulletin") + "</div>"))
         .replace("{{EYEBROW_EXTRA}}", ctx.get("eyebrow_extra_html", ""))
+        .replace("{{MASTHEAD_ALIGN}}", "center" if ctx.get("center_masthead") else "left")
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)
