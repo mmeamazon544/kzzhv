@@ -94,9 +94,9 @@ def span_gregorian(fri: date, sat: date) -> str:
     return f"{fri.day} {MONTHS[fri.month]} {fri.year}–{sat.day} {MONTHS[sat.month]} {sat.year}"
 
 
-def span_hebrew(fri: date, sat: date) -> str:
-    fd, fm, fy = hebrew_date(fri)
-    sd, sm, sy = hebrew_date(sat)
+def span_hebrew_parts(fh: tuple, sh: tuple) -> str:
+    fd, fm, fy = fh
+    sd, sm, sy = sh
     if (fm, fy) == (sm, sy):
         return f"{fd}–{sd} {sm} {sy}"
     if fy == sy:
@@ -175,7 +175,9 @@ def build_context(sat: date) -> dict:
     ends = habdala(sat)
 
     parashah = display_name(item["name"]["en"]) if item else None
-    lede_bits = [span_gregorian(fri, sat), span_hebrew(fri, sat)]
+    sat_hebrew = hebrew_date(sat)
+    lede_bits = [span_gregorian(fri, sat),
+                 span_hebrew_parts(hebrew_date(fri), sat_hebrew)]
     special = special_shabbat(sat, events)
     if special:
         lede_bits.insert(0, special)
@@ -224,6 +226,7 @@ def build_context(sat: date) -> dict:
 
     return {
         "sat": sat, "fri": fri,
+        "sat_hebrew": sat_hebrew,
         "parashah": parashah,
         "title": f"Shabbat {parashah}" if parashah else "Shabbat",
         "lede": " · ".join(lede_bits),
@@ -265,9 +268,13 @@ def mid(text: str) -> str:
                 .replace("·", '<span class="mid">·</span>'))
 
 
-def render_web(ctx: dict) -> Path:
+TIMES_HEADING = ('Shabbat times for Poughkeepsie, NY (41.70<span class="mid">°</span> N, '
+                 '73.92<span class="mid">°</span> W)')
+
+
+def times_rows_html(ctx: dict) -> str:
     times = []
-    for i, (label, small, value, final) in enumerate(ctx["times"]):
+    for label, small, value, final in ctx["times"]:
         cls = ' class="row row--final"' if final else ' class="row"'
         times.append(f"""            <div{cls}>
                 <dt>{label}
@@ -275,7 +282,10 @@ def render_web(ctx: dict) -> Path:
                 </dt>
                 <dd>{value}</dd>
             </div>""")
+    return "\n".join(times)
 
+
+def build_body(ctx: dict) -> list[str]:
     body = []
     if ctx["reading"]:
         r = ctx["reading"]
@@ -303,6 +313,11 @@ def render_web(ctx: dict) -> Path:
             body.append(ctx[key])
         else:
             body.append(f'<p><em style="color: var(--ink-mute);">{PLACEHOLDER.format(kind=kind)}</em></p>')
+    return body
+
+
+def render_web(ctx: dict) -> Path:
+    body = build_body(ctx)
 
     guest = ""
     if ctx["guest_text"]:
@@ -321,7 +336,7 @@ def render_web(ctx: dict) -> Path:
         .replace("{{TITLE}}", mid(ctx["title"]))
         .replace("{{LEDE}}", mid(ctx["lede"]))
         .replace("{{GUEST_NOTICE}}", guest)
-        .replace("{{TIMES_ROWS}}", "\n".join(times))
+        .replace("{{TIMES_ROWS}}", times_rows_html(ctx))
         .replace("{{BODY_SECTIONS}}", "\n\n".join(body))
         .replace("{{COLOPHON}}", COLOPHON_WEB)
     )
@@ -329,6 +344,40 @@ def render_web(ctx: dict) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html)
     return out
+
+
+def render_services_fragments(ctx: dict) -> dict:
+    """The two weekly fragments spliced into site/services.html at publish
+    time, between the weekly-parashah and weekly-bulletin markers. Marc's
+    hand-written page around them is never touched."""
+    sat = ctx["sat"]
+    hd, hm, hy = ctx["sat_hebrew"]
+    name = mid(ctx["parashah"]) if ctx["parashah"] else mid(ctx["title"])
+    label = f"Shabbat Parashat {name}" if ctx["parashah"] else mid(ctx["title"])
+    box = f'''<div class="upcoming-dates">
+                <p class="upcoming-month">This Shabbat &nbsp;<span class="mid">·</span>&nbsp; Saturday, {sat.day} {MONTHS[sat.month]} {sat.year} &nbsp;<span class="mid">·</span>&nbsp; {hd} {hm} {hy}</p>
+                <p class="upcoming-list">{label}</p>
+            </div>'''
+
+    guest = ""
+    if ctx["guest_text"]:
+        guest = f'''    <section class="schedule" aria-label="Where we are this week">
+        <div class="upcoming-dates">
+            <p class="upcoming-list" style="font-family: var(--font-serif); text-transform: none; letter-spacing: 0; font-style: italic;">{ctx["guest_text"]}</p>
+        </div>
+    </section>
+'''
+    weekly = f'''{guest}    <section class="schedule" aria-label="Times for this Shabbat">
+        <p class="schedule-note">{TIMES_HEADING}</p>
+        <dl>
+{times_rows_html(ctx)}
+        </dl>
+    </section>
+
+    <section class="prose" aria-label="Readings, observances, and teachings">
+{chr(10).join(build_body(ctx))}
+    </section>'''
+    return {"parashah_box": box, "weekly": weekly}
 
 
 # email palette

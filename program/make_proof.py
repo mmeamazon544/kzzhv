@@ -131,6 +131,9 @@ def main() -> None:
     shutil.copy(email_html_path, state / "email.html")
     shutil.copy(email_txt_path, state / "email.txt")
     (state / "teachings.json").write_text(json.dumps(t, indent=1))
+    frags = bulletin.render_services_fragments(ctx)
+    (state / "services-parashah.html").write_text(frags["parashah_box"])
+    (state / "services-weekly.html").write_text(frags["weekly"])
     capture(state / "web.html", state)
 
     greg = ctx["lede"].split(" · ")[0] if " · " in ctx["lede"] else ctx["lede"]

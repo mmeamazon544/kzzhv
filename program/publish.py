@@ -76,6 +76,30 @@ def record_approval(bulletin_id: str, rev: str) -> None:
     print(f"immediate={'yes' if late else 'no'}")
 
 
+def splice(text: str, marker: str, content: str) -> str:
+    b, e = f"<!-- {marker}:begin -->", f"<!-- {marker}:end -->"
+    i = text.index(b) + len(b)
+    j = text.index(e)
+    return text[:i] + "\n" + content + "\n" + text[j:]
+
+
+def splice_services(state: Path) -> bool:
+    """Put the week's full bulletin content into site/services.html between
+    its weekly markers (Marc's directive of 3 September 2026: the services
+    page carries everything the email carries, divrei torah included)."""
+    box = state / "services-parashah.html"
+    weekly = state / "services-weekly.html"
+    if not (box.exists() and weekly.exists()):
+        print("no services fragments in this proof; services.html untouched")
+        return False
+    path = ROOT / "site" / "services.html"
+    text = path.read_text()
+    text = splice(text, "weekly-parashah", box.read_text())
+    text = splice(text, "weekly-bulletin", weekly.read_text())
+    path.write_text(text)
+    return True
+
+
 def publish(if_due: bool) -> None:
     cur = load()
     if cur["status"] == "published":
@@ -113,10 +137,12 @@ def publish(if_due: bool) -> None:
     archdir.mkdir(parents=True, exist_ok=True)
     (archdir / f"{cur['id']}.md").write_text("\n".join(lines))
 
+    splice_services(state)
+
     cur["status"] = "published"
     cur["published_at"] = now().isoformat()
     save(cur)
-    print(f"published {cur['id']} to site/bulletin/ and archive")
+    print(f"published {cur['id']} to site/bulletin/, services.html, and archive")
 
 
 def send() -> None:

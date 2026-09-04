@@ -67,6 +67,7 @@ jobs:
           fi
           if grep -q "^published" pub.log; then
             git add -f site/bulletin
+            git add site/services.html
             git add bulletin
             git commit -m "Publish $(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['id'])")"
             git pull --rebase origin main
