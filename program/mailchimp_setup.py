@@ -100,17 +100,19 @@ def main() -> None:
     else:
         print("Proof segment exists")
 
-    # Tag segments created by Marc's imports: "weekly" (the congregational
-    # list) and "ari" (Ari's Friday email). Tags surface as static segments.
+    # Tag segments created by Marc in Mailchimp: "weekly" (the
+    # congregational list) and one per family email. Tags surface as
+    # static segments.
+    WANTED_TAGS = ("weekly", "ari", "misha", "gabi", "mom")
     st, segs2 = api("GET", f"/lists/{aud['id']}/segments?type=static&count=200")
     tag_ids = {}
     for s in segs2.get("segments", []):
-        if s["name"].lower() in ("weekly", "ari"):
+        if s["name"].lower() in WANTED_TAGS:
             tag_ids[s["name"].lower()] = s["id"]
             print(f"tag segment '{s['name']}': {s['member_count']} members")
-    for want in ("weekly", "ari"):
+    for want in WANTED_TAGS:
         if want not in tag_ids:
-            print(f"tag segment '{want}' not found yet (import with that tag, then re-run)")
+            print(f"tag segment '{want}' not found yet (tag the contact, then re-run)")
 
     # Sending-domain verification.
     st, doms = api("GET", "/verified-domains")
@@ -156,10 +158,8 @@ def main() -> None:
         "domain": DOMAIN,
         "domain_status": domain_status,
     }
-    if "weekly" in tag_ids:
-        cfg["weekly_segment_id"] = tag_ids["weekly"]
-    if "ari" in tag_ids:
-        cfg["ari_segment_id"] = tag_ids["ari"]
+    for tag, seg_id in tag_ids.items():
+        cfg[f"{tag}_segment_id"] = seg_id
     out = ROOT / "program" / "data" / "mailchimp.json"
     out.write_text(json.dumps(cfg, indent=1) + "\n")
     print("wrote", out)

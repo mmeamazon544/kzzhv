@@ -1,0 +1,62 @@
+# The family Friday-morning emails: Ari (Tufts), Misha and Hannah
+# (Philadelphia), Gabi and Pascale (Philadelphia), Mom (NYC). Each to its
+# own tag segment. Scheduled sends cover the members named in the
+# repository variable FAMILY_ARMED.
+name: family
+
+on:
+  schedule:
+    - cron: "0 10 * * 5"
+    - cron: "0 11 * * 5"
+  workflow_dispatch:
+    inputs:
+      member:
+        description: "ari | misha | gabi | mom | armed"
+        required: true
+        default: "armed"
+      mode:
+        description: "proof (to Marc) or live"
+        required: true
+        default: "proof"
+      shabbat:
+        description: "Shabbat date (YYYY-MM-DD); empty = next Saturday"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "06" ]; then
+            echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 am in New York"
+          else
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+  send:
+    needs: gate
+    if: needs.gate.outputs.go == 'yes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          FAMILY_ARMED: ${{ vars.FAMILY_ARMED }}
+        working-directory: program
+        run: |
+          set -o pipefail
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python3 family.py --live --member armed | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            MODE="--proof"
+            [ "${{ inputs.mode }}" = "live" ] && MODE="--live"
+            python3 family.py $MODE --member "${{ inputs.member }}" ${{ inputs.shabbat }} | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
