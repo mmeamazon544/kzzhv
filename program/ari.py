@@ -78,7 +78,7 @@ def main() -> None:
 
     html_p, txt_p = bulletin.render_email(ctx)
     label = f"Parashat {ctx['parashah']}" if ctx["parashah"] else ctx["title"]
-    subject = f"Good Shabbos Ári ❤️! Shabbat Times For Tufts University: {label}"
+    subject = f"Ári ❤️! Shabbat Times For Tufts University: {label}"
     cid = send(subject, html_p.read_text(), txt_p.read_text(),
                proof=proof, segment_key="ari_segment_id")
     print(f"Ari email sent: campaign {cid} "
