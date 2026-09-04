@@ -417,6 +417,10 @@ MEMBERSHIP_TEXT = ("KKZZ is free to join, there is no membership fee, and we "
 MEMBERSHIP_LINK_TEXT = ("You may, if you wish, sponsor a meal or contribute "
                         "to the work of the Congregation")
 OFFERINGS_URL = "https://kzzhv.org/offerings.html"
+MEMBERSHIP_TAX_TEXT = ("Kehillah Kedoshah Zikhron Zvi is a tax-exempt "
+                       "charitable organization under Section 501(c)(3) of "
+                       "the Internal Revenue Code; offerings are "
+                       "tax-deductible to the extent permitted by law.")
 
 COLOPHON_WEB = (
     'Torah readings and calendar data by <a href="https://www.hebcal.com">Hebcal.com</a> '
@@ -478,7 +482,7 @@ def build_body(ctx: dict) -> list[str]:
         body.append("<h2>Kiddush</h2>")
         body += [f"<p>{linkify(k)}</p>" for k in ctx["kiddush"]]
     if not ctx.get("skip_membership"):
-        body.append(f'<p>{MEMBERSHIP_TEXT} <a href="/offerings.html">{MEMBERSHIP_LINK_TEXT}</a>.</p>')
+        body.append(f'<p>{MEMBERSHIP_TEXT} <a href="/offerings.html">{MEMBERSHIP_LINK_TEXT}</a>. {MEMBERSHIP_TAX_TEXT}</p>')
     if ctx["announcements"]:
         body.append("<h2>Announcements</h2>")
         body += [f"<p>{a}</p>" for a in ctx["announcements"]]
@@ -752,7 +756,8 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     if not ctx.get("skip_membership"):
         sections.append(e_p(
             f'{MEMBERSHIP_TEXT} <a href="{OFFERINGS_URL}" '
-            f'style="color:{E_GOLD_PALE};">{MEMBERSHIP_LINK_TEXT}</a>.'))
+            f'style="color:{E_GOLD_PALE};">{MEMBERSHIP_LINK_TEXT}</a>. '
+            f'{MEMBERSHIP_TAX_TEXT}'))
     if ctx["announcements"]:
         sections.append(e_h2("Announcements"))
         for a in ctx["announcements"]:
@@ -888,7 +893,8 @@ def render_text(ctx: dict) -> str:
         lines += ["KIDDUSH"] + ctx["kiddush"] + [""]
     if not ctx.get("skip_membership"):
         lines += [MEMBERSHIP_TEXT,
-                  f"{MEMBERSHIP_LINK_TEXT}: {OFFERINGS_URL}", ""]
+                  f"{MEMBERSHIP_LINK_TEXT}: {OFFERINGS_URL}",
+                  MEMBERSHIP_TAX_TEXT, ""]
     if ctx["announcements"]:
         lines += ["ANNOUNCEMENTS"] + ctx["announcements"] + [""]
     lines.append("REFLECTIONS ON THE PARASHA")
