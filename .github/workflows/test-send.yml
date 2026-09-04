@@ -33,6 +33,7 @@ jobs:
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
         run: |
+          set -o pipefail
           python3 program/mailchimp_send.py --proof \
             --subject "KKZZ Bulletin test — Shabbat of ${{ inputs.shabbat }}" \
             --html out/email.html --text out/email.txt | tee -a "$GITHUB_STEP_SUMMARY"

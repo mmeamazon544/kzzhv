@@ -27,6 +27,7 @@ jobs:
     steps:
       - id: g
         run: |
+          set -o pipefail
           if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "18" ]; then
             echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 pm in New York"
           else
@@ -43,6 +44,7 @@ jobs:
       - name: Record approval
         if: github.event_name == 'repository_dispatch'
         run: |
+          set -o pipefail
           git config user.name "kkzz-bulletin"
           git config user.email "shabbat@kzzhv.org"
           python3 program/publish.py --record-approval "${{ github.event.client_payload.id }}" "${{ github.event.client_payload.rev }}" | tee rec.log -a "$GITHUB_STEP_SUMMARY"
@@ -55,6 +57,7 @@ jobs:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           BULLETIN_DRY_RUN: ${{ vars.BULLETIN_DRY_RUN }}
         run: |
+          set -o pipefail
           git config user.name "kkzz-bulletin"
           git config user.email "shabbat@kzzhv.org"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then

@@ -29,18 +29,21 @@ FROM_NAME = "Kehillah Kedoshah Zikhron Zvi"
 FROM_EMAIL = "shabbat@kzzhv.org"
 
 CFG = json.loads((ROOT / "program" / "data" / "mailchimp.json").read_text())
-KEY = os.environ.get("MAILCHIMP_API_KEY", "")
-if not KEY:
-    sys.exit("MAILCHIMP_API_KEY missing")
 BASE = f"https://{CFG['server_prefix']}.api.mailchimp.com/3.0"
-AUTH = "Basic " + base64.b64encode(f"key:{KEY}".encode()).decode()
+
+
+def _auth() -> str:
+    key = os.environ.get("MAILCHIMP_API_KEY", "")
+    if not key:
+        sys.exit("MAILCHIMP_API_KEY missing")
+    return "Basic " + base64.b64encode(f"key:{key}".encode()).decode()
 
 
 def api(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
     req = urllib.request.Request(
         BASE + path,
         method=method,
-        headers={"Authorization": AUTH, "Content-Type": "application/json"},
+        headers={"Authorization": _auth(), "Content-Type": "application/json"},
         data=json.dumps(body).encode() if body is not None else None,
     )
     try:

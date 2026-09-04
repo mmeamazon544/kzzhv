@@ -18,6 +18,7 @@ jobs:
     steps:
       - id: g
         run: |
+          set -o pipefail
           if [ "$(TZ=America/New_York date +%H)" != "17" ]; then
             echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 5 pm in New York"
           else

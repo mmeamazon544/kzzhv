@@ -31,6 +31,7 @@ jobs:
     steps:
       - id: g
         run: |
+          set -o pipefail
           if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "06" ]; then
             echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 am in New York"
           else
@@ -48,6 +49,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: |
+          set -o pipefail
           pip install anthropic playwright pillow
           python -m playwright install --with-deps chromium
       - name: Decide the bulletin and any instructions
@@ -57,6 +59,7 @@ jobs:
           PAYLOAD_REV: ${{ github.event.client_payload.rev }}
           INPUT_SHABBAT: ${{ inputs.shabbat }}
         run: |
+          set -o pipefail
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             CUR_REV=$(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['rev'])" 2>/dev/null || echo "")
             if [ "$PAYLOAD_REV" != "$CUR_REV" ]; then
@@ -77,6 +80,7 @@ jobs:
           PRIVATE_PAGE_PASSWORD: ${{ secrets.PRIVATE_PAGE_PASSWORD }}
           INSTRUCTIONS: ${{ github.event.client_payload.instructions }}
         run: |
+          set -o pipefail
           if [ -n "$INSTRUCTIONS" ]; then
             python make_proof.py "${{ steps.decide.outputs.id }}" --instructions "$INSTRUCTIONS" | tee -a "$GITHUB_STEP_SUMMARY"
           else
@@ -85,6 +89,7 @@ jobs:
       - name: Commit the proof state
         if: steps.decide.outputs.id != ''
         run: |
+          set -o pipefail
           git config user.name "kkzz-bulletin"
           git config user.email "shabbat@kzzhv.org"
           git add bulletin/state

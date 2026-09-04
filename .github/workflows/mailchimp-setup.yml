@@ -24,6 +24,7 @@ jobs:
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
         run: |
+          set -o pipefail
           if [ -n "${{ inputs.verify_code }}" ]; then
             python3 program/mailchimp_setup.py --code "${{ inputs.verify_code }}" | tee -a "$GITHUB_STEP_SUMMARY"
           else
@@ -31,6 +32,7 @@ jobs:
           fi
       - name: Commit configuration
         run: |
+          set -o pipefail
           git config user.name "kkzz-bulletin"
           git config user.email "shabbat@kzzhv.org"
           git add program/data/mailchimp.json
