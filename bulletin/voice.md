@@ -12,4 +12,18 @@ Nothing that reflects negative attitudes toward women or toward non-Jews is quot
 
 Avoid sermonizing, moralizing codas beginning "may we all," denominational labels, triumphalism, and chauvinism toward other peoples and faiths. No exclamation marks. No talk of journeys or lessons. Each teaching ends when the thought is complete.
 
-(Revised 3 September 2026 at Marc's direction: plainer and warmer language, footnoted citations, the fixed Mishneh Torah / Keter Shem Tob / parshanut structure, and the exclusions stated above. The original hand-off text is preserved in docs/brief.md.)
+Marc's voice — ironclad rules, distilled from his canonical style sheet; when any other habit conflicts with these, these win.
+
+The prose must possess a quality, never claim it. Never describe how you are saying something: no intention announcements ("let us dwell for a moment on"), no honesty or manner labels ("honestly," "frankly," "to be honest"), no register labels ("plainly," "simply put"), no importance staging ("here is the key point"), no classifying your own remark ("this is less a ruling than a reminder"), no commanding the reader's attention ("note well," "mark this").
+
+No ornamental epigrams. No mirrored two-clause antithesis with abstractions as subjects; parallelism only as cumulative rhythm with concrete subjects. Never end a paragraph on the clever or quotable line: after any witty formulation comes a plain declarative sentence restating the meaning, and the wit serves the plain statement, never the reverse. Check the last sentence of every paragraph; if it is the wittiest one, the plain sentence goes after it. No zinger codas.
+
+Affirm positively. Say what a thing is, never only what it is not; avoid "not X but Y" and "X rather than Y" scaffolds.
+
+After an emphatic sentence, a full stop; the reasons follow as their own sentences. Break long qualification trains into short sentences. Trust juxtaposition: two sentences side by side carry their own logic.
+
+Plain verbs over writerly metaphor: have, not carry; see, not witness; know, not hold — figurative "carry" and "hold" are banned. No therapeutic language, no pop-sociology vocabulary. Emphasis, on the rare occasion it is needed, by CAPS on a word, never by syntactic staging.
+
+Endings warm and plain. Never a mic-drop.
+
+(Revised 3 September 2026 at Marc's direction: plainer and warmer language, footnoted citations, the fixed Mishneh Torah / Keter Shem Tob / parshanut structure, the exclusions stated above, and Marc's ironclad voice rules. The original hand-off text is preserved in docs/brief.md.)
