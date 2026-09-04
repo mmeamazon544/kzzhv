@@ -326,8 +326,9 @@ def build_context(sat: date) -> dict:
         lede_bits.insert(0, special)
 
     guest_text = None
-    if loc == "Poughkeepsie, no services this week":
-        guest_text = "There are no services this week."
+    no_services = loc == "Poughkeepsie, no services this week"
+    if no_services:
+        guest_text = "No services will be held this week"
     elif loc != "Poughkeepsie":
         guest_text = f"This Shabbat the congregation is guests of {GUESTS.get(loc, loc)}."
 
@@ -392,6 +393,7 @@ def build_context(sat: date) -> dict:
         "title": title,
         "lede": lede,
         "guest_text": guest_text,
+        "no_services": no_services,
         "times": times,
         "times_heading": times_heading,
         "reflections_heading": reflections_heading,
@@ -525,18 +527,30 @@ def service_times_web(ctx: dict) -> str:
     return "\n".join(parts)
 
 
-def render_web(ctx: dict) -> Path:
-    body = build_body(ctx)
+NO_SERVICES_RED = "#ff6b6b"
 
-    guest = ""
-    if ctx["guest_text"]:
-        guest = f'''
+
+def guest_notice_web(ctx: dict) -> str:
+    if not ctx["guest_text"]:
+        return ""
+    if ctx.get("no_services"):
+        style = (f"font-family: var(--font-serif); text-transform: none; "
+                 f"letter-spacing: 0; color: {NO_SERVICES_RED};")
+    else:
+        style = ("font-family: var(--font-serif); text-transform: none; "
+                 "letter-spacing: 0; font-style: italic;")
+    return f'''
     <section class="schedule" aria-label="Where we are this week">
         <div class="upcoming-dates">
-            <p class="upcoming-list" style="font-family: var(--font-serif); text-transform: none; letter-spacing: 0; font-style: italic;">{ctx["guest_text"]}</p>
+            <p class="upcoming-list" style="{style}">{ctx["guest_text"]}</p>
         </div>
     </section>
 '''
+
+
+def render_web(ctx: dict) -> Path:
+    body = build_body(ctx)
+    guest = guest_notice_web(ctx)
 
     tpl = (ROOT / "bulletin" / "templates" / "web.html").read_text()
     html = (
@@ -557,6 +571,67 @@ def render_web(ctx: dict) -> Path:
     return out
 
 
+def services_schedule_fragment(ctx: dict) -> str:
+    """The schedule block in the services page's left column (inline-styled,
+    since the .schedule classes do not reach there): the week's service
+    times — the standing Shabbat schedule or a festival's own — or the red
+    no-services line."""
+    if ctx.get("no_services"):
+        return ('            <p style="font-family: var(--font-serif); '
+                f'font-size: 1.05rem; color: {NO_SERVICES_RED}; margin: 1.4rem 0;">'
+                'No services will be held this week</p>')
+    items = service_times(ctx.get("cluster"))
+    if not items:
+        return ""
+    DL = "margin: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);"
+    ROW = ("display: grid; grid-template-columns: 1fr auto; align-items: baseline; "
+           "gap: 1.5rem; padding: 1.05rem 0 1rem;")
+    SMALL = ("display: block; font-family: var(--font-serif); font-style: italic; "
+             "font-variation-settings: 'opsz' 18, 'wght' 400; font-size: 0.84rem; "
+             "color: var(--ink-mute); letter-spacing: 0; text-transform: none; margin-top: 0.2rem;")
+
+    groups = []
+    cur = {"heading": None, "rows": [], "notes": []}
+    for it in items:
+        if it["kind"] == "heading":
+            if cur["rows"] or cur["notes"] or cur["heading"]:
+                groups.append(cur)
+            cur = {"heading": it["text"], "rows": [], "notes": []}
+        elif it["kind"] == "row":
+            cur["rows"].append(it)
+        else:
+            cur["notes"].append(it["text"])
+    groups.append(cur)
+
+    parts = []
+    for g in groups:
+        if g["heading"]:
+            parts.append('            <p style="font-family: var(--font-display); '
+                         'text-transform: uppercase; letter-spacing: 0.22em; '
+                         'color: var(--gold-pale); font-size: 0.72rem; margin: 1.5rem 0 0.7rem;">'
+                         + mid(g["heading"].replace("&", '<span class="amp">&amp;</span>')) + "</p>")
+        if g["rows"]:
+            parts.append(f'            <dl style="{DL}">')
+            for i, r in enumerate(g["rows"]):
+                color = "var(--gold-pale)" if r["label"].startswith("Conclusion") else None
+                dt_c = color or "var(--ink)"
+                dd_c = color or "var(--fuchsia-hi)"
+                border = "" if i == len(g["rows"]) - 1 else " border-bottom: 1px solid var(--line);"
+                label = r["label"].replace("&", '<span class="amp">&amp;</span>')
+                small = (f'\n                        <small style="{SMALL}">{r["note"]}</small>'
+                         if r["note"] else "")
+                parts.append(f'''                <div class="row" style="{ROW}{border}">
+                    <dt style="font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: 1.1rem; color: {dt_c}; margin: 0;">{label}{small}
+                    </dt>
+                    <dd style="margin: 0; font-family: var(--font-display); font-size: 1.05rem; color: {dd_c}; letter-spacing: 0.06em; text-align: right; white-space: nowrap;">{r["time"]}</dd>
+                </div>''')
+            parts.append("            </dl>")
+        for n in g["notes"]:
+            parts.append('            <p style="margin: 0.7rem 0 0; font-family: var(--font-serif); '
+                         f'font-style: italic; color: var(--ink-soft); font-size: 0.95rem;">{n}</p>')
+    return "\n".join(parts)
+
+
 def render_services_fragments(ctx: dict) -> dict:
     """The two weekly fragments spliced into site/services.html at publish
     time, between the weekly-parashah and weekly-bulletin markers. Marc's
@@ -570,14 +645,9 @@ def render_services_fragments(ctx: dict) -> dict:
                 <p class="upcoming-list">{label}</p>
             </div>'''
 
-    guest = ""
-    if ctx["guest_text"]:
-        guest = f'''    <section class="schedule" aria-label="Where we are this week">
-        <div class="upcoming-dates">
-            <p class="upcoming-list" style="font-family: var(--font-serif); text-transform: none; letter-spacing: 0; font-style: italic;">{ctx["guest_text"]}</p>
-        </div>
-    </section>
-'''
+    # The no-services red line lives in the schedule fragment on this page,
+    # so the weekly section skips the guest box then (no doubling).
+    guest = "" if ctx.get("no_services") else guest_notice_web(ctx)
     weekly = f'''{guest}    <section class="schedule" aria-label="Times for this Shabbat">
         <p class="schedule-note">{mid(ctx["times_heading"])}</p>
         <dl>
@@ -585,11 +655,11 @@ def render_services_fragments(ctx: dict) -> dict:
         </dl>
     </section>
 
-{service_times_web(ctx) if ctx.get("cluster") else ""}
     <section class="prose" aria-label="Readings, observances, and teachings">
 {chr(10).join(build_body(ctx))}
     </section>'''
-    return {"parashah_box": box, "weekly": weekly}
+    return {"parashah_box": box, "weekly": weekly,
+            "schedule": services_schedule_fragment(ctx)}
 
 
 # email palette
@@ -716,7 +786,11 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
                + "\n".join(rows) + "\n    </table>\n  </td></tr>\n")
 
     guest = ""
-    if ctx["guest_text"]:
+    if ctx.get("no_services"):
+        guest = (f'  <tr><td style="padding:18px 26px 0;">'
+                 f'<div style="font-family:{SERIF}; font-size:16px; line-height:1.6; '
+                 f'color:{NO_SERVICES_RED};">{ctx["guest_text"]}</div></td></tr>\n')
+    elif ctx["guest_text"]:
         guest = (f'  <tr><td style="padding:18px 26px 0;">'
                  f'<div style="font-family:{SERIF}; font-style:italic; font-size:15px; line-height:1.6; '
                  f'color:{E_INK}; border:1px solid {E_LINE}; border-left:3px solid {E_GOLD}; '
@@ -741,6 +815,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         tpl.replace("{{BASE}}", base)
         .replace("{{PAGE_TITLE}}", ctx["title"])
         .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
+        .replace("{{EYEBROW_EXTRA}}", ctx.get("eyebrow_extra_html", ""))
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)

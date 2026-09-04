@@ -47,7 +47,12 @@ def main() -> None:
     events = bulletin.fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
     ctx["observances"] = bulletin.observance_lines(sat, events, TUFTS_LAT, TUFTS_LON)
     ctx["times_heading"] = TUFTS_HEADING
-    ctx["eyebrow"] = "Sponsored by Kehillah Kedoshah Zikhron Zvi"
+    ctx["eyebrow"] = "Sponsored by your home congregation, Kehillah Kedoshah Zikhron Zvi"
+    ctx["eyebrow_extra_html"] = """    <div style="font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:2px; color:#e376a3; padding-top:10px;">❤️WITH LOVE FROM אבא and ANYU❤️</div>
+    <div dir="rtl" style="font-family:Georgia,'Times New Roman',serif; font-size:15px; line-height:1.8; color:#f1dccc; padding-top:16px; text-align:right;">אֶפְשָׁר לֵאמֹר בְּלִי שׁוּם הַפְרָזָה, כִּי יוֹתֵר מִשֶּׁיִּשְׂרָאֵל שָׁמְרוּ אֶת הַשַּׁבָּת, שָׁמְרָה הַשַּׁבָּת אוֹתָם.</div>
+    <div style="font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:13px; line-height:1.6; color:#d6b1a6; padding-top:8px;">“You could say without any exaggeration that more than the Jews have kept Shabbat, Shabbat has kept them (Jewish).”</div>
+    <div style="font-family:Georgia,'Times New Roman',serif; font-size:11px; line-height:1.6; color:#9a7273; padding-top:5px;">Ahad Haʿam, “Shabbat ve-Tsiyonut” (שבת וציוניות, “Sabbath and Zionism”), published in <em>Ha-Shiloaḥ</em>, vol. 3, no. 6 (Sivan 5658 / June 1898)</div>
+"""
 
     # Not for this email: congregational logistics.
     ctx["service_times"] = []
@@ -70,7 +75,8 @@ def main() -> None:
             ctx["haftarah_summary"] = t.get("haftarah_summary")
 
     html_p, txt_p = bulletin.render_email(ctx)
-    subject = f"{ctx['title']} · times for Medford, MA"
+    label = f"Parashat {ctx['parashah']}" if ctx["parashah"] else ctx["title"]
+    subject = f"Good Shabbos Ári ❤️! Shabbat Times For Tufts University: {label}"
     cid = send(subject, html_p.read_text(), txt_p.read_text(),
                proof=proof, segment_key="ari_segment_id")
     print(f"Ari email sent: campaign {cid} "

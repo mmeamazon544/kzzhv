@@ -96,6 +96,9 @@ def splice_services(state: Path) -> bool:
     text = path.read_text()
     text = splice(text, "weekly-parashah", box.read_text())
     text = splice(text, "weekly-bulletin", weekly.read_text())
+    schedule = state / "services-schedule.html"
+    if schedule.exists() and "weekly-schedule:begin" in text:
+        text = splice(text, "weekly-schedule", schedule.read_text())
     path.write_text(text)
     return True
 

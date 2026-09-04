@@ -134,6 +134,7 @@ def main() -> None:
     frags = bulletin.render_services_fragments(ctx)
     (state / "services-parashah.html").write_text(frags["parashah_box"])
     (state / "services-weekly.html").write_text(frags["weekly"])
+    (state / "services-schedule.html").write_text(frags["schedule"])
     capture(state / "web.html", state)
 
     greg = ctx["lede"].split(" · ")[0] if " · " in ctx["lede"] else ctx["lede"]

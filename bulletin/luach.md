@@ -76,7 +76,23 @@ Kippur".
 Service times in the bulletin come from bulletin/service-times.md (the
 standing Shabbat schedule) unless a festival file exists at
 bulletin/service-times/<festival>.md — Rosh Hashana's, given by Marc
-3 September 2026, is bulletin/service-times/rosh-hashana.md.
+3 September 2026, is bulletin/service-times/rosh-hashana.md. The schedule
+block on the services page is program-managed the same way (spliced at
+publish between weekly-schedule markers).
+
+Weeks with no services (settled 4 September 2026): the service times do
+not appear anywhere, and a line in red states, verbatim: No services will
+be held this week
+
+Ari's Friday email (Marc's commission, 3-4 September 2026): every Friday
+at 6:00 am, exclusively to Ari; subject "Good Shabbos Ári ❤️! Shabbat
+Times For Tufts University: Parashat <name>"; eyebrow "Sponsored by your
+home congregation, Kehillah Kedoshah Zikhron Zvi", then "❤️WITH LOVE FROM
+אבא and ANYU❤️", then Ahad Haʿam's line on Shabbat keeping the Jews
+(Hebrew with Marc's English rendering and his citation to Ha-Shiloaḥ,
+Sivan 5658 / June 1898); times computed for Tufts University, Medford, MA
+(42.41° N, 71.12° W); then the summaries, the week ahead, and the week's
+Reflections.
 
 Calendar scope
 
