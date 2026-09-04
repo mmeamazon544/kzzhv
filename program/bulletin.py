@@ -129,6 +129,20 @@ def strip_comments(text: str) -> str:
     return re.sub(r"<!--.*?-->", "", text, flags=re.S).strip()
 
 
+def service_times() -> list[tuple[str, str, str]]:
+    """(label, time, note) rows from bulletin/service-times.md."""
+    out = []
+    raw = strip_comments((ROOT / "bulletin" / "service-times.md").read_text())
+    for line in raw.splitlines():
+        if "=" not in line:
+            continue
+        label, _, rest = line.partition("=")
+        time_part, _, note = rest.partition("|")
+        if label.strip() and time_part.strip():
+            out.append((label.strip(), time_part.strip(), note.strip()))
+    return out
+
+
 def observance_lines(sat: date, events: list[dict]) -> list[str]:
     out = []
     for e in sorted(
@@ -239,6 +253,7 @@ def build_context(sat: date) -> dict:
         ],
         "reading": reading,
         "observances": observance_lines(sat, events),
+        "service_times": service_times() if loc == "Poughkeepsie" else [],
         "kiddush": kiddush,
         "announcements": announcements,
         "halakha": None,   # filled by the teachings pipeline (step 4)
@@ -464,6 +479,28 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         else:
             sections.append(e_p(PLACEHOLDER.format(kind=kind), color=E_MUTE, italic=True))
 
+    svc = ""
+    if ctx.get("service_times"):
+        rows = []
+        for label, tval, note in ctx["service_times"]:
+            note_html = (f'<div style="font-family:{SERIF}; font-style:italic; font-size:11px; '
+                         f'color:{E_MUTE}; padding:2px 0 8px;">{note}</div>') if note else ""
+            rows.append(f"""      <tr>
+        <td style="padding:11px 0 2px; border-bottom:1px solid {E_LINE};">
+          <div class="display" style="font-family:{SERIF}; font-size:13px; letter-spacing:1px; color:{E_INK}; text-transform:uppercase;">{e_disp(label.replace('&', '&amp;'))}</div>
+          {note_html}
+        </td>
+        <td align="right" valign="top" style="padding:11px 0 2px; border-bottom:1px solid {E_LINE};">
+          <div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:1px; color:{E_FUCHSIA};">{tval}</div>
+        </td>
+      </tr>""")
+        svc = (f'  <tr><td style="padding:24px 26px 0;">\n'
+               f'    <div class="display" style="font-family:{SERIF}; font-size:12px; '
+               f'letter-spacing:2px; color:{E_GOLD}; text-transform:uppercase; '
+               f'padding-bottom:4px;">Service Times for Kehillah Kedoshah Zikhron Zvi</div>\n'
+               f'    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n'
+               + "\n".join(rows) + "\n    </table>\n  </td></tr>\n")
+
     guest = ""
     if ctx["guest_text"]:
         guest = (f'  <tr><td style="padding:18px 26px 0;">'
@@ -494,6 +531,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)
         .replace("{{TIMES_ROWS}}", "\n".join(times))
+        .replace("{{SERVICE_TIMES}}", svc)
         .replace("{{SECTIONS}}", "".join(sections))
         .replace("{{COLOPHON}}", colophon)
         .replace("{{FOOTER_META}}", footer_meta)
@@ -517,6 +555,11 @@ def render_text(ctx: dict) -> str:
     for label, small, value, _final in ctx["times"]:
         lines.append(f"{label}: {value}  ({small})")
     lines.append("")
+    if ctx.get("service_times"):
+        lines.append("SERVICE TIMES FOR KEHILLAH KEDOSHAH ZIKHRON ZVI")
+        for label, tval, _note in ctx["service_times"]:
+            lines.append(f"{label}: {tval}")
+        lines.append("")
     if ctx["reading"]:
         r = ctx["reading"]
         lines += ["TORAH READING & HAFTARAH", f"{r['name']}, {r['range']}."]

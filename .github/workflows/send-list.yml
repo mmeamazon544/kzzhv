@@ -1,0 +1,22 @@
+# One-shot: send the current approved bulletin to the weekly list.
+# Refuses while BULLETIN_DRY_RUN is not "false". Manually triggered.
+name: send-list
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          BULLETIN_DRY_RUN: ${{ vars.BULLETIN_DRY_RUN }}
+        run: |
+          set -o pipefail
+          python3 program/send_current.py --list | tee -a "$GITHUB_STEP_SUMMARY"

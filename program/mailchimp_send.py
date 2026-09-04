@@ -57,10 +57,21 @@ def api(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
             return e.code, {}
 
 
-def send(subject: str, html: str, text: str, proof: bool) -> str:
+def send(subject: str, html: str, text: str, proof: bool,
+         segment_key: str | None = None) -> str:
+    """proof=True -> the Proof segment (Marc alone). Otherwise the segment
+    named by segment_key ('weekly_segment_id', 'ari_segment_id'); the
+    congregational default is the weekly tag segment, and only if no
+    weekly segment is configured does a send go to the entire audience."""
     recipients: dict = {"list_id": CFG["audience_id"]}
     if proof:
         recipients["segment_opts"] = {"saved_segment_id": CFG["proof_segment_id"]}
+    else:
+        key = segment_key or "weekly_segment_id"
+        if key in CFG:
+            recipients["segment_opts"] = {"saved_segment_id": CFG[key]}
+        elif segment_key:
+            sys.exit(f"segment {segment_key} not configured in mailchimp.json")
 
     st, camp = api("POST", "/campaigns", {
         "type": "regular",
