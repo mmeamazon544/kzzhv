@@ -1,0 +1,28 @@
+# Utility: remove a tag from every member of a tag segment (no address
+# ever appears in code or logs). Manually triggered.
+name: mailchimp-untag
+
+on:
+  workflow_dispatch:
+    inputs:
+      segment:
+        description: "Segment key (ari | misha | gabi | mom | weekly | proof)"
+        required: true
+      tag:
+        description: "Tag to remove from those members"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  untag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        run: |
+          set -o pipefail
+          python3 program/mailchimp_untag.py --segment "${{ inputs.segment }}" --tag "${{ inputs.tag }}" | tee -a "$GITHUB_STEP_SUMMARY"
