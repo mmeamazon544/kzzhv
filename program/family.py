@@ -75,6 +75,39 @@ def next_saturday() -> date:
     return t + timedelta(days=(5 - t.weekday()) % 7)
 
 
+def decide_auto() -> date | None:
+    """The anchor Saturday for a scheduled run, or None when today is not a
+    send day. Send days: every Friday, and the eve of any festival's first
+    day. Never on Shabbat or on a yom tob itself."""
+    from hebcal_client import holidays as hol_items
+
+    ny = datetime.now(ZoneInfo("America/New_York")).date()
+    if ny.weekday() == 5:
+        print("today is Shabbat; no send")
+        return None
+    if ny.weekday() == 4:
+        return ny + timedelta(days=1)
+    tom = ny + timedelta(days=1)
+    events = bulletin.fetch_events(ny - timedelta(days=1), tom + timedelta(days=1))
+    yt = {h["date"] for h in hol_items(events) if h["yomtov"]}
+    if ny in yt:
+        print("today is yom tob; no send")
+        return None
+    if tom not in yt:
+        print("not Friday and not a festival eve; no send")
+        return None
+    prev_sat = ny - timedelta(days=(ny.weekday() - 5) % 7)
+    next_sat = ny + timedelta(days=(5 - ny.weekday()) % 7)
+    for sat in (next_sat, prev_sat):
+        c = bulletin.detect_cluster(
+            sat, bulletin.fetch_events(sat - timedelta(days=3), sat + timedelta(days=8)))
+        if c and tom in c["days"]:
+            return sat
+    print("festival eve, but no covering cluster yet; skipping "
+          "(cluster logic covers festivals within two days of a Shabbat)")
+    return None
+
+
 def build_and_send(member: str, sat: date, proof: bool) -> None:
     m = FAMILY[member]
     cfg = json.loads((ROOT / "program" / "data" / "mailchimp.json").read_text())
@@ -130,10 +163,17 @@ if __name__ == "__main__":
     proof = "--proof" in sys.argv
     if not proof and "--live" not in sys.argv:
         sys.exit("say --proof or --live")
-    member = sys.argv[sys.argv.index("--member") + 1]
-    args = [a for a in sys.argv[1:]
-            if not a.startswith("--") and a not in FAMILY and a != "armed"]
-    sat = date.fromisoformat(args[0]) if args else next_saturday()
+    if "--auto" in sys.argv:
+        anchor = decide_auto()
+        if anchor is None:
+            sys.exit(0)
+        member = "armed"
+        sat = anchor
+    else:
+        member = sys.argv[sys.argv.index("--member") + 1]
+        args = [a for a in sys.argv[1:]
+                if not a.startswith("--") and a not in FAMILY and a != "armed"]
+        sat = date.fromisoformat(args[0]) if args else next_saturday()
 
     if member == "armed":
         armed = [k.strip() for k in os.environ.get("FAMILY_ARMED", "").split(",")

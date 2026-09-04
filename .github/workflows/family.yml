@@ -1,13 +1,14 @@
-# The family Friday-morning emails: Ari (Tufts), Misha and Hannah
-# (Philadelphia), Gabi and Pascale (Philadelphia), Mom (NYC). Each to its
-# own tag segment. Scheduled sends cover the members named in the
-# repository variable FAMILY_ARMED.
+# The family emails: Ari (Tufts), Misha and Hannah (Philadelphia), Gabi
+# and Pascale (Philadelphia), Mom (NYC). Each to its own tag segment.
+# Runs daily at 6:00 am New York; family.py --auto sends only on Fridays
+# and on festival eves (never on Shabbat or yom tob itself), to the
+# members named in the repository variable FAMILY_ARMED.
 name: family
 
 on:
   schedule:
-    - cron: "0 10 * * 5"
-    - cron: "0 11 * * 5"
+    - cron: "0 10 * * *"
+    - cron: "0 11 * * *"
   workflow_dispatch:
     inputs:
       member:
@@ -54,7 +55,7 @@ jobs:
         run: |
           set -o pipefail
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            python3 family.py --live --member armed | tee -a "$GITHUB_STEP_SUMMARY"
+            python3 family.py --live --auto | tee -a "$GITHUB_STEP_SUMMARY"
           else
             MODE="--proof"
             [ "${{ inputs.mode }}" = "live" ] && MODE="--live"
