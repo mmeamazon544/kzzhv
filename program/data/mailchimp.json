@@ -4,5 +4,6 @@
  "audience_name": "Kehillat Zikhron Zvi",
  "proof_segment_id": 249669,
  "domain": "kzzhv.org",
- "domain_status": "verified"
+ "domain_status": "authenticated",
+ "weekly_segment_id": 249670
 }
