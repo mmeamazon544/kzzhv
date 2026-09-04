@@ -47,9 +47,9 @@ def main() -> None:
     events = bulletin.fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
     ctx["observances"] = bulletin.observance_lines(sat, events, TUFTS_LAT, TUFTS_LON)
     ctx["times_heading"] = TUFTS_HEADING
-    ctx["eyebrow"] = "Sponsored by your home congregation, Kehillah Kedoshah Zikhron Zvi"
-    ctx["eyebrow_extra_html"] = """    <div style="font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:2px; color:#e376a3; padding-top:10px;">❤️WITH LOVE FROM אבא and ANYU❤️</div>
-    <div dir="rtl" style="font-family:Georgia,'Times New Roman',serif; font-size:15px; line-height:1.8; color:#f1dccc; padding-top:16px; text-align:right;">אֶפְשָׁר לֵאמֹר בְּלִי שׁוּם הַפְרָזָה, כִּי יוֹתֵר מִשֶּׁיִּשְׂרָאֵל שָׁמְרוּ אֶת הַשַּׁבָּת, שָׁמְרָה הַשַּׁבָּת אוֹתָם.</div>
+    ctx["eyebrow_line_html"] = """    <div class="display" style="font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:3px; color:#c79f50; text-transform:uppercase; text-align:center; line-height:1.7;">SPONSORED BY YOUR HOME CONGREGATION<br>KEHILLAH KEDOSHAH ZIKHRON ZVI</div>"""
+    ctx["eyebrow_extra_html"] = """    <div style="font-family:Georgia,'Times New Roman',serif; font-size:16px; letter-spacing:2px; color:#e376a3; padding-top:12px; text-align:center;">❤️ WITH LOVE FROM אבא and ANYU- GOOD SHABBOS! ❤️</div>
+    <div dir="rtl" style="font-family:Georgia,'Times New Roman',serif; font-size:15px; line-height:1.8; color:#f1dccc; padding-top:18px; text-align:right;">אֶפְשָׁר לֵאמֹר בְּלִי שׁוּם הַפְרָזָה, כִּי יוֹתֵר מִשֶּׁיִּשְׂרָאֵל שָׁמְרוּ אֶת הַשַּׁבָּת, שָׁמְרָה הַשַּׁבָּת אוֹתָם.</div>
     <div style="font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:13px; line-height:1.6; color:#d6b1a6; padding-top:8px;">“You could say without any exaggeration that more than the Jews have kept Shabbat, Shabbat has kept them (Jewish).”</div>
     <div style="font-family:Georgia,'Times New Roman',serif; font-size:11px; line-height:1.6; color:#9a7273; padding-top:5px;">Ahad Haʿam, “Shabbat ve-Tsiyonut” (שבת וציוניות, “Sabbath and Zionism”), published in <em>Ha-Shiloaḥ</em>, vol. 3, no. 6 (Sivan 5658 / June 1898)</div>
 """
@@ -60,6 +60,7 @@ def main() -> None:
     ctx["announcements"] = []
     ctx["guest_text"] = None
     ctx["skip_empty_reflections"] = True
+    ctx["skip_membership"] = True
 
     # Reuse the approved bulletin's teachings and summaries when they
     # cover this same Shabbat.

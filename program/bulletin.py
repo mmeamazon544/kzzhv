@@ -411,6 +411,13 @@ def build_context(sat: date) -> dict:
 
 # --------------------------------------------------------------- rendering --
 
+MEMBERSHIP_TEXT = ("KKZZ is free to join, there is no membership fee, and we "
+                   "never solicit contributions from members, students, "
+                   "parents or alumni.")
+MEMBERSHIP_LINK_TEXT = ("You may, if you wish, sponsor a meal or contribute "
+                        "to the work of the Congregation")
+OFFERINGS_URL = "https://kzzhv.org/offerings.html"
+
 COLOPHON_WEB = (
     'Torah readings and calendar data by <a href="https://www.hebcal.com">Hebcal.com</a> '
     "(CC BY 4.0). Times are computed for Poughkeepsie by the congregation's luach; "
@@ -470,6 +477,8 @@ def build_body(ctx: dict) -> list[str]:
     if ctx["kiddush"]:
         body.append("<h2>Kiddush</h2>")
         body += [f"<p>{linkify(k)}</p>" for k in ctx["kiddush"]]
+    if not ctx.get("skip_membership"):
+        body.append(f'<p>{MEMBERSHIP_TEXT} <a href="/offerings.html">{MEMBERSHIP_LINK_TEXT}</a>.</p>')
     if ctx["announcements"]:
         body.append("<h2>Announcements</h2>")
         body += [f"<p>{a}</p>" for a in ctx["announcements"]]
@@ -740,6 +749,10 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         sections.append(e_h2("Kiddush"))
         for k in ctx["kiddush"]:
             sections.append(e_p(linkify(k)))
+    if not ctx.get("skip_membership"):
+        sections.append(e_p(
+            f'{MEMBERSHIP_TEXT} <a href="{OFFERINGS_URL}" '
+            f'style="color:{E_GOLD_PALE};">{MEMBERSHIP_LINK_TEXT}</a>.'))
     if ctx["announcements"]:
         sections.append(e_h2("Announcements"))
         for a in ctx["announcements"]:
@@ -814,7 +827,10 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     html = (
         tpl.replace("{{BASE}}", base)
         .replace("{{PAGE_TITLE}}", ctx["title"])
-        .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
+        .replace("{{EYEBROW_LINE}}", ctx.get("eyebrow_line_html") or (
+            '    <div class="display" style="font-family:Georgia,\'Times New Roman\',serif; '
+            'font-size:10px; letter-spacing:4px; color:#c79f50; text-transform:uppercase;">'
+            "&mdash;&nbsp;&nbsp;" + ctx.get("eyebrow", "Weekly Bulletin") + "</div>"))
         .replace("{{EYEBROW_EXTRA}}", ctx.get("eyebrow_extra_html", ""))
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
@@ -870,6 +886,9 @@ def render_text(ctx: dict) -> str:
         lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]
     if ctx["kiddush"]:
         lines += ["KIDDUSH"] + ctx["kiddush"] + [""]
+    if not ctx.get("skip_membership"):
+        lines += [MEMBERSHIP_TEXT,
+                  f"{MEMBERSHIP_LINK_TEXT}: {OFFERINGS_URL}", ""]
     if ctx["announcements"]:
         lines += ["ANNOUNCEMENTS"] + ctx["announcements"] + [""]
     lines.append("REFLECTIONS ON THE PARASHA")
