@@ -12,3 +12,7 @@ site/assets/video/yigdal-london-bevis-marks-dweck.mp4
 # commits the approved page with git add -f.
 /site/bulletin/index.html
 /out/
+
+# Python bytecode
+__pycache__/
+*.pyc
