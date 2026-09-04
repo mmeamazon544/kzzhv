@@ -165,6 +165,18 @@ def habdala(d: date, lat: float = KKZZ_LAT, lon: float = KKZZ_LON, tz: str = KKZ
     return round_up(ss + timedelta(minutes=HABDALA_SEASONAL_MINUTES * dl / 720.0))
 
 
+# Fast beginning: dawn at solar depression 16.1° (the classical alot
+# hashachar equivalent), rounded DOWN to the minute for stringency.
+# PROVISIONAL pending calibration against Shearith Israel's published fast
+# times; recorded in bulletin/luach.md.
+FAST_DAWN_DEPRESSION = 16.1
+
+
+def dawn(d: date, lat: float = KKZZ_LAT, lon: float = KKZZ_LON, tz: str = KKZZ_TZ) -> datetime:
+    t = depression(d, FAST_DAWN_DEPRESSION, lat, lon, tz, evening=False)
+    return t.replace(second=0, microsecond=0)
+
+
 def candle_lighting(eve: date, lat: float = KKZZ_LAT, lon: float = KKZZ_LON, tz: str = KKZZ_TZ) -> tuple[datetime, datetime]:
     """(candle lighting, printed sunset) for the given eve. Candles are 18
     minutes before sunset, computed from the rounded sunset so the printed

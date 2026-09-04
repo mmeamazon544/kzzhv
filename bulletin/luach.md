@@ -55,9 +55,28 @@ convention. Both anchor figures in the project brief reproduce exactly
 
 The same nightfall rule, computed on the Poughkeepsie sky, ends festivals
 and Kippur. Festival candle lighting on the eve is as above; second-day
-lighting is after the stated end of the first day. Fast beginnings (dawn)
-are PENDING calibration against Shearith Israel's published fast times and
-will be recorded here before the first fast-day bulletin.
+lighting is after the stated end of the first day, from a flame lit before
+the festival. Fast beginnings: dawn at solar depression 16.1° (the
+classical alot hashachar equivalent), rounded down to the minute —
+PROVISIONAL, chosen 3 September 2026, pending calibration against
+Shearith Israel's published fast times.
+
+Festival bulletins (built 3 September 2026)
+
+A festival or fast within two days of Shabbat or another festival joins
+one cluster bulletin (the brief's rule). When Shabbat is itself a festival
+day, the bulletin is the festival's (title "Rosh Hashana 5787"); when the
+festival falls near an ordinary Shabbat, one bulletin carries both
+("Shabbat Ha'azinu and Kippur 5787"), Shabbat's times and reading first.
+Festival times are headed "Times for Poughkeepsie, NY (…)" — the exact
+Shabbat heading stays reserved for ordinary weeks. The Reflections heading
+follows: "Reflections on Rosh Hashana", "Reflections on the Parasha and
+Kippur".
+
+Service times in the bulletin come from bulletin/service-times.md (the
+standing Shabbat schedule) unless a festival file exists at
+bulletin/service-times/<festival>.md — Rosh Hashana's, given by Marc
+3 September 2026, is bulletin/service-times/rosh-hashana.md.
 
 Calendar scope
 

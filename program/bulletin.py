@@ -26,7 +26,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from hebcal_client import fetch_events, holidays
-from zemanim import candle_lighting, format_time, habdala
+from zemanim import KKZZ_LAT, KKZZ_LON, candle_lighting, dawn, format_time, habdala
 
 ROOT = Path(__file__).resolve().parent.parent
 SECRETARY = "kehillatzikhronzvi@gmail.com"
@@ -129,17 +129,32 @@ def strip_comments(text: str) -> str:
     return re.sub(r"<!--.*?-->", "", text, flags=re.S).strip()
 
 
-def service_times() -> list[tuple[str, str, str]]:
-    """(label, time, note) rows from bulletin/service-times.md."""
-    out = []
-    raw = strip_comments((ROOT / "bulletin" / "service-times.md").read_text())
+def service_times(cluster: dict | None = None) -> list[dict]:
+    """Structured service schedule: items of kind heading / row / note.
+    A festival cluster with its own file (bulletin/service-times/<slug>.md)
+    overrides the standing Shabbat schedule in bulletin/service-times.md."""
+    path = ROOT / "bulletin" / "service-times.md"
+    if cluster:
+        slug_name = re.sub(r"[^a-z0-9]+", "-", cluster["name"].lower()).strip("-")
+        cand = ROOT / "bulletin" / "service-times" / f"{slug_name}.md"
+        if cand.exists():
+            path = cand
+    out: list[dict] = []
+    raw = strip_comments(path.read_text())
     for line in raw.splitlines():
-        if "=" not in line:
+        line = line.strip()
+        if not line:
             continue
-        label, _, rest = line.partition("=")
-        time_part, _, note = rest.partition("|")
-        if label.strip() and time_part.strip():
-            out.append((label.strip(), time_part.strip(), note.strip()))
+        if line.startswith("# "):
+            out.append({"kind": "heading", "text": line[2:].strip()})
+        elif line.startswith("* "):
+            out.append({"kind": "note", "text": line[2:].strip()})
+        elif "=" in line:
+            label, _, rest = line.partition("=")
+            time_part, _, note = rest.partition("|")
+            if label.strip() and time_part.strip():
+                out.append({"kind": "row", "label": label.strip(),
+                            "time": time_part.strip(), "note": note.strip()})
     return out
 
 
@@ -179,10 +194,106 @@ def special_shabbat(sat: date, events: list[dict]) -> str | None:
     return None
 
 
+def strip_year(title: str) -> str:
+    return re.sub(r" \d{4,5}$", "", title)
+
+
+def reading_from_item(item: dict) -> dict:
+    seph = item.get("sephardic")
+    haft = item.get("haftara")
+    if seph:
+        haft_line = (f"Haftarah: {seph.replace('-', '–')}, the Sephardic reading "
+                     f"(Ashkenazim read {haft.replace('-', '–')}).")
+    elif haft:
+        haft_line = (f"Haftarah: {haft.replace('-', '–')}. "
+                     "Ashkenazim and Sephardim read the same passage.")
+    else:
+        haft_line = None
+    rng = (item.get("summary") or "").replace("-", "–")
+    if "M" in (item.get("fullkriyah") or {}) and "; " in rng:
+        head, _, maf = rng.rpartition("; ")
+        rng = f"{head}; maftir {maf}"
+    return {
+        "name": display_name(item["name"]["en"]),
+        "range": rng,
+        "range_raw": (item.get("summary") or "").split(";")[0].strip(),
+        "haftarah": haft_line,
+        "haftarah_raw": seph or haft or "",
+    }
+
+
+def detect_cluster(sat: date, events: list[dict]) -> dict | None:
+    """A festival cluster touching this Shabbat: consecutive yom tob days
+    within two days of it, plus a fast within two days after them (the
+    brief's clustering rule). None for a plain Shabbat."""
+    hols = holidays(events)
+    yt = sorted({h["date"] for h in hols if h["yomtov"] and abs((h["date"] - sat).days) <= 2})
+    if not yt:
+        return None
+    chain = [yt[0]]
+    for d in yt[1:]:
+        if (d - chain[-1]).days <= 2:
+            chain.append(d)
+    fast = next(
+        (h for h in hols
+         if not h["yomtov"]
+         and (h.get("subcat") == "fast" or strip_year(h["title"]).startswith(("Tzom", "Ta'anit", "Asara")))
+         and 0 < (h["date"] - chain[-1]).days <= 2),
+        None)
+    first_title = next(h["title"] for h in hols if h["date"] == chain[0] and h["yomtov"])
+    base = re.sub(r" I+$", "", strip_year(first_title))
+    return {"name": NAMES.get(base, base), "eve": chain[0] - timedelta(days=1),
+            "days": chain, "fast": fast}
+
+
+def cluster_times(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list:
+    rows = []
+    eve, days, name = cluster["eve"], cluster["days"], cluster["name"]
+    ev_label = f"Erev {name}" + (" and Shabbat" if eve.weekday() == 4 else "")
+    candles, printed = candle_lighting(eve, lat, lon)
+    rows.append(("Candle lighting", f"{ev_label}, {long_day(eve)} · 18 minutes to sunset",
+                 format_time(candles), False))
+    rows.append(("Sunset", long_day(eve), format_time(printed), False))
+    for prev, d in zip(days, days[1:]):
+        rows.append(("Candle lighting, second day",
+                     f"{long_day(prev)}, after the first day ends · from a flame lit before the festival",
+                     format_time(habdala(prev, lat, lon)), False))
+    fast = cluster["fast"]
+    rows.append((f"{name} ends", f"{long_day(days[-1])} · Habdala",
+                 format_time(habdala(days[-1], lat, lon)), fast is None))
+    if fast:
+        fname = NAMES.get(strip_year(fast["title"]), strip_year(fast["title"]))
+        rows.append((f"{fname} begins", f"{long_day(fast['date'])} · dawn",
+                     format_time(dawn(fast["date"], lat, lon)), False))
+        rows.append((f"{fname} ends", f"{long_day(fast['date'])} · nightfall",
+                     format_time(habdala(fast["date"], lat, lon)), True))
+    return rows
+
+
+def leyning_range(start: date, end: date) -> list[dict]:
+    j = fetch_json(
+        f"https://www.hebcal.com/leyning?cfg=json&start={start.isoformat()}&end={end.isoformat()}"
+    )
+    return j.get("items", [])
+
+
+def cluster_readings(cluster: dict) -> list[dict]:
+    out = []
+    for it in leyning_range(cluster["days"][0], cluster["days"][-1]):
+        d = date.fromisoformat(it["date"])
+        if d in cluster["days"] and it.get("fullkriyah") and it.get("type") in ("holiday", "shabbat"):
+            out.append(reading_from_item(it))
+    return out
+
+
+TIMES_HEADING_TEXT = "Shabbat times for Poughkeepsie, NY (41.70° N, 73.92° W)"
+TIMES_HEADING_FESTIVAL_TEXT = "Times for Poughkeepsie, NY (41.70° N, 73.92° W)"
+
+
 def build_context(sat: date) -> dict:
     fri = sat - timedelta(days=1)
     item = leyning(sat)
-    events = fetch_events(sat - timedelta(days=1), sat + timedelta(days=8))
+    events = fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
     loc = strip_comments((ROOT / "bulletin" / "location.md").read_text()) or "Poughkeepsie"
 
     candles, printed = candle_lighting(fri)
@@ -202,27 +313,13 @@ def build_context(sat: date) -> dict:
     elif loc != "Poughkeepsie":
         guest_text = f"This Shabbat the congregation is guests of {GUESTS.get(loc, loc)}."
 
-    reading = None
-    if item:
-        seph = item.get("sephardic")
-        haft = item.get("haftara")
-        if seph:
-            haft_line = (f"Haftarah: {seph.replace('-', '–')}, the Sephardic reading "
-                         f"(Ashkenazim read {haft.replace('-', '–')}).")
-        elif haft:
-            haft_line = (f"Haftarah: {haft.replace('-', '–')}. "
-                         "Ashkenazim and Sephardim read the same passage.")
-        else:
-            haft_line = None
-        reading = {
-            "name": parashah,
-            "range": (item.get("summary") or "").replace("-", "–"),
-            "range_raw": item.get("summary") or "",
-            "haftarah": haft_line,
-            "haftarah_raw": seph or haft or "",
-            "parashah_summary": None,   # filled by the teachings pipeline
-            "haftarah_summary": None,
-        }
+    cluster = detect_cluster(sat, events)
+
+    readings: list[dict] = []
+    if cluster:
+        readings = cluster_readings(cluster)
+    elif item:
+        readings = [reading_from_item(item)]
 
     announcements = [p.strip() for p in
                      strip_comments((ROOT / "bulletin" / "announcements.md").read_text()).split("\n\n")
@@ -238,22 +335,62 @@ def build_context(sat: date) -> dict:
             f"Congregation's secretary at {SECRETARY} by Thursday night at 10:00 pm",
         ]
 
+    shabbat_times = [
+        ("Candle lighting", f"Erev Shabbat, {long_day(fri)} · 18 minutes to sunset",
+         format_time(candles), False),
+        ("Sunset", f"Erev Shabbat, {long_day(fri)}", format_time(printed), False),
+        ("Habdala", f"{long_day(sat)} · end of Shabbat", format_time(ends), True),
+    ]
+
+    if cluster and sat in cluster["days"]:
+        # The Shabbat is itself a festival day (Rosh Hashana on Shabbat).
+        span_end = cluster["fast"]["date"] if cluster["fast"] else cluster["days"][-1]
+        hy = hebrew_date(cluster["days"][0])[2]
+        title = f"{cluster['name']} {hy}"
+        lede = (span_gregorian(cluster["eve"], span_end) + " · "
+                + span_hebrew_parts(hebrew_date(cluster["eve"]), hebrew_date(span_end)))
+        times = cluster_times(cluster)
+        times_heading = TIMES_HEADING_FESTIVAL_TEXT
+        reflections_heading = f"Reflections on {cluster['name']}"
+        parashah = None
+    elif cluster:
+        # A festival within two days of an ordinary Shabbat: one bulletin
+        # covers both (the brief's clustering rule). Shabbat first, then
+        # the festival's own times and readings.
+        span_end = cluster["fast"]["date"] if cluster["fast"] else cluster["days"][-1]
+        hy = hebrew_date(cluster["days"][0])[2]
+        title = (f"Shabbat {parashah} and {cluster['name']} {hy}"
+                 if parashah else f"Shabbat and {cluster['name']} {hy}")
+        lede = (span_gregorian(fri, span_end) + " · "
+                + span_hebrew_parts(hebrew_date(fri), hebrew_date(span_end)))
+        shabbat_times[-1] = shabbat_times[-1][:3] + (False,)
+        times = shabbat_times + cluster_times(cluster)
+        times_heading = TIMES_HEADING_FESTIVAL_TEXT
+        reflections_heading = f"Reflections on the Parasha and {cluster['name']}"
+        readings = ([reading_from_item(item)] if item else []) + readings
+    else:
+        title = f"Shabbat {parashah}" if parashah else "Shabbat"
+        lede = " · ".join(lede_bits)
+        times = shabbat_times
+        times_heading = TIMES_HEADING_TEXT
+        reflections_heading = "Reflections on the Parasha"
+
     return {
         "sat": sat, "fri": fri,
         "sat_hebrew": sat_hebrew,
+        "cluster": cluster,
         "parashah": parashah,
-        "title": f"Shabbat {parashah}" if parashah else "Shabbat",
-        "lede": " · ".join(lede_bits),
+        "title": title,
+        "lede": lede,
         "guest_text": guest_text,
-        "times": [
-            ("Candle lighting", f"Erev Shabbat, {long_day(fri)} · 18 minutes to sunset",
-             format_time(candles), False),
-            ("Sunset", f"Erev Shabbat, {long_day(fri)}", format_time(printed), False),
-            ("Habdala", f"{long_day(sat)} · end of Shabbat", format_time(ends), True),
-        ],
-        "reading": reading,
+        "times": times,
+        "times_heading": times_heading,
+        "reflections_heading": reflections_heading,
+        "readings": readings,
+        "torah_summary": None,      # filled by the teachings pipeline
+        "haftarah_summary": None,
         "observances": observance_lines(sat, events),
-        "service_times": service_times() if loc == "Poughkeepsie" else [],
+        "service_times": service_times(cluster) if loc == "Poughkeepsie" else [],
         "kiddush": kiddush,
         "announcements": announcements,
         "halakha": None,   # filled by the teachings pipeline (step 4)
@@ -280,11 +417,9 @@ def linkify(text: str) -> str:
 def mid(text: str) -> str:
     """Wrap glyphs the display face lacks (– · °) for site markup."""
     return (text.replace("–", '<span class="mid">–</span>')
-                .replace("·", '<span class="mid">·</span>'))
-
-
-TIMES_HEADING = ('Shabbat times for Poughkeepsie, NY (41.70<span class="mid">°</span> N, '
-                 '73.92<span class="mid">°</span> W)')
+                .replace("—", '<span class="mid">—</span>')
+                .replace("·", '<span class="mid">·</span>')
+                .replace("°", '<span class="mid">°</span>'))
 
 
 def times_rows_html(ctx: dict) -> str:
@@ -302,16 +437,22 @@ def times_rows_html(ctx: dict) -> str:
 
 def build_body(ctx: dict) -> list[str]:
     body = []
-    if ctx["reading"]:
-        r = ctx["reading"]
+    if ctx["readings"]:
+        single = len(ctx["readings"]) == 1
         body.append('<h2>Torah Reading <span class="amp">&amp;</span> Haftarah</h2>')
-        body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
-        if r.get("parashah_summary"):
-            body.append(f"<p>{r['parashah_summary']}</p>")
-        if r["haftarah"]:
-            body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
-        if r.get("haftarah_summary"):
-            body.append(f"<p>{r['haftarah_summary']}</p>")
+        for r in ctx["readings"]:
+            body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
+            if single and ctx.get("torah_summary"):
+                body.append(f"<p>{ctx['torah_summary']}</p>")
+            if r["haftarah"]:
+                body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
+            if single and ctx.get("haftarah_summary"):
+                body.append(f"<p>{ctx['haftarah_summary']}</p>")
+        if not single:
+            if ctx.get("torah_summary"):
+                body.append(f"<p>{ctx['torah_summary']}</p>")
+            if ctx.get("haftarah_summary"):
+                body.append(f"<p>{ctx['haftarah_summary']}</p>")
     if ctx["observances"]:
         body.append("<h2>In the Week Ahead</h2>")
         body += [f"<p>{o}</p>" for o in ctx["observances"]]
@@ -321,7 +462,7 @@ def build_body(ctx: dict) -> list[str]:
     if ctx["announcements"]:
         body.append("<h2>Announcements</h2>")
         body += [f"<p>{a}</p>" for a in ctx["announcements"]]
-    body.append("<h2>Reflections on the Parasha</h2>")
+    body.append(f"<h2>{ctx.get('reflections_heading', 'Reflections on the Parasha')}</h2>")
     for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
         body.append(f"<h3>{head}</h3>")
         if ctx[key]:
@@ -329,6 +470,50 @@ def build_body(ctx: dict) -> list[str]:
         else:
             body.append(f'<p><em style="color: var(--ink-mute);">{PLACEHOLDER.format(kind=kind)}</em></p>')
     return body
+
+
+def service_times_web(ctx: dict) -> str:
+    """The service-times block in site markup, used on the bulletin page
+    and in the services-page splice."""
+    items = ctx.get("service_times") or []
+    if not items:
+        return ""
+    groups = []
+    cur = {"heading": None, "rows": [], "notes": []}
+    for it in items:
+        if it["kind"] == "heading":
+            if cur["rows"] or cur["notes"] or cur["heading"]:
+                groups.append(cur)
+            cur = {"heading": it["text"], "rows": [], "notes": []}
+        elif it["kind"] == "row":
+            cur["rows"].append(it)
+        else:
+            cur["notes"].append(it["text"])
+    groups.append(cur)
+
+    parts = ['    <section class="schedule" aria-label="Service times">',
+             '        <p class="schedule-note">Service Times for Kehillah Kedoshah Zikhron Zvi</p>']
+    for g in groups:
+        if g["heading"]:
+            parts.append('        <p class="schedule-note" style="margin: 1.4rem 0 0.8rem; color: var(--gold-pale); letter-spacing: 0.2em;">'
+                         + mid(g["heading"].replace("&", '<span class="amp">&amp;</span>')) + "</p>")
+        if g["rows"]:
+            parts.append("        <dl>")
+            for i, r in enumerate(g["rows"]):
+                cls = ' class="row row--final"' if i == len(g["rows"]) - 1 else ' class="row"'
+                label = r["label"].replace("&", '<span class="amp">&amp;</span>')
+                small = f"\n                    <small>{r['note']}</small>" if r["note"] else ""
+                parts.append(f"""            <div{cls}>
+                <dt>{label}{small}
+                </dt>
+                <dd>{r['time']}</dd>
+            </div>""")
+            parts.append("        </dl>")
+        for n in g["notes"]:
+            parts.append('        <p style="margin: 0.8rem 0 0; color: var(--ink-soft); '
+                         f'font-style: italic; font-size: 0.95rem;">{n}</p>')
+    parts.append("    </section>")
+    return "\n".join(parts)
 
 
 def render_web(ctx: dict) -> Path:
@@ -351,6 +536,8 @@ def render_web(ctx: dict) -> Path:
         .replace("{{TITLE}}", mid(ctx["title"]))
         .replace("{{LEDE}}", mid(ctx["lede"]))
         .replace("{{GUEST_NOTICE}}", guest)
+        .replace("{{TIMES_HEADING}}", mid(ctx["times_heading"]))
+        .replace("{{SERVICE_TIMES}}", service_times_web(ctx))
         .replace("{{TIMES_ROWS}}", times_rows_html(ctx))
         .replace("{{BODY_SECTIONS}}", "\n\n".join(body))
         .replace("{{COLOPHON}}", COLOPHON_WEB)
@@ -383,12 +570,13 @@ def render_services_fragments(ctx: dict) -> dict:
     </section>
 '''
     weekly = f'''{guest}    <section class="schedule" aria-label="Times for this Shabbat">
-        <p class="schedule-note">{TIMES_HEADING}</p>
+        <p class="schedule-note">{mid(ctx["times_heading"])}</p>
         <dl>
 {times_rows_html(ctx)}
         </dl>
     </section>
 
+{service_times_web(ctx) if ctx.get("cluster") else ""}
     <section class="prose" aria-label="Readings, observances, and teachings">
 {chr(10).join(build_body(ctx))}
     </section>'''
@@ -448,17 +636,23 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
       </tr>""")
 
     sections = []
-    if ctx["reading"]:
-        r = ctx["reading"]
+    if ctx["readings"]:
+        single = len(ctx["readings"]) == 1
         sections.append(e_h2("Torah Reading &amp; Haftarah"))
-        sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
-        if r.get("parashah_summary"):
-            sections.append(e_p(r["parashah_summary"]))
-        if r["haftarah"]:
-            sections.append(e_p(r["haftarah"].replace(
-                "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
-        if r.get("haftarah_summary"):
-            sections.append(e_p(r["haftarah_summary"]))
+        for r in ctx["readings"]:
+            sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
+            if single and ctx.get("torah_summary"):
+                sections.append(e_p(ctx["torah_summary"]))
+            if r["haftarah"]:
+                sections.append(e_p(r["haftarah"].replace(
+                    "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
+            if single and ctx.get("haftarah_summary"):
+                sections.append(e_p(ctx["haftarah_summary"]))
+        if not single:
+            if ctx.get("torah_summary"):
+                sections.append(e_p(ctx["torah_summary"]))
+            if ctx.get("haftarah_summary"):
+                sections.append(e_p(ctx["haftarah_summary"]))
     if ctx["observances"]:
         sections.append(e_h2("In the Week Ahead"))
         for o in ctx["observances"]:
@@ -471,7 +665,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         sections.append(e_h2("Announcements"))
         for a in ctx["announcements"]:
             sections.append(e_p(a))
-    sections.append(e_h2("Reflections on the Parasha"))
+    sections.append(e_h2(ctx.get("reflections_heading", "Reflections on the Parasha")))
     for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
         sections.append(e_h3(head))
         if ctx[key]:
@@ -482,16 +676,26 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     svc = ""
     if ctx.get("service_times"):
         rows = []
-        for label, tval, note in ctx["service_times"]:
+        for it in ctx["service_times"]:
+            if it["kind"] == "heading":
+                rows.append(f"""      <tr><td colspan="2" style="padding:18px 0 3px;">
+          <div class="display" style="font-family:{SERIF}; font-size:11px; letter-spacing:2px; color:{E_GOLD_PALE}; text-transform:uppercase;">{e_disp(it['text'].replace('&', '&amp;'))}</div>
+        </td></tr>""")
+                continue
+            if it["kind"] == "note":
+                rows.append(f"""      <tr><td colspan="2" style="padding:7px 0 2px;">
+          <div style="font-family:{SERIF}; font-style:italic; font-size:12px; color:{E_SOFT};">{it['text']}</div>
+        </td></tr>""")
+                continue
             note_html = (f'<div style="font-family:{SERIF}; font-style:italic; font-size:11px; '
-                         f'color:{E_MUTE}; padding:2px 0 8px;">{note}</div>') if note else ""
+                         f'color:{E_MUTE}; padding:2px 0 8px;">{it["note"]}</div>') if it["note"] else ""
             rows.append(f"""      <tr>
         <td style="padding:11px 0 2px; border-bottom:1px solid {E_LINE};">
-          <div class="display" style="font-family:{SERIF}; font-size:13px; letter-spacing:1px; color:{E_INK}; text-transform:uppercase;">{e_disp(label.replace('&', '&amp;'))}</div>
+          <div class="display" style="font-family:{SERIF}; font-size:13px; letter-spacing:1px; color:{E_INK}; text-transform:uppercase;">{e_disp(it['label'].replace('&', '&amp;'))}</div>
           {note_html}
         </td>
         <td align="right" valign="top" style="padding:11px 0 2px; border-bottom:1px solid {E_LINE};">
-          <div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:1px; color:{E_FUCHSIA};">{tval}</div>
+          <div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:1px; color:{E_FUCHSIA};">{it['time']}</div>
         </td>
       </tr>""")
         svc = (f'  <tr><td style="padding:24px 26px 0;">\n'
@@ -530,6 +734,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)
+        .replace("{{TIMES_HEADING}}", e_disp(ctx["times_heading"]))
         .replace("{{TIMES_ROWS}}", "\n".join(times))
         .replace("{{SERVICE_TIMES}}", svc)
         .replace("{{SECTIONS}}", "".join(sections))
@@ -551,24 +756,30 @@ def render_text(ctx: dict) -> str:
     lines = ["KEHILLAH KEDOSHAH ZIKHRON ZVI — WEEKLY BULLETIN", "", ctx["title"], ctx["lede"], ""]
     if ctx["guest_text"]:
         lines += [ctx["guest_text"], ""]
-    lines.append("Shabbat times for Poughkeepsie, NY (41.70 N, 73.92 W)")
+    lines.append(ctx["times_heading"].replace("°", ""))
     for label, small, value, _final in ctx["times"]:
         lines.append(f"{label}: {value}  ({small})")
     lines.append("")
     if ctx.get("service_times"):
         lines.append("SERVICE TIMES FOR KEHILLAH KEDOSHAH ZIKHRON ZVI")
-        for label, tval, _note in ctx["service_times"]:
-            lines.append(f"{label}: {tval}")
+        for it in ctx["service_times"]:
+            if it["kind"] == "heading":
+                lines.append(it["text"].upper())
+            elif it["kind"] == "note":
+                lines.append(it["text"])
+            else:
+                lines.append(f"{it['label']}: {it['time']}")
         lines.append("")
-    if ctx["reading"]:
-        r = ctx["reading"]
-        lines += ["TORAH READING & HAFTARAH", f"{r['name']}, {r['range']}."]
-        if r.get("parashah_summary"):
-            lines.append(r["parashah_summary"])
-        if r["haftarah"]:
-            lines.append(r["haftarah"])
-        if r.get("haftarah_summary"):
-            lines.append(r["haftarah_summary"])
+    if ctx["readings"]:
+        lines.append("TORAH READING & HAFTARAH")
+        for r in ctx["readings"]:
+            lines.append(f"{r['name']}, {r['range']}.")
+            if r["haftarah"]:
+                lines.append(r["haftarah"])
+        if ctx.get("torah_summary"):
+            lines.append(ctx["torah_summary"])
+        if ctx.get("haftarah_summary"):
+            lines.append(ctx["haftarah_summary"])
         lines.append("")
     if ctx["observances"]:
         lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]

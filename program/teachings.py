@@ -416,6 +416,25 @@ def with_footnotes(teaching: dict) -> str:
 
 # ------------------------------------------------------------------- main --
 
+def fetch_reading_text(ref: str, cap: int = 9000) -> str | None:
+    """Text of a reading range. Sefaria returns nothing for some
+    cross-chapter ranges, so fall back to fetching chapter by chapter."""
+    t = fetch_text(ref, max_chars=cap)
+    if t:
+        return t
+    m = re.match(r"(.+?)\s+(\d+):\d+\s*-\s*(\d+):\d+$", ref.strip())
+    if not m:
+        return None
+    book, c1, c2 = m.group(1), int(m.group(2)), int(m.group(3))
+    n = max(1, c2 - c1 + 1)
+    parts = []
+    for ch in range(c1, c2 + 1):
+        tt = fetch_text(f"{book} {ch}", max_chars=cap // n)
+        if tt:
+            parts.append(tt)
+    return "\n".join(parts) or None
+
+
 def generate(week_description: str, reading_refs: tuple | None = None) -> dict:
     p = plan(week_description)
     print("plan:", json.dumps({k: p[k] for k in ("halakhic_topic", "aggadic_topic")}), file=sys.stderr)
@@ -429,7 +448,7 @@ def generate(week_description: str, reading_refs: tuple | None = None) -> dict:
                            ("Haftarah", reading_refs[1])):
             if not ref:
                 continue
-            t = fetch_text(ref, max_chars=9000)
+            t = fetch_reading_text(ref)
             if t:
                 reading_texts += f"[{label}: {ref}]\n{t}\n\n"
     print(f"gathered: {len(sef_h)}+{len(sef_a)} sefaria, {len(kst_docs)} KST pages, "

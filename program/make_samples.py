@@ -24,10 +24,17 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def week_description(ctx: dict) -> str:
     lines = [ctx["title"], ctx["lede"]]
-    if ctx["reading"]:
-        lines.append(f"Torah reading: {ctx['reading']['name']}, {ctx['reading']['range']}")
-        if ctx["reading"]["haftarah"]:
-            lines.append(ctx["reading"]["haftarah"])
+    for r in ctx["readings"]:
+        lines.append(f"Reading: {r['name']}, {r['range']}")
+        if r["haftarah"]:
+            lines.append(r["haftarah"])
+    if ctx.get("cluster"):
+        c = ctx["cluster"]
+        days = ", ".join(d.strftime("%A %d %B") for d in c["days"])
+        lines.append(f"This is a festival bulletin: {c['name']}, days: {days}; "
+                     f"eve {c['eve'].strftime('%A %d %B')}."
+                     + (f" It also covers the fast on {c['fast']['date'].strftime('%A %d %B')}."
+                        if c["fast"] else ""))
     if ctx["observances"]:
         lines.append("In the week ahead: " + " ".join(ctx["observances"]))
     return "\n".join(lines)
@@ -38,18 +45,17 @@ def strip_tags(html: str) -> str:
 
 
 def reading_refs(ctx: dict) -> tuple | None:
-    r = ctx.get("reading")
-    if not r:
+    if not ctx.get("readings"):
         return None
+    r = ctx["readings"][0]
     return (r.get("range_raw") or "", r.get("haftarah_raw") or "")
 
 
 def apply_teachings(ctx: dict, t: dict) -> None:
     ctx["halakha"] = t["halakha_html"]
     ctx["aggada"] = t["aggada_html"]
-    if ctx.get("reading"):
-        ctx["reading"]["parashah_summary"] = t.get("parashah_summary")
-        ctx["reading"]["haftarah_summary"] = t.get("haftarah_summary")
+    ctx["torah_summary"] = t.get("parashah_summary")
+    ctx["haftarah_summary"] = t.get("haftarah_summary")
 
 
 def main() -> None:

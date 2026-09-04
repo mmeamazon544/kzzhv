@@ -65,7 +65,13 @@ Vezot Haberakhah = Vezot Haberakha
 Holidays and observances
 
 Rosh Hashana = Rosh Hashana
+Rosh Hashana I = Rosh Hashana, first day
+Rosh Hashana I (on Shabbat) = Rosh Hashana, first day (on Shabbat)
 Rosh Hashana II = Rosh Hashana, second day
+Sukkot I = Sukkot, first day
+Sukkot I (on Shabbat) = Sukkot, first day (on Shabbat)
+Sukkot II = Sukkot, second day
+Yom Kippur (Mincha) = Kippur, Minhah reading
 Yom Kippur = Kippur
 Erev Yom Kippur = Erev Kippur
 Sukkot = Sukkot
