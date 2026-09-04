@@ -1,0 +1,59 @@
+# Ari's Friday-morning email: Shabbat and festival times for Tufts
+# University, Medford, MA, with the week's summaries and Reflections.
+# Exclusively to Ari; sponsored by Kehillah Kedoshah Zikhron Zvi.
+# Scheduled sends run only once the repository variable ARI_LIVE is "true".
+name: ari
+
+on:
+  schedule:
+    - cron: "0 10 * * 5"
+    - cron: "0 11 * * 5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "proof (to Marc) or live (to Ari)"
+        required: true
+        default: "proof"
+      shabbat:
+        description: "Shabbat date (YYYY-MM-DD); empty = next Saturday"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "$(TZ=America/New_York date +%H)" != "06" ]; then
+              echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 am in New York"; exit 0
+            fi
+            if [ "${{ vars.ARI_LIVE }}" != "true" ]; then
+              echo "go=no" >> "$GITHUB_OUTPUT"; echo "ARI_LIVE is not true"; exit 0
+            fi
+          fi
+          echo "go=yes" >> "$GITHUB_OUTPUT"
+
+  send:
+    needs: gate
+    if: needs.gate.outputs.go == 'yes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        working-directory: program
+        run: |
+          set -o pipefail
+          FLAG=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.mode }}" != "live" ]; then
+            FLAG="--proof"
+          fi
+          python3 ari.py $FLAG ${{ inputs.shabbat }} | tee -a "$GITHUB_STEP_SUMMARY"

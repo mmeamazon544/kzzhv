@@ -158,7 +158,8 @@ def service_times(cluster: dict | None = None) -> list[dict]:
     return out
 
 
-def observance_lines(sat: date, events: list[dict]) -> list[str]:
+def observance_lines(sat: date, events: list[dict],
+                     lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list[str]:
     out = []
     for e in sorted(
         (e for e in holidays(events) if sat <= e["date"] <= sat + timedelta(days=7)),
@@ -178,7 +179,7 @@ def observance_lines(sat: date, events: list[dict]) -> list[str]:
                      "Selihot since 2 Elul")
         line = f"{long_day(e['date'])} — {shown}."
         if base in YOMTOV_EVES:
-            candles, printed = candle_lighting(e["date"])
+            candles, printed = candle_lighting(e["date"], lat, lon)
             line += (f" Candle lighting {format_time(candles)} (18 minutes to sunset); "
                      f"sunset {format_time(printed)}.")
         out.append(line)
@@ -290,14 +291,31 @@ TIMES_HEADING_TEXT = "Shabbat times for Poughkeepsie, NY (41.70° N, 73.92° W)"
 TIMES_HEADING_FESTIVAL_TEXT = "Times for Poughkeepsie, NY (41.70° N, 73.92° W)"
 
 
+def build_times(sat: date, fri: date, cluster: dict | None,
+                lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list:
+    """The times rows for any sky: plain Shabbat, pure festival, or the
+    hybrid Shabbat-plus-festival cluster."""
+    candles, printed = candle_lighting(fri, lat, lon)
+    ends = habdala(sat, lat, lon)
+    shabbat_times = [
+        ("Candle lighting", f"Erev Shabbat, {long_day(fri)} · 18 minutes to sunset",
+         format_time(candles), False),
+        ("Sunset", f"Erev Shabbat, {long_day(fri)}", format_time(printed), False),
+        ("Habdala", f"{long_day(sat)} · end of Shabbat", format_time(ends), True),
+    ]
+    if cluster and sat in cluster["days"]:
+        return cluster_times(cluster, lat, lon)
+    if cluster:
+        shabbat_times[-1] = shabbat_times[-1][:3] + (False,)
+        return shabbat_times + cluster_times(cluster, lat, lon)
+    return shabbat_times
+
+
 def build_context(sat: date) -> dict:
     fri = sat - timedelta(days=1)
     item = leyning(sat)
     events = fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
     loc = strip_comments((ROOT / "bulletin" / "location.md").read_text()) or "Poughkeepsie"
-
-    candles, printed = candle_lighting(fri)
-    ends = habdala(sat)
 
     parashah = display_name(item["name"]["en"]) if item else None
     sat_hebrew = hebrew_date(sat)
@@ -335,12 +353,7 @@ def build_context(sat: date) -> dict:
             f"Congregation's secretary at {SECRETARY} by Thursday night at 10:00 pm",
         ]
 
-    shabbat_times = [
-        ("Candle lighting", f"Erev Shabbat, {long_day(fri)} · 18 minutes to sunset",
-         format_time(candles), False),
-        ("Sunset", f"Erev Shabbat, {long_day(fri)}", format_time(printed), False),
-        ("Habdala", f"{long_day(sat)} · end of Shabbat", format_time(ends), True),
-    ]
+    times = build_times(sat, fri, cluster)
 
     if cluster and sat in cluster["days"]:
         # The Shabbat is itself a festival day (Rosh Hashana on Shabbat).
@@ -349,7 +362,6 @@ def build_context(sat: date) -> dict:
         title = f"{cluster['name']} {hy}"
         lede = (span_gregorian(cluster["eve"], span_end) + " · "
                 + span_hebrew_parts(hebrew_date(cluster["eve"]), hebrew_date(span_end)))
-        times = cluster_times(cluster)
         times_heading = TIMES_HEADING_FESTIVAL_TEXT
         reflections_heading = f"Reflections on {cluster['name']}"
         parashah = None
@@ -363,15 +375,12 @@ def build_context(sat: date) -> dict:
                  if parashah else f"Shabbat and {cluster['name']} {hy}")
         lede = (span_gregorian(fri, span_end) + " · "
                 + span_hebrew_parts(hebrew_date(fri), hebrew_date(span_end)))
-        shabbat_times[-1] = shabbat_times[-1][:3] + (False,)
-        times = shabbat_times + cluster_times(cluster)
         times_heading = TIMES_HEADING_FESTIVAL_TEXT
         reflections_heading = f"Reflections on the Parasha and {cluster['name']}"
         readings = ([reading_from_item(item)] if item else []) + readings
     else:
         title = f"Shabbat {parashah}" if parashah else "Shabbat"
         lede = " · ".join(lede_bits)
-        times = shabbat_times
         times_heading = TIMES_HEADING_TEXT
         reflections_heading = "Reflections on the Parasha"
 
@@ -532,7 +541,7 @@ def render_web(ctx: dict) -> Path:
     tpl = (ROOT / "bulletin" / "templates" / "web.html").read_text()
     html = (
         tpl.replace("{{PAGE_TITLE}}", ctx["title"])
-        .replace("{{EYEBROW}}", "Weekly Bulletin")
+        .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
         .replace("{{TITLE}}", mid(ctx["title"]))
         .replace("{{LEDE}}", mid(ctx["lede"]))
         .replace("{{GUEST_NOTICE}}", guest)
@@ -665,13 +674,14 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         sections.append(e_h2("Announcements"))
         for a in ctx["announcements"]:
             sections.append(e_p(a))
-    sections.append(e_h2(ctx.get("reflections_heading", "Reflections on the Parasha")))
-    for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
-        sections.append(e_h3(head))
-        if ctx[key]:
-            sections.append(e_p(ctx[key]))
-        else:
-            sections.append(e_p(PLACEHOLDER.format(kind=kind), color=E_MUTE, italic=True))
+    if not (ctx.get("skip_empty_reflections") and not ctx["halakha"] and not ctx["aggada"]):
+        sections.append(e_h2(ctx.get("reflections_heading", "Reflections on the Parasha")))
+        for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
+            sections.append(e_h3(head))
+            if ctx[key]:
+                sections.append(e_p(ctx[key]))
+            else:
+                sections.append(e_p(PLACEHOLDER.format(kind=kind), color=E_MUTE, italic=True))
 
     svc = ""
     if ctx.get("service_times"):
@@ -730,7 +740,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     html = (
         tpl.replace("{{BASE}}", base)
         .replace("{{PAGE_TITLE}}", ctx["title"])
-        .replace("{{EYEBROW}}", "Weekly Bulletin")
+        .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)
