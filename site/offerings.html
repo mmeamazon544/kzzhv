@@ -8,17 +8,107 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Kehillah Kedoshah Zikhron Zvi">
   <meta property="og:title" content="Offerings">
-  <meta property="og:description" content="">
-  <meta property="og:url" content="https://kzzhv.netlify.app/offerings">
-  <meta property="og:image" content="https://kzzhv.netlify.app/assets/images/tzedakah.jpg">
+  <meta property="og:description" content="We do not solicit contributions. For those who wish to support the work of the Kehillah, offerings may be directed toward its projects.">
+  <meta property="og:url" content="https://kzzhv.org/offerings">
+  <meta property="og:image" content="https://kzzhv.org/assets/images/tzedakah.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Offerings">
   <meta name="twitter:description" content="">
-  <meta name="twitter:image" content="https://kzzhv.netlify.app/assets/images/tzedakah.jpg">
+  <meta name="twitter:image" content="https://kzzhv.org/assets/images/tzedakah.jpg">
 
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="icon" type="image/png" href="assets/images/logo-deer.png">
     <script defer src="https://www.paypal.com/sdk/js?client-id=BAAjTreqV4Otj4XnTNsqIOOlEJZtlOljXD1ge3c4sM5vPtzYs3vElC6vcDBHkotXdez0c_2bY3D6rszLLA&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
+
+    <style>
+      /* Page-local: the offerings goal-rule and interface details. */
+      .offering-goal { margin: 1.8rem 0 0.6rem; max-width: var(--measure-wide); }
+      .offering-rule {
+        position: relative;
+        height: 18px;
+        background: var(--bg-panel);
+        border: 1px solid var(--gold-deep);
+        box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.45);
+      }
+      .offering-fill {
+        position: absolute;
+        top: 1px; bottom: 1px; left: 1px;
+        background-image: url("assets/images/pimpernel.jpg");
+        background-size: 280px;
+        border-right: 1px solid var(--gold);
+        min-width: 0;
+      }
+      .offering-fill[data-empty] { border-right: 0; }
+      .offering-fill[data-empty] .offering-mark { display: none; }
+      .offering-mark {
+        position: absolute;
+        right: -5px; top: 50%;
+        transform: translateY(-50%);
+        color: var(--gold);
+        font-size: 9px;
+        line-height: 1;
+        text-shadow: 0 0 4px rgba(0,0,0,0.8);
+      }
+      .offering-figures {
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        font-size: 0.72rem;
+        color: var(--gold);
+        margin: 0.6rem 0 0;
+      }
+      .offering-figures em {
+        font-family: var(--font-serif);
+        font-style: italic;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--ink-mute);
+        font-size: 0.85rem;
+      }
+      .offering-epigraph {
+        font-style: italic;
+        font-variation-settings: "opsz" 24, "wght" 400;
+        color: var(--ink-soft);
+        max-width: var(--measure);
+      }
+      .offering-epigraph small {
+        display: block;
+        font-style: normal;
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        font-size: 0.62rem;
+        color: var(--gold);
+        margin-top: 0.4rem;
+      }
+      .offering-act { margin: 1.4rem 0 0.4rem; }
+      .offering-form .field select {
+        font-family: var(--font-serif);
+        font-size: 1.02rem;
+        color: var(--ink);
+        background-color: var(--bg-deep);
+        border: 1px solid var(--line);
+        padding: 0.7rem 0.9rem;
+        line-height: 1.4;
+      }
+      .offering-form .field select:focus {
+        outline: none;
+        border-color: var(--fuchsia);
+        box-shadow: 0 0 0 3px rgba(199, 88, 137, 0.18);
+      }
+      .offering-preview {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--gold);
+        background: var(--bg-deep);
+        padding: 0.9rem 1.1rem;
+        margin: 1.2rem 0 0;
+        font-size: 0.98rem;
+        color: var(--ink-soft);
+      }
+      .offering-preview strong { color: var(--gold-pale); font-weight: 500; }
+      .offering-error { color: var(--rose); font-size: 0.92rem; margin: 0.7rem 0 0; display: none; }
+      .field[hidden] { display: none; }
+    </style>
 </head>
 <body>
 
@@ -53,68 +143,162 @@
     <div class="page-head">
         <p class="eyebrow">501(c)(3) Nonprofit</p>
         <h1 class="page-title">Offerings</h1>
-        <p class="page-lede">If you'd like to support the Kehillah, or make a donation in honor or in memory of someone, you may do so here.</p>
+        <p class="page-lede">We do not solicit contributions.</p>
     </div>
 
     <article class="prose">
+        <p>For those who wish to support the work of the Kehillah, offerings may be directed toward any of the purposes below, or given for the general good of the congregation.</p>
         <p>Kehillah Kedoshah Zikhron Zvi is a nonprofit organization recognized as tax-exempt under Section 501(c)(3) of the Internal Revenue Code. Offerings are tax-deductible to the extent permitted by law.</p>
     </article>
 
-    <div class="panel-with-image">
-        <section class="donation-frame" aria-label="Donation">
-            <h2>Make an Offering</h2>
-            <p style="font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 1.4rem; font-style: italic; font-variation-settings: 'opsz' 18, 'wght' 400;">PayPal · Venmo · Card</p>
+    <div class="diamond-rule" aria-hidden="true"><span></span></div>
 
-            <!-- PayPal Hosted Button -->
-            <div id="paypal-container-HGEL458SR7CYU" aria-label="PayPal donation button"></div>
+    <section class="two-col" aria-label="Restoration of the KKZZ space">
+        <div class="prose" style="margin: 0; padding: 0;">
+            <h2>Restoration of the 1904 Space</h2>
+            <p class="offering-epigraph">&ldquo;Restore us back to You, and we will return. Renew our days as of old.&rdquo;
+                <small>Lamentations 5:21 &mdash; the verse above our ark</small>
+            </p>
+            <p>The Kehillah prays in a room built in 1904, under painted murals of the same year, on floors that have held more than a century of standing and sitting, gathering and song. One campaign of $6,000 restores both: the repair and restoration of the floors, and the conservation of the original painted murals.</p>
 
-            <!-- Always-visible direct link to PayPal — works even if the embedded
-                 button fails to load. -->
-            <p class="paypal-direct-link">
-                <a href="https://www.paypal.com/ncp/payment/HGEL458SR7CYU" target="_blank" rel="noopener" class="btn">
-                    Donate via PayPal
-                </a>
+            <!-- goal:restoration:begin -->
+            <div class="offering-goal" role="progressbar" aria-valuemin="0" aria-valuemax="6000" aria-valuenow="0" aria-label="Restoration: $0 raised of $6,000">
+                <div class="offering-rule">
+                    <div class="offering-fill" data-empty style="width: 0.0%;"><span class="offering-mark" aria-hidden="true">&#9670;</span></div>
+                </div>
+                <p class="offering-figures"><span class="amp">$</span>0 of <span class="amp">$</span>6,000 &nbsp;<em>toward the restoration</em></p>
+            </div>
+            <!-- goal:restoration:end -->
+
+            <p class="offering-act"><a class="btn" href="#offering" data-purpose="restoration">Direct an offering toward the restoration</a></p>
+        </div>
+        <figure class="two-col-image">
+            <img src="assets/images/ark-poughkeepsie.jpg" alt="The ark of Kehillah Kedoshah Zikhron Zvi in its 1904 room, the restoration verse painted above it">
+        </figure>
+    </section>
+
+    <section class="prose" aria-label="The KKZZ Siddur Project">
+        <h2>The KKZZ Siddur Project</h2>
+        <p>The Kehillah prays from its own pages. This project designs, typesets, and prints KKZZ&rsquo;s own siddurim &mdash; traditional and egalitarian, in the congregation&rsquo;s liturgical practice and in its own aesthetic.</p>
+
+        <!-- goal:siddur:begin -->
+            <div class="offering-goal" role="progressbar" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="0" aria-label="Siddur: $0 raised of $1,000">
+                <div class="offering-rule">
+                    <div class="offering-fill" data-empty style="width: 0.0%;"><span class="offering-mark" aria-hidden="true">&#9670;</span></div>
+                </div>
+                <p class="offering-figures"><span class="amp">$</span>0 of <span class="amp">$</span>1,000 &nbsp;<em>toward the siddurim</em></p>
+            </div>
+            <!-- goal:siddur:end -->
+
+        <p class="offering-act"><a class="btn" href="#offering" data-purpose="siddur">Direct an offering toward the Siddur</a></p>
+    </section>
+
+    <section class="prose" aria-label="The KKZZ Mahzor Project">
+        <h2>The KKZZ Mahzor Project</h2>
+        <p>For the Days of Awe: the design, typesetting, and printing of KKZZ&rsquo;s own mahzorim for Rosh Hashana and Kippur, in the same practice and the same hand.</p>
+
+        <!-- goal:mahzor:begin -->
+            <div class="offering-goal" role="progressbar" aria-valuemin="0" aria-valuemax="1600" aria-valuenow="0" aria-label="Mahzor: $0 raised of $1,600">
+                <div class="offering-rule">
+                    <div class="offering-fill" data-empty style="width: 0.0%;"><span class="offering-mark" aria-hidden="true">&#9670;</span></div>
+                </div>
+                <p class="offering-figures"><span class="amp">$</span>0 of <span class="amp">$</span>1,600 &nbsp;<em>toward the mahzorim</em></p>
+            </div>
+            <!-- goal:mahzor:end -->
+
+        <p class="offering-act"><a class="btn" href="#offering" data-purpose="mahzor">Direct an offering toward the Mahzor</a></p>
+    </section>
+
+    <div class="diamond-rule" aria-hidden="true"><span></span></div>
+
+    <section class="prose" aria-label="Dedications and communal offerings">
+        <h2>In Memory, In Honor</h2>
+        <p>An offering of any amount may be made in memory of a person, or in honor of one. The name is entered with the offering, travels with it, and is named on the Congregation&rsquo;s receipt and in its records.</p>
+        <p class="offering-act">
+            <a class="btn" href="#offering" data-purpose="general" data-dedication="memory" style="margin-right: 0.8rem;">In memory of&hellip;</a>
+            <a class="btn" href="#offering" data-purpose="general" data-dedication="honor">In honor of&hellip;</a>
+        </p>
+
+        <h2>Kiddush <span class="amp">&amp;</span> Meal Sponsorships</h2>
+        <p>The tables of the Kehillah are open to sponsorship in the old way of congregations &mdash; for a yahrzeit, a birthday, a recovery, an anniversary, a thanksgiving, or no stated reason at all.</p>
+    </section>
+
+    <section class="schedule" aria-label="Sponsorship offerings">
+        <dl>
+            <div class="row">
+                <dt>Sponsor a Shabbat or holiday Kiddush
+                    <small>With a dedication or occasion, if you wish</small>
+                </dt>
+                <dd><span class="amp">$</span>100</dd>
+            </div>
+            <div class="row row--final">
+                <dt>Sponsor a communal meal
+                    <small>A Shabbat or holiday meal of the Kehillah</small>
+                </dt>
+                <dd><span class="amp">$</span>200</dd>
+            </div>
+        </dl>
+        <p class="offering-act" style="margin-top: 1.4rem;">
+            <a class="btn" href="#offering" data-purpose="kiddush" style="margin-right: 0.8rem;">Sponsor a Kiddush</a>
+            <a class="btn" href="#offering" data-purpose="meal">Sponsor a meal</a>
+        </p>
+    </section>
+
+    <div class="diamond-rule" aria-hidden="true"><span></span></div>
+
+    <div class="panel-with-image" id="offering">
+        <section class="donation-frame offering-form" aria-label="Make an offering">
+            <h2>Making an Offering</h2>
+            <p style="font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 1.4rem; font-style: italic; font-variation-settings: 'opsz' 18, 'wght' 400;">PayPal &middot; Venmo &middot; Card</p>
+
+            <div class="field">
+                <label for="of-purpose">Purpose</label>
+                <select id="of-purpose">
+                    <option value="general">General support of the Kehillah</option>
+                    <option value="restoration">Restoration of the 1904 murals and floors</option>
+                    <option value="siddur">The KKZZ Siddur Project</option>
+                    <option value="mahzor">The KKZZ Mahzor Project</option>
+                    <option value="kiddush">Kiddush sponsorship &mdash; $100</option>
+                    <option value="meal">Communal meal sponsorship &mdash; $200</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="of-amount">Amount (USD)</label>
+                <input type="number" id="of-amount" min="1" step="1" inputmode="numeric" placeholder="Any amount">
+            </div>
+
+            <div class="field">
+                <label for="of-dedication">Dedication</label>
+                <select id="of-dedication">
+                    <option value="">No dedication</option>
+                    <option value="memory">In memory of&hellip;</option>
+                    <option value="honor">In honor of&hellip;</option>
+                </select>
+            </div>
+
+            <div class="field" id="of-name-field" hidden>
+                <label for="of-name" id="of-name-label">Name</label>
+                <input type="text" id="of-name" maxlength="60" placeholder="The name to be remembered">
+            </div>
+
+            <div class="field">
+                <label for="of-occasion">Occasion <span style="text-transform: none; letter-spacing: 0; color: var(--ink-mute);">(optional)</span></label>
+                <input type="text" id="of-occasion" maxlength="60" placeholder="A yahrzeit, a birthday, an anniversary&hellip;">
+            </div>
+
+            <div class="offering-preview" id="of-preview" aria-live="polite">
+                Your offering will be designated: <strong id="of-preview-text">KKZZ &mdash; General support of the Kehillah</strong>
+            </div>
+            <p class="offering-error" id="of-error"></p>
+
+            <p style="margin: 1.6rem 0 0;">
+                <button type="button" class="btn" id="of-continue">Continue to PayPal</button>
             </p>
 
             <p class="small">
-                A receipt for tax purposes can be provided on request &mdash; please <a href="contact.html">be in touch</a>.
+                PayPal provides its transaction receipt at once. The Congregation provides an official contribution receipt naming your designated purpose &mdash; see below.
             </p>
-
-            <script>
-            (function () {
-                // Try to render the PayPal hosted button as soon as the SDK is available.
-                // If the SDK never loads, or rendering fails for any reason, the
-                // direct "Donate via PayPal" link above continues to work.
-                var BUTTON_ID = "HGEL458SR7CYU";
-                var SELECTOR = "#paypal-container-" + BUTTON_ID;
-                var attempts = 0;
-
-                function tryRender() {
-                    attempts++;
-                    if (window.paypal && window.paypal.HostedButtons) {
-                        try {
-                            window.paypal.HostedButtons({
-                                hostedButtonId: BUTTON_ID
-                            }).render(SELECTOR);
-                        } catch (err) {
-                            console.warn("PayPal button render failed:", err);
-                        }
-                        return;
-                    }
-                    if (attempts < 40) {  // poll for ~10 seconds
-                        setTimeout(tryRender, 250);
-                    } else {
-                        console.warn("PayPal SDK did not load; using direct link fallback.");
-                    }
-                }
-
-                if (document.readyState === "loading") {
-                    document.addEventListener("DOMContentLoaded", tryRender);
-                } else {
-                    tryRender();
-                }
-            })();
-            </script>
         </section>
 
         <figure class="panel-image">
@@ -123,9 +307,117 @@
     </div>
 
     <article class="prose" style="margin-top: 1rem;">
-        <p>To discuss other ways of supporting the community &mdash; recurring offerings, memorial dedications, sponsoring a Kiddush, or honoring a learning or life-cycle event &mdash; please <a href="contact.html">write to us</a>.</p>
+        <h2>Acknowledgment <span class="amp">&amp;</span> Receipts</h2>
+        <p>Every offering is acknowledged. Each contributor receives an official receipt of Kehillah Kedoshah Zikhron Zvi, a 501(c)(3) organization, stating the amount and the designated purpose &mdash; the restoration, a project, a kiddush, a name remembered or honored. Receipts are sent by the Congregation&rsquo;s secretary; for any question about an offering or a receipt, please <a href="contact.html">be in touch</a>.</p>
+        <p>To discuss other ways of supporting the community &mdash; recurring offerings, or honoring a learning or life-cycle event &mdash; please <a href="contact.html">write to us</a>.</p>
     </article>
 
+    <script>
+    (function () {
+        // The PayPal merchant identifier enables purpose-tagged donations
+        // through paypal.com/donate. Until it is supplied, the Continue
+        // button uses the congregation's existing hosted payment link and
+        // the donor keeps the designation shown on screen.
+        var MERCHANT_ID = "";
+        var HOSTED_LINK = "https://www.paypal.com/ncp/payment/HGEL458SR7CYU";
+
+        var PURPOSES = {
+            general:     { label: "General support of the Kehillah", fixed: null },
+            restoration: { label: "Restoration of the 1904 murals and floors", fixed: null },
+            siddur:      { label: "The KKZZ Siddur Project", fixed: null },
+            mahzor:      { label: "The KKZZ Mahzor Project", fixed: null },
+            kiddush:     { label: "Shabbat or holiday Kiddush sponsorship", fixed: 100 },
+            meal:        { label: "Communal meal sponsorship", fixed: 200 }
+        };
+
+        var elPurpose = document.getElementById("of-purpose");
+        var elAmount = document.getElementById("of-amount");
+        var elDedication = document.getElementById("of-dedication");
+        var elNameField = document.getElementById("of-name-field");
+        var elNameLabel = document.getElementById("of-name-label");
+        var elName = document.getElementById("of-name");
+        var elOccasion = document.getElementById("of-occasion");
+        var elPreview = document.getElementById("of-preview-text");
+        var elError = document.getElementById("of-error");
+
+        function designation() {
+            var p = PURPOSES[elPurpose.value];
+            var s = "KKZZ — " + p.label;
+            var name = elName.value.trim();
+            if (elDedication.value === "memory" && name) s += ", in memory of " + name;
+            if (elDedication.value === "honor" && name) s += ", in honor of " + name;
+            var occ = elOccasion.value.trim();
+            if (occ) s += " (" + occ + ")";
+            return s.slice(0, 127);
+        }
+
+        function refresh() {
+            var p = PURPOSES[elPurpose.value];
+            if (p.fixed !== null) {
+                elAmount.value = p.fixed;
+                elAmount.readOnly = true;
+            } else {
+                if (elAmount.readOnly) elAmount.value = "";
+                elAmount.readOnly = false;
+            }
+            var d = elDedication.value;
+            elNameField.hidden = !d;
+            if (d) {
+                elNameLabel.textContent = d === "memory" ? "In memory of" : "In honor of";
+                elName.placeholder = d === "memory"
+                    ? "The name to be remembered" : "The name to be honored";
+            }
+            elPreview.textContent = designation();
+            elError.style.display = "none";
+        }
+
+        function fail(msg) {
+            elError.textContent = msg;
+            elError.style.display = "block";
+        }
+
+        function proceed() {
+            var p = PURPOSES[elPurpose.value];
+            var amount = parseFloat(elAmount.value);
+            if (!(amount > 0)) { fail("Kindly enter an amount."); elAmount.focus(); return; }
+            if (elDedication.value && !elName.value.trim()) {
+                fail(elDedication.value === "memory"
+                    ? "Kindly enter the name to be remembered."
+                    : "Kindly enter the name to be honored.");
+                elName.focus(); return;
+            }
+            var url;
+            if (MERCHANT_ID) {
+                url = "https://www.paypal.com/donate/?business=" + encodeURIComponent(MERCHANT_ID)
+                    + "&currency_code=USD&no_recurring=0"
+                    + "&amount=" + encodeURIComponent(amount.toFixed(2))
+                    + "&item_name=" + encodeURIComponent(designation());
+            } else {
+                url = HOSTED_LINK;
+            }
+            window.open(url, "_blank", "noopener");
+        }
+
+        ["change", "input", "keyup"].forEach(function (ev) {
+            [elPurpose, elAmount, elDedication, elName, elOccasion].forEach(function (el) {
+                el.addEventListener(ev, refresh);
+            });
+        });
+        document.getElementById("of-continue").addEventListener("click", proceed);
+
+        // Section buttons pre-select the purpose (and dedication) and scroll.
+        document.querySelectorAll("a.btn[data-purpose]").forEach(function (a) {
+            a.addEventListener("click", function () {
+                elPurpose.value = a.getAttribute("data-purpose");
+                var d = a.getAttribute("data-dedication") || "";
+                elDedication.value = d;
+                refresh();
+            });
+        });
+
+        refresh();
+    })();
+    </script>
 
     <div class="footer-banner" aria-hidden="true"></div>
 

@@ -1,0 +1,29 @@
+# Keeps the Offerings page's goal figures true to the ledger: whenever
+# bulletin/offerings-ledger.md changes, the marked regions of the page are
+# rewritten and the change deploys with the push.
+name: offerings
+
+on:
+  push:
+    paths:
+      - "bulletin/offerings-ledger.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -o pipefail
+          python3 program/offerings_update.py | tee -a "$GITHUB_STEP_SUMMARY"
+      - run: |
+          set -o pipefail
+          git config user.name "kkzz-bulletin"
+          git config user.email "shabbat@kzzhv.org"
+          git add site/offerings.html
+          git diff --cached --quiet || { git commit -m "Offerings figures from the ledger"; git pull --rebase origin main; git push; }
