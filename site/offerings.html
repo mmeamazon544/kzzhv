@@ -314,11 +314,11 @@
 
     <script>
     (function () {
-        // The PayPal merchant identifier enables purpose-tagged donations
-        // through paypal.com/donate. Until it is supplied, the Continue
-        // button uses the congregation's existing hosted payment link and
-        // the donor keeps the designation shown on screen.
-        var MERCHANT_ID = "";
+        // The PayPal merchant identifier routes purpose-tagged donations
+        // through paypal.com/donate, so each offering's designation rides
+        // into PayPal's own records. The hosted payment link remains the
+        // fallback if the identifier is ever cleared.
+        var MERCHANT_ID = "MK43NLEZ9PB52";
         var HOSTED_LINK = "https://www.paypal.com/ncp/payment/HGEL458SR7CYU";
 
         var PURPOSES = {

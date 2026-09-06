@@ -7,9 +7,6 @@ congregation's 501(c)(3) language, the designated purpose) into
 14-TECHNICAL/CLAUDE STUFF/KKZZ RECEIPTS/ and opens it; print to PDF from
 the browser and send it to the contributor.
 
-The EIN line prints a placeholder until Marc supplies the number; official
-receipts customarily carry it.
-
 Usage:
   python3 program/receipt.py --name "Jane Doe" --amount 250 \
       --designated "the restoration of the original 1904 murals and floors" \
@@ -25,7 +22,9 @@ from pathlib import Path
 
 OUT = Path("/Volumes/DB PRIMARY LOCAL/Dropbox/14-TECHNICAL/CLAUDE STUFF/KKZZ RECEIPTS")
 CREST = "https://kzzhv.org/assets/images/logo-deer-blush.png"
-EIN = "[EIN to be supplied]"
+# Federal EIN, supplied by Marc 6 September 2026. (New York State
+# Exempt Organization Number, on file, not printed on receipts: 280515.)
+EIN = "85-1296663"
 
 
 def arg(flag: str, default: str = "") -> str:
