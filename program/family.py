@@ -78,10 +78,20 @@ def next_saturday() -> date:
 def decide_auto() -> date | None:
     """The anchor Saturday for a scheduled run, or None when today is not a
     send day. Send days: every Friday, and the eve of any festival's first
-    day. Never on Shabbat or on a yom tob itself."""
+    day. Never on Shabbat or on a yom tob itself. A send day listed in
+    bulletin/family-skip.md (one ISO date per line) is skipped for every
+    member — date-keyed, so a skip can never outlive its day."""
     from hebcal_client import holidays as hol_items
 
     ny = datetime.now(ZoneInfo("America/New_York")).date()
+    skip_file = ROOT / "bulletin" / "family-skip.md"
+    if skip_file.exists():
+        import re
+        skips = set(re.findall(r"\d{4}-\d{2}-\d{2}",
+                               re.sub(r"<!--.*?-->", "", skip_file.read_text(), flags=re.S)))
+        if ny.isoformat() in skips:
+            print(f"family letters skipped for {ny} (bulletin/family-skip.md, Marc's word)")
+            return None
     if ny.weekday() == 5:
         print("today is Shabbat; no send")
         return None
