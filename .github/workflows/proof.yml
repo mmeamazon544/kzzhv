@@ -101,6 +101,10 @@ jobs:
           git config user.email "shabbat@kzzhv.org"
           git add bulletin/state
           git commit -m "Proof ${{ steps.decide.outputs.id }}"
+          # The build renders site/bulletin/index.html as a side effect; the
+          # publish step later ships it from state. Discard it so the rebase
+          # is clean.
+          git checkout -- site/ 2>/dev/null || true
           git pull --rebase origin main
           git push
       - name: Send the proof to Marc
