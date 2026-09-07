@@ -1,0 +1,65 @@
+{
+ "plan": {
+  "halakhic_topic": "Shofar on a Rosh Hashana that begins on Shabbat: why no teki'ot are sounded on Saturday 12 September, what the rabbis feared, and how the Western Sephardic congregations order the blasts on the second day (the tekiot of the Torah reading, the Musaf orders of Malkhiyot/Zikhronot/Shofarot, and the blasts after Musaf)",
+  "kst_queries": [
+   "laws and customs of the Tekingot",
+   "Tekingot after Musaf",
+   "Rosh Hashana Shaharit customs and liturgical variants"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Shofar, Sukkah and Lulav 1:1",
+   "Mishneh Torah, Shofar, Sukkah and Lulav 1:2",
+   "Mishneh Torah, Shofar, Sukkah and Lulav 2:6",
+   "Mishneh Torah, Shofar, Sukkah and Lulav 2:7",
+   "Mishneh Torah, Shofar, Sukkah and Lulav 3:1",
+   "Mishneh Torah, Shofar, Sukkah and Lulav 3:10"
+  ],
+  "aggadic_topic": "Hannah's voiceless prayer in the haftarah of the first day (I Samuel 1:13): on the Rosh Hashana whose first day is Shabbat and whose shofar is silent, the day's own haftarah teaches that the prayer heard on high is the one spoken in the heart \u2014 and the Talmud's tradition that Sarah, Rachel and Hannah were remembered on Rosh Hashana ties the haftarah to the day and to Genesis 21",
+  "sefaria_refs_aggada": [
+   "I Samuel 1:13",
+   "Rashi on I Samuel 1:13:1",
+   "Radak on I Samuel 1:13:1",
+   "Berakhot 31a",
+   "Berakhot 31b",
+   "Rosh Hashanah 10b"
+  ]
+ },
+ "halakha_html": "<p>Rosh Hashana begins this year on Shabbat, and on Saturday no shofar is sounded. The Rambam rules that when the festival falls on Shabbat the shofar is not blown anywhere, and he is candid about why. Blowing is held back on Shabbat by rabbinic restraint alone, and a commandment of the Torah would ordinarily override such a restraint. The sages feared that someone would carry the shofar through the street to a neighbour who knows how to sound it.<sup>1</sup> Everyone is obliged to hear; few are skilled at blowing. So the whole of the day's shofar moves to Sunday: thirty blasts after the Torah is returned, then one order after each of Malkhuyot, Zikhronot and Shofarot in Musaf.<sup>2</sup></p><p>Many congregations add a great teru'ah at the very end. The Tur gives it in the name of Rav Sa'adia Gaon, to confound the accuser. Rav Hai Gaon said it was never a settled custom, only something individuals did, and that no one's obligation depends on it; the Rambam's own order of prayer says nothing of it, and old Ashkenazic books from Vienna sound three full sets. One collector of Sephardic custom offers a gentler reason: when the prayers end and each person goes home, the Shekhina too returns to its place, and the blast goes with it \u2014 <em>alah Elohim bi-teru'ah</em>.<sup>3</sup> The teru'ah marks the close of the day's prayer.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.2:6\">Mishneh Torah, Shofar, Sukkah and Lulav 2:6</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.3:10\">Mishneh Torah, Shofar, Sukkah and Lulav 3:10</a> &nbsp; 3. Keter Shem Tob, vol. 6, p. 203</p>",
+ "aggada_html": "<p>Hannah stands at Shiloh and prays without a sound. Her lips move; her voice cannot be heard. Rashi says Eli took her for drunk because people were not accustomed to praying silently \u2014 she was doing something no one there had seen before.<sup>1</sup> Radak reads the verse with the Targum: she prayed in her heart, gathering her whole attention into it.<sup>2</sup> Eli, once he understands, blesses her, and the Talmud learns from him that a person who suspects another wrongly owes both an apology and a blessing.<sup>3</sup> On a Rosh Hashana whose first day has no shofar, the haftarah gives us a prayer that made no sound and was answered.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Rashi.on.I.Samuel.1:13:1\">Rashi on I Samuel 1:13</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Radak.on.I.Samuel.1:13:1\">Radak on I Samuel 1:13</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Berakhot.31b\">Berakhot 31b</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Shofar, Sukkah and Lulav 2:6",
+   "sefaria_ref": "Mishneh Torah, Shofar, Sukkah and Lulav 2:6",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Shofar, Sukkah and Lulav 3:10",
+   "sefaria_ref": "Mishneh Torah, Shofar, Sukkah and Lulav 3:10",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 6, p. 203",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Rashi on I Samuel 1:13",
+   "sefaria_ref": "Rashi on I Samuel 1:13:1",
+   "kst": false
+  },
+  {
+   "display": "Radak on I Samuel 1:13",
+   "sefaria_ref": "Radak on I Samuel 1:13:1",
+   "kst": false
+  },
+  {
+   "display": "Berakhot 31b",
+   "sefaria_ref": "Berakhot 31b",
+   "kst": false
+  }
+ ],
+ "parashah_summary": "The Eternal takes note of Sarah, and she bears a son to Abraham in his old age. They name him Isaac, laughter, and Sarah says that everyone who hears will laugh with her. He is circumcised at eight days, and when he is weaned Abraham makes a great feast. Sarah asks that Hagar and Ishmael be sent away, and Abraham is much distressed. God promises that Ishmael too will become a great nation, hears the boy in the wilderness of Beer-sheba, and opens Hagar's eyes to a well. The chapter ends with Abraham's pact with Abimelech, seven ewes set apart, and a tamarisk planted at Beer-sheba.",
+ "haftarah_summary": "Hannah goes up with Elkanah to Shiloh year after year and comes home childless and taunted. At the sanctuary she prays in her heart and vows that a son would be given to the service of the Eternal for life. Eli mistakes her silence for drunkenness, hears her out, and sends her away with a blessing. Samuel is born, and when he is weaned she brings him to Shiloh and lends him to God. Then she sings: the bows of the mighty are broken, the hungry are fed, the poor are lifted from the dust and seated among nobles."
+}
