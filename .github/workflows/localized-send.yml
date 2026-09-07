@@ -1,0 +1,41 @@
+# Localized bulletin sends: the current published bulletin with halakhic
+# times for a family member's own sky and no KKZZ service times.
+# Manual only; runs at Marc's word.
+name: localized-send
+
+on:
+  workflow_dispatch:
+    inputs:
+      members:
+        description: "Comma-separated: ari,misha,gabi,mom"
+        required: false
+        default: "ari,misha,gabi"
+      live:
+        description: "true = send to the members' segments; false = proof to Marc"
+        required: false
+        default: "false"
+      shabbat:
+        description: "Bulletin Saturday (YYYY-MM-DD); empty = next Saturday"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency: bulletin-send
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send
+        working-directory: program
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        run: |
+          set -o pipefail
+          MODE="--proof"
+          if [ "${{ inputs.live }}" = "true" ]; then MODE="--live"; fi
+          python3 localized_send.py "$MODE" --members "${{ inputs.members }}" ${{ inputs.shabbat }} | tee -a "$GITHUB_STEP_SUMMARY"
