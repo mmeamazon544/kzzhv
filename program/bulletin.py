@@ -149,10 +149,13 @@ def service_times(cluster: dict | None = None) -> list[dict]:
             out.append({"kind": "heading", "text": line[2:].strip()})
         elif line.startswith("* "):
             out.append({"kind": "note", "text": line[2:].strip()})
+        elif len(line) >= 3 and set(line) == {"-"}:
+            out.append({"kind": "bar"})
         elif "=" in line:
             label, _, rest = line.partition("=")
             time_part, _, note = rest.partition("|")
-            if label.strip() and time_part.strip():
+            if label.strip():
+                # An empty time ("Break =") is a label-only row.
                 out.append({"kind": "row", "label": label.strip(),
                             "time": time_part.strip(), "note": note.strip()})
     return out
@@ -299,6 +302,9 @@ def cluster_times(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -
                      format_time(dawn(fast["date"], lat, lon)), False))
         rows.append((f"{fname} ends", f"{long_day(fast['date'])} · nightfall",
                      format_time(habdala(fast["date"], lat, lon)), True))
+        if fname in FAST_NOTES:
+            # A description row: empty label and value, small text only.
+            rows.append(("", FAST_NOTES[fname], "", False))
     return rows
 
 
@@ -318,8 +324,21 @@ def cluster_readings(cluster: dict) -> list[dict]:
     return out
 
 
-TIMES_HEADING_TEXT = "Shabbat times for Poughkeepsie, NY (41.70° N, 73.92° W)"
-TIMES_HEADING_FESTIVAL_TEXT = "Times for Poughkeepsie, NY (41.70° N, 73.92° W)"
+# Two-part heading, split on the em-dash by the renderers: the first part
+# larger, the rest normal (Marc's relabel, 7 September 2026).
+TIMES_HEADING_TEXT = "Halakhic (Ritual) Times — Poughkeepsie, NY 41.70 N 73.92 W"
+TIMES_HEADING_FESTIVAL_TEXT = TIMES_HEADING_TEXT
+
+# Tiny descriptions shown under a fast's rows in the times block, by the
+# fast's display name. Text Marc's own (7 September 2026).
+FAST_NOTES = {
+    "Fast of Gedalia":
+        "A minor fast day that mourns the assassination of Gedaliah ben "
+        "Ahikam, the Jewish governor of Judea, at the hands of a fellow "
+        "Jew, a tragedy which ended Jewish autonomy in the Land of Israel "
+        "and led to the exile of the Jewish people from the Land to "
+        "Babylonia in 582 BCE.",
+}
 
 
 def build_times(sat: date, fri: date, cluster: dict | None,
@@ -477,9 +496,34 @@ def mid(text: str) -> str:
                 .replace("°", '<span class="mid">°</span>'))
 
 
+def split_heading_web(text: str) -> str:
+    """A two-part heading: the part before the em-dash larger, the rest
+    in the schedule-note's em style. Headings without one pass through."""
+    if " — " in text:
+        big, rest = text.split(" — ", 1)
+        return (f'<span style="font-size: 1.02rem; letter-spacing: 0.22em;">{mid(big)}</span>'
+                f'<span class="mid"> — </span><em>{mid(rest)}</em>')
+    return mid(text)
+
+
+# A thin William Morris separation bar (the site's pimpernel tile).
+MORRIS_BAR_WEB = (
+    '        <div aria-hidden="true" style="height: 24px; margin: 1.7rem 0 0.3rem; '
+    'background-image: url(/assets/images/pimpernel.jpg); background-size: 280px; '
+    'background-repeat: repeat; border-top: 2px solid var(--gold-deep); '
+    'border-bottom: 2px solid var(--gold-deep);"></div>')
+
+
 def times_rows_html(ctx: dict) -> str:
     times = []
     for label, small, value, final in ctx["times"]:
+        if not label and not value:
+            # A description row (e.g. the Fast of Gedalia note).
+            times.append('            <div class="row">\n'
+                         '                <dt style="text-transform: none; letter-spacing: 0;">\n'
+                         f'                    <small>{small}</small>\n'
+                         "                </dt>\n            </div>")
+            continue
         cls = ' class="row row--final"' if final else ' class="row"'
         times.append(f"""            <div{cls}>
                 <dt>{label}
@@ -493,21 +537,21 @@ def times_rows_html(ctx: dict) -> str:
 def build_body(ctx: dict) -> list[str]:
     body = []
     if ctx["readings"]:
-        single = len(ctx["readings"]) == 1
+        # Each interpretation sits directly under what it interprets: the
+        # Torah summary under the first portion, the haftarah summary under
+        # the first haftarah (Marc's direction, 7 September 2026).
         body.append('<h2>Torah Reading <span class="amp">&amp;</span> Haftarah</h2>')
+        placed_torah = placed_haft = False
         for r in ctx["readings"]:
             body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
-            if single and ctx.get("torah_summary"):
+            if not placed_torah and ctx.get("torah_summary"):
                 body.append(f"<p>{ctx['torah_summary']}</p>")
+                placed_torah = True
             if r["haftarah"]:
                 body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
-            if single and ctx.get("haftarah_summary"):
-                body.append(f"<p>{ctx['haftarah_summary']}</p>")
-        if not single:
-            if ctx.get("torah_summary"):
-                body.append(f"<p>{ctx['torah_summary']}</p>")
-            if ctx.get("haftarah_summary"):
-                body.append(f"<p>{ctx['haftarah_summary']}</p>")
+                if not placed_haft and ctx.get("haftarah_summary"):
+                    body.append(f"<p>{ctx['haftarah_summary']}</p>")
+                    placed_haft = True
     if ctx["observances"]:
         body.append("<h2>In the Week Ahead</h2>")
         body += [f"<p>{o}</p>" for o in ctx["observances"]]
@@ -531,44 +575,46 @@ def build_body(ctx: dict) -> list[str]:
 
 def service_times_web(ctx: dict) -> str:
     """The service-times block in site markup, used on the bulletin page
-    and in the services-page splice."""
+    and in the services-page splice. Items render in file order: headings
+    (two sizes around the em-dash), rows (a label-only row has no time),
+    notes, and Morris separation bars."""
     items = ctx.get("service_times") or []
     if not items:
         return ""
-    groups = []
-    cur = {"heading": None, "rows": [], "notes": []}
-    for it in items:
-        if it["kind"] == "heading":
-            if cur["rows"] or cur["notes"] or cur["heading"]:
-                groups.append(cur)
-            cur = {"heading": it["text"], "rows": [], "notes": []}
-        elif it["kind"] == "row":
-            cur["rows"].append(it)
-        else:
-            cur["notes"].append(it["text"])
-    groups.append(cur)
-
     parts = ['    <section class="schedule" aria-label="Service times">',
              '        <p class="schedule-note">Service Times for Kehillah Kedoshah Zikhron Zvi</p>']
-    for g in groups:
-        if g["heading"]:
-            parts.append('        <p class="schedule-note" style="margin: 1.4rem 0 0.8rem; color: var(--gold-pale); letter-spacing: 0.2em;">'
-                         + mid(g["heading"].replace("&", '<span class="amp">&amp;</span>')) + "</p>")
-        if g["rows"]:
-            parts.append("        <dl>")
-            for i, r in enumerate(g["rows"]):
-                cls = ' class="row row--final"' if i == len(g["rows"]) - 1 else ' class="row"'
-                label = r["label"].replace("&", '<span class="amp">&amp;</span>')
-                small = f"\n                    <small>{r['note']}</small>" if r["note"] else ""
-                parts.append(f"""            <div{cls}>
+    rows: list[dict] = []
+
+    def flush() -> None:
+        if not rows:
+            return
+        parts.append("        <dl>")
+        for i, r in enumerate(rows):
+            cls = ' class="row row--final"' if i == len(rows) - 1 else ' class="row"'
+            label = r["label"].replace("&", '<span class="amp">&amp;</span>')
+            small = f"\n                    <small>{r['note']}</small>" if r["note"] else ""
+            dd = f"\n                <dd>{r['time']}</dd>" if r["time"] else ""
+            parts.append(f"""            <div{cls}>
                 <dt>{label}{small}
-                </dt>
-                <dd>{r['time']}</dd>
+                </dt>{dd}
             </div>""")
-            parts.append("        </dl>")
-        for n in g["notes"]:
+        parts.append("        </dl>")
+        rows.clear()
+
+    for it in items:
+        if it["kind"] == "row":
+            rows.append(it)
+            continue
+        flush()
+        if it["kind"] == "heading":
+            parts.append('        <p class="schedule-note" style="margin: 1.6rem 0 0.8rem; color: var(--gold-pale); letter-spacing: 0.2em;">'
+                         + split_heading_web(it["text"].replace("&", '<span class="amp">&amp;</span>')) + "</p>")
+        elif it["kind"] == "bar":
+            parts.append(MORRIS_BAR_WEB)
+        else:
             parts.append('        <p style="margin: 0.8rem 0 0; color: var(--ink-soft); '
-                         f'font-style: italic; font-size: 0.95rem;">{n}</p>')
+                         f'font-style: italic; font-size: 0.95rem;">{it["text"]}</p>')
+    flush()
     parts.append("    </section>")
     return "\n".join(parts)
 
@@ -645,7 +691,7 @@ def render_web(ctx: dict) -> Path:
         .replace("{{BANNER}}", banner_web(ctx))
         .replace("{{GREETINGS}}", greetings_web(ctx))
         .replace("{{GUEST_NOTICE}}", guest)
-        .replace("{{TIMES_HEADING}}", mid(ctx["times_heading"]))
+        .replace("{{TIMES_HEADING}}", split_heading_web(ctx["times_heading"]))
         .replace("{{SERVICE_TIMES}}", service_times_web(ctx))
         .replace("{{TIMES_ROWS}}", times_rows_html(ctx))
         .replace("{{BODY_SECTIONS}}", "\n\n".join(body))
@@ -676,45 +722,57 @@ def services_schedule_fragment(ctx: dict) -> str:
              "font-variation-settings: 'opsz' 18, 'wght' 400; font-size: 0.84rem; "
              "color: var(--ink-mute); letter-spacing: 0; text-transform: none; margin-top: 0.2rem;")
 
-    groups = []
-    cur = {"heading": None, "rows": [], "notes": []}
-    for it in items:
-        if it["kind"] == "heading":
-            if cur["rows"] or cur["notes"] or cur["heading"]:
-                groups.append(cur)
-            cur = {"heading": it["text"], "rows": [], "notes": []}
-        elif it["kind"] == "row":
-            cur["rows"].append(it)
-        else:
-            cur["notes"].append(it["text"])
-    groups.append(cur)
+    parts: list[str] = []
+    rows: list[dict] = []
 
-    parts = []
-    for g in groups:
-        if g["heading"]:
+    def flush() -> None:
+        if not rows:
+            return
+        parts.append(f'            <dl style="{DL}">')
+        for i, r in enumerate(rows):
+            color = "var(--gold-pale)" if r["label"].lower().startswith("conclusion") else None
+            dt_c = color or "var(--ink)"
+            dd_c = color or "var(--fuchsia-hi)"
+            border = "" if i == len(rows) - 1 else " border-bottom: 1px solid var(--line);"
+            label = r["label"].replace("&", '<span class="amp">&amp;</span>')
+            small = (f'\n                        <small style="{SMALL}">{r["note"]}</small>'
+                     if r["note"] else "")
+            dd = (f'\n                    <dd style="margin: 0; font-family: var(--font-display); font-size: 1.05rem; color: {dd_c}; letter-spacing: 0.06em; text-align: right; white-space: nowrap;">{r["time"]}</dd>'
+                  if r["time"] else "")
+            parts.append(f'''                <div class="row" style="{ROW}{border}">
+                    <dt style="font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: 1.1rem; color: {dt_c}; margin: 0;">{label}{small}
+                    </dt>{dd}
+                </div>''')
+        parts.append("            </dl>")
+        rows.clear()
+
+    for it in items:
+        if it["kind"] == "row":
+            rows.append(it)
+            continue
+        flush()
+        if it["kind"] == "heading":
+            text = it["text"].replace("&", '<span class="amp">&amp;</span>')
+            if " — " in text:
+                big, rest = text.split(" — ", 1)
+                text = (f'<span style="font-size: 0.95rem;">{mid(big)}</span>'
+                        f'<span class="mid"> — </span>'
+                        f'<span style="color: var(--ink-mute); letter-spacing: 0.16em;">{mid(rest)}</span>')
+            else:
+                text = mid(text)
             parts.append('            <p style="font-family: var(--font-display); '
                          'text-transform: uppercase; letter-spacing: 0.22em; '
                          'color: var(--gold-pale); font-size: 0.72rem; margin: 1.5rem 0 0.7rem;">'
-                         + mid(g["heading"].replace("&", '<span class="amp">&amp;</span>')) + "</p>")
-        if g["rows"]:
-            parts.append(f'            <dl style="{DL}">')
-            for i, r in enumerate(g["rows"]):
-                color = "var(--gold-pale)" if r["label"].startswith("Conclusion") else None
-                dt_c = color or "var(--ink)"
-                dd_c = color or "var(--fuchsia-hi)"
-                border = "" if i == len(g["rows"]) - 1 else " border-bottom: 1px solid var(--line);"
-                label = r["label"].replace("&", '<span class="amp">&amp;</span>')
-                small = (f'\n                        <small style="{SMALL}">{r["note"]}</small>'
-                         if r["note"] else "")
-                parts.append(f'''                <div class="row" style="{ROW}{border}">
-                    <dt style="font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: 1.1rem; color: {dt_c}; margin: 0;">{label}{small}
-                    </dt>
-                    <dd style="margin: 0; font-family: var(--font-display); font-size: 1.05rem; color: {dd_c}; letter-spacing: 0.06em; text-align: right; white-space: nowrap;">{r["time"]}</dd>
-                </div>''')
-            parts.append("            </dl>")
-        for n in g["notes"]:
+                         + text + "</p>")
+        elif it["kind"] == "bar":
+            parts.append('            <div aria-hidden="true" style="height: 24px; margin: 1.5rem 0 0.3rem; '
+                         'background-image: url(/assets/images/pimpernel.jpg); background-size: 280px; '
+                         'background-repeat: repeat; border-top: 2px solid var(--gold-deep); '
+                         'border-bottom: 2px solid var(--gold-deep);"></div>')
+        else:
             parts.append('            <p style="margin: 0.7rem 0 0; font-family: var(--font-serif); '
-                         f'font-style: italic; color: var(--ink-soft); font-size: 0.95rem;">{n}</p>')
+                         f'font-style: italic; color: var(--ink-soft); font-size: 0.95rem;">{it["text"]}</p>')
+    flush()
     return "\n".join(parts)
 
 
@@ -735,7 +793,7 @@ def render_services_fragments(ctx: dict) -> dict:
     # so the weekly section skips the guest box then (no doubling).
     guest = "" if ctx.get("no_services") else guest_notice_web(ctx)
     weekly = f'''{banner_web(ctx)}{guest}    <section class="schedule" aria-label="Times for this Shabbat">
-        <p class="schedule-note">{mid(ctx["times_heading"])}</p>
+        <p class="schedule-note">{split_heading_web(ctx["times_heading"])}</p>
         <dl>
 {times_rows_html(ctx)}
         </dl>
@@ -760,9 +818,20 @@ def e_disp(text: str) -> str:
     """Glyphs the display face lacks (– & · °) set in the serif instead,
     the email counterpart of the site's .amp/.mid spans."""
     span = '<span style="font-family:Georgia,serif; font-style:italic;">{}</span>'
-    for glyph in ("–", "&amp;", "·", "°"):
+    for glyph in ("–", "—", "&amp;", "·", "°"):
         text = text.replace(glyph, span.format(glyph))
     return text
+
+
+def split_heading_email(text: str) -> str:
+    """Email counterpart of split_heading_web: larger before the em-dash,
+    muted normal after it."""
+    if " — " in text:
+        big, rest = text.split(" — ", 1)
+        return (f'<span style="font-size:14px;">{e_disp(big)}</span>'
+                f'<span style="font-family:Georgia,serif;"> — </span>'
+                f'<span style="color:{E_MUTE};">{e_disp(rest)}</span>')
+    return e_disp(text)
 
 
 def e_h2(text: str) -> str:
@@ -790,6 +859,14 @@ def e_p(html_text: str, color: str = E_INK, italic: bool = False, size: int = 14
 def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     times = []
     for label, small, value, final in ctx["times"]:
+        if not label and not value:
+            # A description row (e.g. the Fast of Gedalia note).
+            times.append(f"""      <tr>
+        <td colspan="2" style="padding:8px 0 3px; border-bottom:1px solid {E_LINE};">
+          <div style="font-family:{SERIF}; font-style:italic; font-size:11px; line-height:1.6; color:{E_MUTE};">{small}</div>
+        </td>
+      </tr>""")
+            continue
         color = E_GOLD_PALE if final else E_INK
         vcolor = E_GOLD_PALE if final else E_FUCHSIA
         times.append(f"""      <tr>
@@ -804,22 +881,19 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
 
     sections = []
     if ctx["readings"]:
-        single = len(ctx["readings"]) == 1
         sections.append(e_h2("Torah Reading &amp; Haftarah"))
+        placed_torah = placed_haft = False
         for r in ctx["readings"]:
             sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
-            if single and ctx.get("torah_summary"):
+            if not placed_torah and ctx.get("torah_summary"):
                 sections.append(e_p(ctx["torah_summary"]))
+                placed_torah = True
             if r["haftarah"]:
                 sections.append(e_p(r["haftarah"].replace(
                     "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
-            if single and ctx.get("haftarah_summary"):
-                sections.append(e_p(ctx["haftarah_summary"]))
-        if not single:
-            if ctx.get("torah_summary"):
-                sections.append(e_p(ctx["torah_summary"]))
-            if ctx.get("haftarah_summary"):
-                sections.append(e_p(ctx["haftarah_summary"]))
+                if not placed_haft and ctx.get("haftarah_summary"):
+                    sections.append(e_p(ctx["haftarah_summary"]))
+                    placed_haft = True
     if ctx["observances"]:
         sections.append(e_h2("In the Week Ahead"))
         for o in ctx["observances"]:
@@ -852,7 +926,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         for it in ctx["service_times"]:
             if it["kind"] == "heading":
                 rows.append(f"""      <tr><td colspan="2" style="padding:18px 0 3px;">
-          <div class="display" style="font-family:{SERIF}; font-size:11px; letter-spacing:2px; color:{E_GOLD_PALE}; text-transform:uppercase;">{e_disp(it['text'].replace('&', '&amp;'))}</div>
+          <div class="display" style="font-family:{SERIF}; font-size:11px; letter-spacing:2px; color:{E_GOLD_PALE}; text-transform:uppercase;">{split_heading_email(it['text'].replace('&', '&amp;'))}</div>
         </td></tr>""")
                 continue
             if it["kind"] == "note":
@@ -860,6 +934,13 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
           <div style="font-family:{SERIF}; font-style:italic; font-size:12px; color:{E_SOFT};">{it['text']}</div>
         </td></tr>""")
                 continue
+            if it["kind"] == "bar":
+                rows.append(f"""      <tr><td colspan="2" style="padding:16px 0 2px;">
+          <img src="{base}/bulletin/assets/bar-pimpernel.jpg" width="548" alt="" style="display:block; width:100%; height:auto; border-top:2px solid #856a2e; border-bottom:2px solid #856a2e;">
+        </td></tr>""")
+                continue
+            time_html = (f'<div class="display" style="font-family:{SERIF}; font-size:14px; '
+                         f'letter-spacing:1px; color:{E_FUCHSIA};">{it["time"]}</div>') if it["time"] else ""
             note_html = (f'<div style="font-family:{SERIF}; font-style:italic; font-size:11px; '
                          f'color:{E_MUTE}; padding:2px 0 8px;">{it["note"]}</div>') if it["note"] else ""
             rows.append(f"""      <tr>
@@ -868,7 +949,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
           {note_html}
         </td>
         <td align="right" valign="top" style="padding:11px 0 2px; border-bottom:1px solid {E_LINE};">
-          <div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:1px; color:{E_FUCHSIA};">{it['time']}</div>
+          {time_html}
         </td>
       </tr>""")
         svc = (f'  <tr><td style="padding:24px 26px 0;">\n'
@@ -954,7 +1035,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)
-        .replace("{{TIMES_HEADING}}", e_disp(ctx["times_heading"]))
+        .replace("{{TIMES_HEADING}}", split_heading_email(ctx["times_heading"]))
         .replace("{{TIMES_ROWS}}", "\n".join(times))
         .replace("{{SERVICE_TIMES}}", svc)
         .replace("{{SECTIONS}}", "".join(sections))
@@ -978,10 +1059,6 @@ def render_text(ctx: dict) -> str:
         lines += [ctx["banner"]["heading"]] + ctx["banner"]["lines"] + [""]
     if ctx["guest_text"]:
         lines += [ctx["guest_text"], ""]
-    lines.append(ctx["times_heading"].replace("°", ""))
-    for label, small, value, _final in ctx["times"]:
-        lines.append(f"{label}: {value}  ({small})")
-    lines.append("")
     if ctx.get("service_times"):
         lines.append("SERVICE TIMES FOR KEHILLAH KEDOSHAH ZIKHRON ZVI")
         for it in ctx["service_times"]:
@@ -989,19 +1066,33 @@ def render_text(ctx: dict) -> str:
                 lines.append(it["text"].upper())
             elif it["kind"] == "note":
                 lines.append(it["text"])
-            else:
+            elif it["kind"] == "bar":
+                lines.append("- - - - -")
+            elif it["time"]:
                 lines.append(f"{it['label']}: {it['time']}")
+            else:
+                lines.append(it["label"])
         lines.append("")
+    lines.append(ctx["times_heading"].replace("°", ""))
+    for label, small, value, _final in ctx["times"]:
+        if not label and not value:
+            lines.append(small)
+        else:
+            lines.append(f"{label}: {value}  ({small})")
+    lines.append("")
     if ctx["readings"]:
         lines.append("TORAH READING & HAFTARAH")
+        placed_torah = placed_haft = False
         for r in ctx["readings"]:
             lines.append(f"{r['name']}, {r['range']}.")
+            if not placed_torah and ctx.get("torah_summary"):
+                lines.append(ctx["torah_summary"])
+                placed_torah = True
             if r["haftarah"]:
                 lines.append(r["haftarah"])
-        if ctx.get("torah_summary"):
-            lines.append(ctx["torah_summary"])
-        if ctx.get("haftarah_summary"):
-            lines.append(ctx["haftarah_summary"])
+                if not placed_haft and ctx.get("haftarah_summary"):
+                    lines.append(ctx["haftarah_summary"])
+                    placed_haft = True
         lines.append("")
     if ctx["observances"]:
         lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]

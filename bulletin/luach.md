@@ -80,6 +80,20 @@ bulletin/service-times/<festival>.md — Rosh Hashana's, given by Marc
 block on the services page is program-managed the same way (spliced at
 publish between weekly-schedule markers).
 
+Layout of the service-times block (Marc's direction, 7 September 2026):
+the block sits directly under the banner, before the halakhic times.
+File format, rendered strictly in file order: "# BIG — normal" headings
+(the part before the em-dash set larger); "Label = time | description"
+rows; "Label =" with no time for a label-only row (BREAK); "* note"
+paragraphs wherever they fall; "---" for a William Morris separation bar
+(the pimpernel pattern; the email uses bar-pimpernel.jpg). The halakhic
+times block is headed "Halakhic (Ritual) Times — Poughkeepsie, NY 41.70 N
+73.92 W", split the same way. A fast named in FAST_NOTES (bulletin.py)
+carries a tiny description under its rows — the Fast of Gedalia text is
+Marc's own. In the readings section each interpretation sits directly
+under what it interprets: the Torah summary under the first portion, the
+haftarah summary under the first haftarah.
+
 Weeks with no services (settled 4 September 2026): the service times do
 not appear anywhere, and a line in red states, verbatim: No services will
 be held this week
