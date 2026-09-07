@@ -158,6 +158,16 @@ or name is asked for in that banner line, not guessed. (Widened from
 teachings-only at Marc's direction, 7 September 2026, after his greeting
 corrections on the Rosh Hashana proof changed nothing.)
 
+Localized bulletin sends (Marc's commission, 7 September 2026,
+program/localized_send.py + the localized-send workflow): the current
+PUBLISHED bulletin, complete with banner and greetings, sent to a family
+member's own tag segment with the KKZZ service times dropped and the
+halakhic times, their heading, and the subject recomputed for that
+member's sky (Ari at Tufts, Misha and Gabi in Philadelphia, Mom in New
+York). Teachings come from the published state, never redrafted. Manual
+workflow only; proof by default, live at Marc's word. First used for
+Rosh Hashana 5787.
+
 Sister congregations
 
 Congregation Shearith Israel, New York — Kippur, by default.
