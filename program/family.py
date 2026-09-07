@@ -135,6 +135,8 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
     ctx["kiddush"] = []
     ctx["announcements"] = []
     ctx["guest_text"] = None
+    ctx["banner"] = None       # congregational outreach, not for the family letters
+    ctx["greetings"] = []
     ctx["skip_empty_reflections"] = True
     ctx["skip_membership"] = True
     ctx["center_masthead"] = True

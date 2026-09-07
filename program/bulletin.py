@@ -158,6 +158,37 @@ def service_times(cluster: dict | None = None) -> list[dict]:
     return out
 
 
+def load_banner() -> dict | None:
+    """First line = heading, rest = answer lines; None when empty."""
+    path = ROOT / "bulletin" / "banner.md"
+    if not path.exists():
+        return None
+    lines = [l.strip() for l in strip_comments(path.read_text()).splitlines() if l.strip()]
+    if not lines:
+        return None
+    return {"heading": lines[0], "lines": lines[1:]}
+
+
+def load_greetings(cluster: dict | None) -> list[dict]:
+    """Festival greetings (Language | dir | script | translit | English)
+    from bulletin/greetings/<festival>.md, when the file exists."""
+    if not cluster:
+        return []
+    slug_name = re.sub(r"[^a-z0-9]+", "-", cluster["name"].lower()).strip("-")
+    path = ROOT / "bulletin" / "greetings" / f"{slug_name}.md"
+    if not path.exists():
+        return []
+    out = []
+    for line in strip_comments(path.read_text()).splitlines():
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) >= 5 and parts[2]:
+            out.append({"language": parts[0], "dir": parts[1] or "ltr",
+                        "script": parts[2],
+                        "translit": "" if parts[3] in ("", "—", "-") else parts[3],
+                        "english": parts[4]})
+    return out
+
+
 def observance_lines(sat: date, events: list[dict],
                      lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list[str]:
     out = []
@@ -394,6 +425,8 @@ def build_context(sat: date) -> dict:
         "lede": lede,
         "guest_text": guest_text,
         "no_services": no_services,
+        "banner": load_banner(),
+        "greetings": load_greetings(cluster),
         "times": times,
         "times_heading": times_heading,
         "reflections_heading": reflections_heading,
@@ -543,6 +576,44 @@ def service_times_web(ctx: dict) -> str:
 NO_SERVICES_RED = "#ff6b6b"
 
 
+def banner_web(ctx: dict) -> str:
+    b = ctx.get("banner")
+    if not b:
+        return ""
+    first = b["lines"][0] if b["lines"] else ""
+    rest = "".join(
+        f'\n            <p style="margin: 0.55rem 0 0; font-family: var(--font-serif); '
+        f'font-style: italic; font-variation-settings: \'opsz\' 24, \'wght\' 400; '
+        f'font-size: 1.08rem; color: var(--ink-soft);">{l}</p>'
+        for l in b["lines"][1:])
+    return f'''    <section class="schedule" aria-label="{b["heading"]}">
+        <div class="upcoming-dates" style="border-left-color: var(--fuchsia);">
+            <p class="upcoming-month">{mid(b["heading"])}</p>
+            <p class="upcoming-list">{mid(first)}</p>{rest}
+        </div>
+    </section>
+'''
+
+
+def greetings_web(ctx: dict) -> str:
+    gs = ctx.get("greetings") or []
+    if not gs:
+        return ""
+    LANG = ("font-family: var(--font-display); text-transform: uppercase; "
+            "letter-spacing: 0.22em; font-size: 0.62rem; color: var(--gold);")
+    rows = []
+    for g in gs:
+        translit = f'<em>{g["translit"]}</em> · ' if g["translit"] else ""
+        rows.append(f'''        <p style="margin: 1.15rem 0 0; text-align: center;">
+            <span dir="{g["dir"]}" style="font-size: 1.35rem; line-height: 1.5; color: var(--ink);">{g["script"]}</span><br>
+            <span style="{LANG}">{g["language"]}</span>
+            <span style="font-family: var(--font-serif); font-size: 0.88rem; color: var(--ink-mute);"> — {translit}{g["english"]}</span>
+        </p>''')
+    return ('    <section class="schedule" aria-label="Greetings of the New Year">\n'
+            '        <p class="schedule-note" style="text-align: center;">Greetings of the New Year</p>\n'
+            + "\n".join(rows) + "\n    </section>\n")
+
+
 def guest_notice_web(ctx: dict) -> str:
     if not ctx["guest_text"]:
         return ""
@@ -571,6 +642,8 @@ def render_web(ctx: dict) -> Path:
         .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
         .replace("{{TITLE}}", mid(ctx["title"]))
         .replace("{{LEDE}}", mid(ctx["lede"]))
+        .replace("{{BANNER}}", banner_web(ctx))
+        .replace("{{GREETINGS}}", greetings_web(ctx))
         .replace("{{GUEST_NOTICE}}", guest)
         .replace("{{TIMES_HEADING}}", mid(ctx["times_heading"]))
         .replace("{{SERVICE_TIMES}}", service_times_web(ctx))
@@ -661,7 +734,7 @@ def render_services_fragments(ctx: dict) -> dict:
     # The no-services red line lives in the schedule fragment on this page,
     # so the weekly section skips the guest box then (no doubling).
     guest = "" if ctx.get("no_services") else guest_notice_web(ctx)
-    weekly = f'''{guest}    <section class="schedule" aria-label="Times for this Shabbat">
+    weekly = f'''{banner_web(ctx)}{greetings_web(ctx)}{guest}    <section class="schedule" aria-label="Times for this Shabbat">
         <p class="schedule-note">{mid(ctx["times_heading"])}</p>
         <dl>
 {times_rows_html(ctx)}
@@ -803,6 +876,42 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
                f'    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n'
                + "\n".join(rows) + "\n    </table>\n  </td></tr>\n")
 
+    banner = ""
+    b = ctx.get("banner")
+    if b:
+        first = b["lines"][0] if b["lines"] else ""
+        rest = "".join(
+            f'<div style="font-family:{SERIF}; font-style:italic; font-size:14px; '
+            f'line-height:1.6; color:{E_SOFT}; padding-top:6px;">{l}</div>'
+            for l in b["lines"][1:])
+        banner = (f'  <tr><td style="padding:22px 26px 0;">'
+                  f'<div style="border:1px solid {E_LINE}; border-left:3px solid #c75889; '
+                  f'background-color:#240a1c; padding:16px 18px;">'
+                  f'<div class="display" style="font-family:{SERIF}; font-size:10px; '
+                  f'letter-spacing:3px; color:{E_GOLD}; text-transform:uppercase;">{e_disp(b["heading"])}</div>'
+                  f'<div class="display" style="font-family:{SERIF}; font-size:16px; '
+                  f'letter-spacing:1px; color:{E_INK}; text-transform:uppercase; '
+                  f'padding-top:7px;">{e_disp(first)}</div>{rest}</div></td></tr>\n')
+
+    greetings = ""
+    if ctx.get("greetings"):
+        items = []
+        for g in ctx["greetings"]:
+            translit = f'<em>{g["translit"]}</em> · ' if g["translit"] else ""
+            items.append(
+                f'<div style="padding-top:13px;">'
+                f'<div dir="{g["dir"]}" style="font-family:{SERIF}; font-size:20px; '
+                f'line-height:1.5; color:{E_INK};">{g["script"]}</div>'
+                f'<div style="font-family:{SERIF}; font-size:11px; color:{E_MUTE}; padding-top:2px;">'
+                f'<span class="display" style="font-family:{SERIF}; font-size:9px; letter-spacing:2px; '
+                f'text-transform:uppercase; color:{E_GOLD};">{g["language"]}</span>'
+                f' — {translit}{g["english"]}</div></div>')
+        greetings = (f'  <tr><td align="center" style="padding:24px 26px 0; text-align:center;">'
+                     f'<div class="display" style="font-family:{SERIF}; font-size:10px; '
+                     f'letter-spacing:2px; color:{E_GOLD}; text-transform:uppercase; '
+                     f'padding-bottom:2px;">Greetings of the New Year</div>'
+                     + "".join(items) + "</td></tr>\n")
+
     guest = ""
     if ctx.get("no_services"):
         guest = (f'  <tr><td style="padding:18px 26px 0;">'
@@ -838,6 +947,8 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
             "&mdash;&nbsp;&nbsp;" + ctx.get("eyebrow", "Weekly Bulletin") + "</div>"))
         .replace("{{EYEBROW_EXTRA}}", ctx.get("eyebrow_extra_html", ""))
         .replace("{{MASTHEAD_ALIGN}}", "center" if ctx.get("center_masthead") else "left")
+        .replace("{{BANNER}}", banner)
+        .replace("{{GREETINGS}}", greetings)
         .replace("{{TITLE}}", e_disp(ctx["title"]))
         .replace("{{LEDE}}", ctx["lede"])
         .replace("{{GUEST_NOTICE}}", guest)
@@ -861,6 +972,14 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
 
 def render_text(ctx: dict) -> str:
     lines = ["KEHILLAH KEDOSHAH ZIKHRON ZVI — WEEKLY BULLETIN", "", ctx["title"], ctx["lede"], ""]
+    if ctx.get("banner"):
+        lines += [ctx["banner"]["heading"]] + ctx["banner"]["lines"] + [""]
+    if ctx.get("greetings"):
+        lines.append("GREETINGS OF THE NEW YEAR")
+        for g in ctx["greetings"]:
+            t = f" ({g['translit']})" if g["translit"] else ""
+            lines.append(f"{g['language']}: {g['script']}{t} — {g['english']}")
+        lines.append("")
     if ctx["guest_text"]:
         lines += [ctx["guest_text"], ""]
     lines.append(ctx["times_heading"].replace("°", ""))

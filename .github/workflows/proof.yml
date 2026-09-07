@@ -70,7 +70,14 @@ jobs:
           elif [ -n "$INPUT_SHABBAT" ]; then
             echo "id=$INPUT_SHABBAT" >> "$GITHUB_OUTPUT"
           else
-            echo "id=$(TZ=America/New_York python3 -c 'from datetime import date,timedelta;t=date.today();print((t+timedelta(days=(5-t.weekday())%7)).isoformat())')" >> "$GITHUB_OUTPUT"
+            ID=$(TZ=America/New_York python3 -c 'from datetime import date,timedelta;t=date.today();print((t+timedelta(days=(5-t.weekday())%7)).isoformat())')
+            CUR_ID=$(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['id'])" 2>/dev/null || echo "")
+            if [ "$ID" = "$CUR_ID" ]; then
+              echo "a proof for $ID already exists (built early or already approved); not rebuilding"
+              echo "id=" >> "$GITHUB_OUTPUT"
+            else
+              echo "id=$ID" >> "$GITHUB_OUTPUT"
+            fi
           fi
       - name: Build the proof
         if: steps.decide.outputs.id != ''
