@@ -734,7 +734,7 @@ def render_services_fragments(ctx: dict) -> dict:
     # The no-services red line lives in the schedule fragment on this page,
     # so the weekly section skips the guest box then (no doubling).
     guest = "" if ctx.get("no_services") else guest_notice_web(ctx)
-    weekly = f'''{banner_web(ctx)}{greetings_web(ctx)}{guest}    <section class="schedule" aria-label="Times for this Shabbat">
+    weekly = f'''{banner_web(ctx)}{guest}    <section class="schedule" aria-label="Times for this Shabbat">
         <p class="schedule-note">{mid(ctx["times_heading"])}</p>
         <dl>
 {times_rows_html(ctx)}
@@ -743,7 +743,9 @@ def render_services_fragments(ctx: dict) -> dict:
 
     <section class="prose" aria-label="Readings, observances, and teachings">
 {chr(10).join(build_body(ctx))}
-    </section>'''
+    </section>
+
+{greetings_web(ctx)}'''
     return {"parashah_box": box, "weekly": weekly,
             "schedule": services_schedule_fragment(ctx)}
 
@@ -974,12 +976,6 @@ def render_text(ctx: dict) -> str:
     lines = ["KEHILLAH KEDOSHAH ZIKHRON ZVI — WEEKLY BULLETIN", "", ctx["title"], ctx["lede"], ""]
     if ctx.get("banner"):
         lines += [ctx["banner"]["heading"]] + ctx["banner"]["lines"] + [""]
-    if ctx.get("greetings"):
-        lines.append("GREETINGS OF THE NEW YEAR")
-        for g in ctx["greetings"]:
-            t = f" ({g['translit']})" if g["translit"] else ""
-            lines.append(f"{g['language']}: {g['script']}{t} — {g['english']}")
-        lines.append("")
     if ctx["guest_text"]:
         lines += [ctx["guest_text"], ""]
     lines.append(ctx["times_heading"].replace("°", ""))
@@ -1021,6 +1017,12 @@ def render_text(ctx: dict) -> str:
     for head, key, kind in (("Halakha", "halakha", "halakhic"), ("Aggada", "aggada", "aggadic")):
         lines.append(head)
         lines.append(re.sub(r"<[^>]+>", "", ctx[key]) if ctx[key] else f"({PLACEHOLDER.format(kind=kind)})")
+        lines.append("")
+    if ctx.get("greetings"):
+        lines.append("GREETINGS OF THE NEW YEAR")
+        for g in ctx["greetings"]:
+            t = f" ({g['translit']})" if g["translit"] else ""
+            lines.append(f"{g['language']}: {g['script']}{t} — {g['english']}")
         lines.append("")
     lines += [
         "Torah readings and calendar data by Hebcal.com (CC BY 4.0). Times are",
