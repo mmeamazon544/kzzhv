@@ -7,8 +7,12 @@ step later ships exactly these bytes), updates bulletin/state/current.json,
 and mails the proof — the finished email with an approval banner on top —
 to the Proof segment (Marc alone).
 
-Change requests pass extra instructions through --instructions; the
-teachings drafting sees them.
+Change requests pass extra instructions through --instructions. Two
+things happen with them: the content files Marc owns (banner,
+announcements, location, service times, greetings) are edited to match,
+and the teachings drafting sees them. What neither path can do — layout,
+templates, program behavior — is reported back in the fresh proof's
+banner so Marc knows to bring it to Claude directly.
 
 Two phases, because the proof email links to the PNG/PDF at their
 raw.githubusercontent URLs, which exist only after the workflow commits:
@@ -36,14 +40,126 @@ from mailchimp_send import send as mailchimp_send
 ROOT = Path(__file__).resolve().parent.parent
 RAW = "https://raw.githubusercontent.com/mmeamazon544/kzzhv/main"
 
+# ------------------------------------------------------- change requests --
+# Files the Request-changes box may edit: the content Marc owns. Never
+# templates, never program code — those changes go to Claude directly and
+# the proof banner says so.
+CONTENT_FILES = ["bulletin/banner.md", "bulletin/announcements.md",
+                 "bulletin/location.md", "bulletin/service-times.md"]
+CONTENT_DIRS = ["bulletin/service-times", "bulletin/greetings"]
 
-def banner(bulletin_id: str, rev: str, title: str) -> str:
+CHANGES_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "edits": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {"path": {"type": "string"},
+                               "content": {"type": "string"}},
+                "required": ["path", "content"],
+                "additionalProperties": False,
+            },
+        },
+        "not_done": {"type": "string"},
+    },
+    "required": ["edits", "not_done"],
+    "additionalProperties": False,
+}
+
+
+def editable_files() -> list[str]:
+    paths = [p for p in CONTENT_FILES if (ROOT / p).exists()]
+    for d in CONTENT_DIRS:
+        base = ROOT / d
+        if base.is_dir():
+            paths += sorted(str(p.relative_to(ROOT)) for p in base.glob("*.md"))
+    return paths
+
+
+def path_allowed(rel: str) -> bool:
+    if ".." in rel or rel.startswith("/"):
+        return False
+    if rel in CONTENT_FILES:
+        return True
+    return any(rel.startswith(d + "/") and rel.endswith(".md")
+               for d in CONTENT_DIRS)
+
+
+def apply_instructions(instructions: str) -> str:
+    """Edit the content files to match Marc's change request. Returns a
+    plain-English note of whatever the request asked for that these files
+    cannot carry (layout, templates, program behavior), '' when nothing."""
+    import teachings as t
+
+    files = editable_files()
+    listing = "\n\n".join(
+        f"=== {p} ===\n{(ROOT / p).read_text()}" for p in files)
+    prompt = f"""You maintain the content files of the weekly bulletin of Kehillah
+Kedoshah Zikhron Zvi. Marc, who runs the congregation, pressed "Request
+changes" on a proof and wrote:
+
+{instructions}
+
+Below are the content files you may edit, with their current contents.
+Each file's opening comment states its own format; keep formats exactly.
+Return, as edits, the complete new text of only the files that must
+change (path exactly as given). You may also create a new file under
+bulletin/service-times/ or bulletin/greetings/ if the request calls for
+one, following the format of its siblings.
+
+Rules:
+- Never invent facts. If the request needs a time, name, text, or
+  greeting Marc did not supply and the files do not contain, do not
+  guess — put that part in not_done, asking him plainly for it.
+- Requests about the divrei torah / teachings / reflections are handled
+  by a separate drafting step that also sees his instructions; do not
+  list those in not_done and do not try to act on them here.
+- Anything about layout, design, typography, templates, the program's
+  behavior, or publishing cannot be done from here: describe it briefly
+  and plainly in not_done (it will be shown to Marc so he can bring it
+  to Claude). If everything is handled, not_done is an empty string.
+
+{listing}"""
+    try:
+        r = t._create(
+            max_tokens=8000,
+            output_config={"format": {"type": "json_schema", "schema": CHANGES_SCHEMA}},
+            messages=[{"role": "user", "content": prompt}],
+        )
+        out = t._json_out(r)
+    except Exception as e:
+        # The proof must still arrive: the teachings drafting sees the
+        # instructions regardless; only the file edits are lost.
+        print(f"change-request applier failed: {e}")
+        return ("the automatic change step failed this round, so nothing in the "
+                "times, announcements, banner, or greetings was edited. "
+                "Tell Claude what should change.")
+    for e in out.get("edits", []):
+        rel = e["path"].strip()
+        if not path_allowed(rel):
+            print(f"change-request edit to {rel} refused (outside the content files)")
+            continue
+        (ROOT / rel).write_text(e["content"])
+        print(f"change request edited {rel}")
+    note = out.get("not_done", "").strip()
+    if note:
+        print(f"change request, not done from here: {note}")
+    return note
+
+
+def banner(bulletin_id: str, rev: str, title: str, note: str = "") -> str:
     approve, changes = proof_links.links(bulletin_id, rev)
     png = f"{RAW}/bulletin/state/{bulletin_id}/proof.png"
     pdf = f"{RAW}/bulletin/state/{bulletin_id}/proof.pdf"
     btn = ("display:inline-block; font-family:Georgia,serif; letter-spacing:2px; "
            "text-transform:uppercase; font-size:13px; padding:12px 22px; "
            "text-decoration:none; margin:6px 10px 6px 0;")
+    note_html = ""
+    if note:
+        note_html = (f'\n  <div style="font-family:Georgia,serif; font-size:12px; '
+                     f'color:#e6c780; padding-top:10px; max-width:520px;">'
+                     f'Not changed from this proof cycle — bring it to Claude: {note}</div>')
     return f"""<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#240a1c; border-bottom:3px solid #c79f50;">
 <tr><td align="center" style="padding:18px 20px;">
   <div style="font-family:Georgia,serif; font-size:12px; letter-spacing:3px; color:#c79f50; text-transform:uppercase;">Proof — not yet published</div>
@@ -54,7 +170,7 @@ def banner(bulletin_id: str, rev: str, title: str) -> str:
   </div>
   <div style="font-family:Georgia,serif; font-size:11px; color:#9a7273; padding-top:6px;">
     The web page: <a href="{png}" style="color:#e6c780;">PNG</a> &nbsp;·&nbsp; <a href="{pdf}" style="color:#e6c780;">PDF</a>
-  </div>
+  </div>{note_html}
 </td></tr></table>
 """
 
@@ -90,11 +206,14 @@ def send_only() -> None:
     bulletin_id, rev = current["id"], current["rev"]
     state = ROOT / "bulletin" / "state" / bulletin_id
     email_html = (state / "email.html").read_text()
+    note = current.get("note", "")
     proof_html = re.sub(
-        r"(<body[^>]*>)", r"\1\n" + banner(bulletin_id, rev, current["subject"]),
+        r"(<body[^>]*>)",
+        r"\1\n" + banner(bulletin_id, rev, current["subject"], note),
         email_html, count=1)
     approve, changes = proof_links.links(bulletin_id, rev)
-    proof_text = (f"PROOF — approve: {approve}\nrequest changes: {changes}\n\n"
+    note_text = f"Not changed from this proof cycle — bring it to Claude: {note}\n" if note else ""
+    proof_text = (f"PROOF — approve: {approve}\nrequest changes: {changes}\n{note_text}\n"
                   + (state / "email.txt").read_text())
     cid = mailchimp_send(f"PROOF: {current['subject']}", proof_html, proof_text, proof=True)
     print(f"proof email for {bulletin_id} rev {rev}: campaign {cid} to Marc only")
@@ -113,6 +232,8 @@ def main() -> None:
     sat = date.fromisoformat(args[0])
     bulletin_id = sat.isoformat()
     rev = datetime.now(ZoneInfo("America/New_York")).strftime("%Y%m%dT%H%M%S")
+
+    note = apply_instructions(instructions) if instructions else ""
 
     ctx = bulletin.build_context(sat)
     week = week_description(ctx)
@@ -143,6 +264,8 @@ def main() -> None:
         "title": ctx["title"], "subject": f"{ctx['title']} · {greg}",
         "proofed_at": rev,
     }
+    if note:
+        current["note"] = note
     (ROOT / "bulletin" / "state" / "current.json").write_text(
         json.dumps(current, indent=1) + "\n")
     print(f"proofed {bulletin_id} rev {rev}; commit, then --send-only")

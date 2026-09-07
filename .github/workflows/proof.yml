@@ -99,7 +99,8 @@ jobs:
           set -o pipefail
           git config user.name "kkzz-bulletin"
           git config user.email "shabbat@kzzhv.org"
-          git add bulletin/state
+          # Content-file edits from a change request commit with the state.
+          git add bulletin
           git commit -m "Proof ${{ steps.decide.outputs.id }}"
           # The build renders site/bulletin/index.html as a side effect; the
           # publish step later ships it from state. Discard it so the rebase

@@ -30,9 +30,12 @@ export default async function handler(req) {
 
   return page("Request changes", `
 <h1>Request Changes</h1>
-<p>Bulletin for <strong>${id}</strong>. Say what should change, in plain English.</p>
+<p>Bulletin for <strong>${id}</strong>. Say what should change, in plain English.
+Service times, announcements, the banner, greetings, and the teachings can all
+change from here. Page design and layout changes need Claude directly — the
+fresh proof will say so if part of a request lands there.</p>
 <form method="POST">
-  <textarea name="instructions" autofocus placeholder="e.g. Move the memorial notice above the class listing; cite the Zohar passage instead of the midrash."></textarea>
+  <textarea name="instructions" autofocus placeholder="e.g. Musaf at 11:15, not 11:00; add an announcement about the sukka raising; make the halakha teaching shorter."></textarea>
   <button type="submit">Send and regenerate</button>
 </form>`);
 }

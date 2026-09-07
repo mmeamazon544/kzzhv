@@ -122,6 +122,16 @@ not yet approved. (Moved from Thursday to Wednesday at Marc's direction,
 3 September 2026.) Festivals and fasts: same pattern, proof at 6:00 am two
 days before the eve. Nothing is ever published or sent without approval.
 
+Request changes on a proof: the box's instructions edit the content files
+Marc owns — banner, announcements, location, service times, greetings —
+and reach the teachings drafting; a fresh proof follows, again to Marc
+alone. Layout, template, and program changes are outside the box's reach:
+the fresh proof's banner names whatever a request asked for that must go
+to Claude directly. The change step never invents facts — a missing time
+or name is asked for in that banner line, not guessed. (Widened from
+teachings-only at Marc's direction, 7 September 2026, after his greeting
+corrections on the Rosh Hashana proof changed nothing.)
+
 Sister congregations
 
 Congregation Shearith Israel, New York — Kippur, by default.
