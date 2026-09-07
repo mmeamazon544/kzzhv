@@ -1,31 +1,31 @@
 {
  "plan": {
-  "halakhic_topic": "Shofar on the first day of Rosh Hashana when it falls on Shabbat: why no tekiot are sounded on Saturday 12 September, how the mitzvah is fulfilled on the second day, and Western Sephardic practice regarding the placement of the tekiot (before and within Musaf, and after Musaf) and the shofar-blower's blessings",
+  "halakhic_topic": "Rosh Hashana whose first day is Shabbat: why no shofar is sounded on Saturday, what stands in its place in the Shabbat Musaf, and how the Western Sephardic congregations order the tekiot on Sunday, the second day",
   "kst_queries": [
-   "laws and customs of the Tekingot",
+   "Rosh Hashana Shaharit \u2014 laws and customs of the Tekingot",
    "Tekingot after Musaf",
-   "Rosh Hashana Shaharit Torah readings and Haftara"
+   "Rosh HaShanah Musaf \u2014 Ngalenu, Malkhiyot, Zikhronot, Shofarot"
   ],
   "sefaria_refs_halakha": [
    "Mishneh Torah, Shofar, Sukkah and Lulav 1:1",
-   "Mishneh Torah, Shofar, Sukkah and Lulav 1:2",
    "Mishneh Torah, Shofar, Sukkah and Lulav 2:6",
    "Mishneh Torah, Shofar, Sukkah and Lulav 2:7",
-   "Mishneh Torah, Shofar, Sukkah and Lulav 3:7",
-   "Mishneh Torah, Shofar, Sukkah and Lulav 3:10"
+   "Mishneh Torah, Shofar, Sukkah and Lulav 2:8",
+   "Mishneh Torah, Repentance 3:4",
+   "Mishnah Rosh Hashanah 4:1"
   ],
-  "aggadic_topic": "Hannah at Shiloh (haftarah of the first day): 'she was speaking upon her heart' \u2014 prayer offered without a voice, and the Rosh Hashana theme of zikkaron, the remembering of Sarah, Rachel and Hannah, which links the Torah reading of Genesis 21 to the haftarah",
+  "aggadic_topic": "Hannah's soundless prayer in the haftarah of the first day: on a Rosh Hashana when no shofar may be sounded, the cry that is heard is the one 'spoken in her heart, her lips moving but her voice unheard' \u2014 and Rosh Hashana as the day Hannah was remembered",
   "sefaria_refs_aggada": [
-   "Rosh Hashanah 10b",
-   "Rosh Hashanah 11a",
-   "Berakhot 31a",
+   "I Samuel 1:13",
    "Rashi on I Samuel 1:13:1",
    "Radak on I Samuel 1:13:1",
-   "Bereshit Rabbah 73:1"
+   "Berakhot 31a",
+   "Rosh Hashanah 11a",
+   "Pesikta Rabbati 43"
   ]
  },
- "halakha_html": "<p>The Rambam rules that the mitzvah of the day is to hear the shofar, learned from the Torah's words, <em>a day of sounding shall it be for you</em>.<sup>1</sup> When the first day falls on Shabbat, as it does this year, no shofar is sounded anywhere. The blowing itself is forbidden only as <em>shebut</em>, a rabbinic restriction, and the Rambam says a commandment of the Torah would ordinarily override it. The Sages nonetheless decreed otherwise, lest someone carry the shofar through the street to a skilled blower. All are obligated, and not all are skilled.<sup>2</sup> Among us that <em>all</em> is read plainly: women and men alike hear the shofar and sound it. So on Sunday morning we hear the blasts \u2014 thirty after the Torah is returned, the blower saying the blessing to hear the shofar and <em>shehehiyanu</em>, then further blasts within Musaf at Malkhuyot, Zikhronot and Shofarot.<sup>3</sup></p><p>Keter Shem Tob gathers the customs for the long teru'a after Musaf. Rav Sa'adia Gaon gave the reason as confounding the accuser; Rav Hai Gaon said it was no custom at all, only that individuals who had not heard would blow once the service ended. Mahzor Vitry has a bare teru'a, without tekia or shebarim; in Vienna they sounded full sets three times over. The Rambam's own order of prayer does not mention it. Keter Shem Tob offers its own reason: the Shekhina rests among those who pray, and as they part we sound one teru'a \u2014 <em>God has ascended with a teru'a</em>.<sup>4</sup></p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.1:1\">Mishneh Torah, Shofar, Sukkah and Lulav 1:1</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.2:6\">Mishneh Torah, Shofar, Sukkah and Lulav 2:6</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.3:10\">Mishneh Torah, Shofar, Sukkah and Lulav 3:10</a> &nbsp; 4. Keter Shem Tob, vol. 6, pp. 202\u2013203</p>",
- "aggada_html": "<p>Hannah stands at Shiloh and prays, and the verse says she was speaking upon her heart; her lips moved, her voice was not heard. Rashi explains that Eli took her for drunk because people were not accustomed to praying without sound.<sup>1</sup> Radak, following the Targum, reads it differently: she gathered her heart into the prayer.<sup>2</sup> The midrash teaches that Sarah, Rachel and Hannah were remembered on Rosh Hashana.<sup>3</sup> That is why we read of Sarah in the morning and Hannah after her. Zikkaron is the day's own word, and it begins with prayer nobody else could hear.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Rashi.on.I.Samuel.1:13:1\">Rashi on I Samuel 1:13</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Radak.on.I.Samuel.1:13:1\">Radak on I Samuel 1:13</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Bereshit.Rabbah.73:1\">Bereshit Rabbah 73:1</a></p>",
+ "halakha_html": "<p>The Rambam rules that hearing the shofar on Rosh Hashana is a commandment of the Torah, learned by the oral tradition from the sounding commanded for the yovel.<sup>1</sup> Yet when the first day falls on Shabbat, as it does this year, the shofar is not sounded anywhere. Blowing is forbidden on Shabbat only by rabbinic ordinance, which a Torah obligation would ordinarily set aside. The Sages feared something else: that someone would take a shofar in hand and carry it through the street to a neighbor who knows how to blow.<sup>2</sup> The Mishnah remembers a time when the shofar was sounded on Shabbat wherever a court sat.<sup>3</sup> Musaf keeps its verses of Malkhuyot, Zikhronot and Shofarot; the horn waits until Sunday. In our congregation the obligation to hear the shofar and to sound it belongs to women and men alike.</p><p>Keter Shem Tob records the custom of one great teru'a at the close of the service, which Rav Amram Gaon explained as confounding the accuser. Rav Hai Gaon held it to be no fixed practice, and said that nothing is lost if it is left out, since the obligation has already been fulfilled. Older Ashkenazic communities blew a full set after the prayer. The Rambam's own siddur and the Abudarham do not mention the blast at all. The author adds a reason of his own: the Shekhina rests among those who pray and rises when they disperse, and so we sound a teru'a, as it is said, God ascends with a teru'a.<sup>4</sup> Communities differ here, and both usages are honorable.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.1:1\">Mishneh Torah, Shofar, Sukkah and Lulav 1:1</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Shofar,.Sukkah.and.Lulav.2:6\">Mishneh Torah, Shofar, Sukkah and Lulav 2:6</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Mishnah.Rosh.Hashanah.4:1\">Mishnah Rosh Hashanah 4:1</a> &nbsp; 4. Keter Shem Tob, vol. 6, p. 203</p>",
+ "aggada_html": "<p>On a morning when no horn sounds, the haftarah gives us Hannah. She stands at Shiloh and prays in her heart; her lips move and her voice is not heard.<sup>1</sup> Rashi says the people of that time had no practice of praying without sound, which is why Eli took her for a drunken woman.<sup>2</sup> She was the first, and she was misread. The Talmud teaches that Sarah, Rachel and Hannah were remembered on Rosh Hashana.<sup>3</sup> She asked for a child, and she was answered, and no one standing beside her heard a word of it. The day when the shofar rests is still a day of being remembered.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/I.Samuel.1:13\">I Samuel 1:13</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Rashi.on.I.Samuel.1:13:1\">Rashi on I Samuel 1:13</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Rosh.Hashanah.11a\">Rosh Hashanah 11a</a></p>",
  "halakha_citations": [
   {
    "display": "Mishneh Torah, Shofar, Sukkah and Lulav 1:1",
@@ -38,33 +38,33 @@
    "kst": false
   },
   {
-   "display": "Mishneh Torah, Shofar, Sukkah and Lulav 3:10",
-   "sefaria_ref": "Mishneh Torah, Shofar, Sukkah and Lulav 3:10",
+   "display": "Mishnah Rosh Hashanah 4:1",
+   "sefaria_ref": "Mishnah Rosh Hashanah 4:1",
    "kst": false
   },
   {
-   "display": "Keter Shem Tob, vol. 6, pp. 202\u2013203",
+   "display": "Keter Shem Tob, vol. 6, p. 203",
    "sefaria_ref": null,
    "kst": true
   }
  ],
  "aggada_citations": [
   {
+   "display": "I Samuel 1:13",
+   "sefaria_ref": "I Samuel 1:13",
+   "kst": false
+  },
+  {
    "display": "Rashi on I Samuel 1:13",
    "sefaria_ref": "Rashi on I Samuel 1:13:1",
    "kst": false
   },
   {
-   "display": "Radak on I Samuel 1:13",
-   "sefaria_ref": "Radak on I Samuel 1:13:1",
-   "kst": false
-  },
-  {
-   "display": "Bereshit Rabbah 73:1",
-   "sefaria_ref": "Bereshit Rabbah 73:1",
+   "display": "Rosh Hashanah 11a",
+   "sefaria_ref": "Rosh Hashanah 11a",
    "kst": false
   }
  ],
- "parashah_summary": "On the first day we read of Sarah. The Eternal took note of her as promised, and at the set time she bore a son. Abraham circumcises Isaac at eight days and makes a great feast at his weaning. Sarah asks that Hagar and Ishmael be sent away, and in the wilderness of Beer-sheba God hears the cry of the boy, opens Hagar's eyes to a well, and promises that he too will become a great nation. Abraham then makes a pact with Abimelech at Beer-sheba. The maftir from Numbers names the day one of sounding the shofar.",
- "haftarah_summary": "Hannah goes up year after year to Shiloh with Elkanah, taunted for her childlessness and unable to eat. She prays without a sound, and Eli, watching her lips, mistakes her for a drunken woman; she answers that she has been pouring out her heart. Eli blesses her, she goes home, and Samuel is born. When he is weaned she brings him to Shiloh and lends him to the service of the Eternal. Her song follows: the bows of the mighty are broken, the hungry are fed, the poor are raised from the dust and seated among nobles."
+ "parashah_summary": "The first day's reading opens with a promise kept. The Eternal takes note of Sarah, and Isaac is born to her and to Abraham in their old age. Sarah says that God has made laughter for her, and everyone who hears will laugh with her. The boy is circumcised at eight days and later weaned with a great feast. Hagar and Ishmael are sent into the wilderness of Beer-sheba, and when the water is gone God hears the cry of the boy and opens her eyes to a well. Abraham then makes a pact with Abimelech at Beer-sheba, plants a tamarisk, and calls there on the name of the Eternal.",
+ "haftarah_summary": "Elkanah goes up each year to Shiloh with his household. Hannah has no children, and her rival taunts her until she weeps and will not eat. At the sanctuary she prays and vows that if she is granted a son she will give him to the Eternal for all his days. Her lips move and no voice is heard, and Eli takes her for a drunken woman until she explains herself; he blesses her, and she goes away and eats. Samuel is born, and when he is weaned she brings him to Shiloh. Her song praises the Eternal, who breaks the bows of the mighty, raises the poor from the dust, and gives strength to the king."
 }
