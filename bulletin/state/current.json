@@ -1,10 +1,13 @@
 {
  "id": "2026-09-12",
  "rev": "20260907T183037",
- "status": "published",
+ "status": "sent",
  "title": "Rosh Hashana 5787",
  "subject": "Rosh Hashana 5787 \u00b7 11\u201314 September 2026",
  "proofed_at": "20260907T183037",
  "approved_at": "2026-09-07T18:51:14.530606-04:00",
- "published_at": "2026-09-07T18:51:14.574297-04:00"
+ "published_at": "2026-09-07T18:51:14.574297-04:00",
+ "sent_at": "2026-09-07T19:25:23.702482-04:00",
+ "dry_run": false,
+ "campaign": "d7191fc4e5"
 }
