@@ -259,10 +259,18 @@ DRAFT_SCHEMA = {
             "required": ["html", "citations"],
             "additionalProperties": False,
         },
-        "parashah_summary": {"type": "string"},
-        "haftarah_summary": {"type": "string"},
+        "reading_summaries": {"type": "array", "items": {
+            "type": "object",
+            "properties": {
+                "reading": {"type": "string"},
+                "torah_summary": {"type": "string"},
+                "haftarah_summary": {"type": "string"},
+            },
+            "required": ["reading", "torah_summary", "haftarah_summary"],
+            "additionalProperties": False,
+        }},
     },
-    "required": ["halakha", "aggada", "parashah_summary", "haftarah_summary"],
+    "required": ["halakha", "aggada", "reading_summaries"],
     "additionalProperties": False,
 }
 
@@ -299,11 +307,15 @@ def draft_system() -> str:
         "and verse.\n"
         "- Never quote, cite, or paraphrase material that reflects negative "
         "attitudes toward women or toward non-Jews; choose other material.\n"
-        "- Also write parashah_summary and haftarah_summary: one paragraph "
-        "each, plain text (no tags, no footnotes, no citations), summarizing "
-        "the highlights of the week's Torah reading and of the haftarah, "
-        "grounded in the reading texts supplied. Same voice: plain, warm, "
-        "readable aloud; 60 to 110 words each.\n"
+        "- Also write reading_summaries: ONE ENTRY PER READING listed in "
+        "the source material, in the same order. 'reading' repeats the "
+        "reading's name exactly as given; torah_summary and "
+        "haftarah_summary are one paragraph each, plain text (no tags, no "
+        "footnotes, no citations), summarizing the highlights of that "
+        "day's Torah reading and of its haftarah, grounded in the reading "
+        "texts supplied. A reading with no haftarah gets an empty "
+        "haftarah_summary. Same voice: plain, warm, readable aloud; 60 to "
+        "110 words each.\n"
         "- Transliteration follows the congregation's Sephardic style "
         "(Shabbat, Habdala, Selihot, Kippur, Shabuot, Tish'a Be'Ab).\n"
     )
@@ -435,7 +447,7 @@ def fetch_reading_text(ref: str, cap: int = 9000) -> str | None:
     return "\n".join(parts) or None
 
 
-def generate(week_description: str, reading_refs: tuple | None = None) -> dict:
+def generate(week_description: str, reading_refs: list | None = None) -> dict:
     p = plan(week_description)
     print("plan:", json.dumps({k: p[k] for k in ("halakhic_topic", "aggadic_topic")}), file=sys.stderr)
     sef_h = gather_sefaria(p["sefaria_refs_halakha"])
@@ -443,12 +455,14 @@ def generate(week_description: str, reading_refs: tuple | None = None) -> dict:
     kst_descs, kst_docs, kst_ranges = gather_kst(p["kst_queries"])
 
     reading_texts = ""
-    if reading_refs:
-        for label, ref in (("Torah reading", reading_refs[0]),
-                           ("Haftarah", reading_refs[1])):
+    refs = reading_refs or []
+    cap = max(3500, 9000 // max(1, len(refs)))
+    for rr in refs:
+        for label, ref in ((f"Torah reading — {rr['name']}", rr["torah"]),
+                           (f"Haftarah — {rr['name']}", rr["haftarah"])):
             if not ref:
                 continue
-            t = fetch_reading_text(ref)
+            t = fetch_reading_text(ref, cap=cap)
             if t:
                 reading_texts += f"[{label}: {ref}]\n{t}\n\n"
     print(f"gathered: {len(sef_h)}+{len(sef_a)} sefaria, {len(kst_docs)} KST pages, "
@@ -485,14 +499,20 @@ def generate(week_description: str, reading_refs: tuple | None = None) -> dict:
         if problems:
             raise RuntimeError("citations still failing after redrafts: " + "; ".join(problems))
 
+    summaries = [{"reading": (s.get("reading") or "").strip(),
+                  "torah_summary": (s.get("torah_summary") or "").strip(),
+                  "haftarah_summary": (s.get("haftarah_summary") or "").strip()}
+                 for s in d.get("reading_summaries", [])]
     return {
         "plan": p,
         "halakha_html": with_footnotes(d["halakha"]),
         "aggada_html": with_footnotes(d["aggada"]),
         "halakha_citations": d["halakha"]["citations"],
         "aggada_citations": d["aggada"]["citations"],
-        "parashah_summary": d["parashah_summary"].strip(),
-        "haftarah_summary": d["haftarah_summary"].strip(),
+        "reading_summaries": summaries,
+        # Compatibility pair: the first reading's summaries.
+        "parashah_summary": summaries[0]["torah_summary"] if summaries else "",
+        "haftarah_summary": summaries[0]["haftarah_summary"] if summaries else "",
     }
 
 

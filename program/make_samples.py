@@ -44,18 +44,18 @@ def strip_tags(html: str) -> str:
     return re.sub(r"<[^>]+>", "", html)
 
 
-def reading_refs(ctx: dict) -> tuple | None:
+def reading_refs(ctx: dict) -> list | None:
+    """One entry per reading, in bulletin order — the drafting writes a
+    summary pair for each."""
     if not ctx.get("readings"):
         return None
-    r = ctx["readings"][0]
-    return (r.get("range_raw") or "", r.get("haftarah_raw") or "")
+    return [{"name": r["name"],
+             "torah": r.get("range_raw") or "",
+             "haftarah": r.get("haftarah_raw") or ""}
+            for r in ctx["readings"]]
 
 
-def apply_teachings(ctx: dict, t: dict) -> None:
-    ctx["halakha"] = t["halakha_html"]
-    ctx["aggada"] = t["aggada_html"]
-    ctx["torah_summary"] = t.get("parashah_summary")
-    ctx["haftarah_summary"] = t.get("haftarah_summary")
+apply_teachings = bulletin.apply_teachings
 
 
 def main() -> None:

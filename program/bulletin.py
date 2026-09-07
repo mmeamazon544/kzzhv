@@ -297,14 +297,18 @@ def cluster_times(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -
     rows.append((f"{name} ends", f"{long_day(days[-1])} · Habdala",
                  format_time(habdala(days[-1], lat, lon)), fast is None))
     if fast:
+        # The fast gets its own section (Marc's layout, 7 September 2026):
+        # a Morris bar, a header, the description, then the time lines.
         fname = NAMES.get(strip_year(fast["title"]), strip_year(fast["title"]))
-        rows.append((f"{fname} begins", f"{long_day(fast['date'])} · dawn",
-                     format_time(dawn(fast["date"], lat, lon)), False))
-        rows.append((f"{fname} ends", f"{long_day(fast['date'])} · nightfall",
-                     format_time(habdala(fast["date"], lat, lon)), True))
+        rows.append(("__bar__", "", "", False))
+        rows.append(("__head__", fname, "", False))
         if fname in FAST_NOTES:
             # A description row: empty label and value, small text only.
             rows.append(("", FAST_NOTES[fname], "", False))
+        rows.append(("Fast begins", f"{long_day(fast['date'])} · dawn",
+                     format_time(dawn(fast["date"], lat, lon)), False))
+        rows.append(("Fast ends", f"{long_day(fast['date'])} · nightfall",
+                     format_time(habdala(fast["date"], lat, lon)), True))
     return rows
 
 
@@ -406,8 +410,23 @@ def build_context(sat: date) -> dict:
 
     times = build_times(sat, fri, cluster)
 
+    # In-the-Week-Ahead: an editorial override at
+    # bulletin/week-ahead/<saturday>.md (one line per item) replaces the
+    # computed list for that bulletin alone; keyed by date, so a stale
+    # file can never leak into another week.
+    observances = observance_lines(sat, events)
+    override = ROOT / "bulletin" / "week-ahead" / f"{sat.isoformat()}.md"
+    if override.exists():
+        wa = [l.strip() for l in strip_comments(override.read_text()).splitlines() if l.strip()]
+        if wa:
+            observances = wa
+
+    eyebrow = "Weekly Bulletin"
     if cluster and sat in cluster["days"]:
-        # The Shabbat is itself a festival day (Rosh Hashana on Shabbat).
+        # The Shabbat is itself a festival day (Rosh Hashana on Shabbat):
+        # a festival bulletin, so no "Weekly Bulletin" eyebrow (Marc's
+        # direction, 7 September 2026).
+        eyebrow = ""
         span_end = cluster["fast"]["date"] if cluster["fast"] else cluster["days"][-1]
         hy = hebrew_date(cluster["days"][0])[2]
         title = f"{cluster['name']} {hy}"
@@ -440,6 +459,7 @@ def build_context(sat: date) -> dict:
         "sat_hebrew": sat_hebrew,
         "cluster": cluster,
         "parashah": parashah,
+        "eyebrow": eyebrow,
         "title": title,
         "lede": lede,
         "guest_text": guest_text,
@@ -452,7 +472,7 @@ def build_context(sat: date) -> dict:
         "readings": readings,
         "torah_summary": None,      # filled by the teachings pipeline
         "haftarah_summary": None,
-        "observances": observance_lines(sat, events),
+        "observances": observances,
         "service_times": service_times(cluster) if loc == "Poughkeepsie" else [],
         "kiddush": kiddush,
         "announcements": announcements,
@@ -517,6 +537,15 @@ MORRIS_BAR_WEB = (
 def times_rows_html(ctx: dict) -> str:
     times = []
     for label, small, value, final in ctx["times"]:
+        if label == "__bar__":
+            times.append(MORRIS_BAR_WEB)
+            continue
+        if label == "__head__":
+            times.append('            <div class="schedule-note" style="margin: 1.2rem 0 0.4rem; '
+                         'color: var(--gold-pale); letter-spacing: 0.2em; font-family: var(--font-display); '
+                         'text-transform: uppercase; font-size: 0.72rem;">'
+                         + split_heading_web(small) + "</div>")
+            continue
         if not label and not value:
             # A description row (e.g. the Fast of Gedalia note).
             times.append('            <div class="row">\n'
@@ -534,24 +563,44 @@ def times_rows_html(ctx: dict) -> str:
     return "\n".join(times)
 
 
+def apply_teachings(ctx: dict, t: dict) -> None:
+    """Attach a generated (or archived) teachings dict to the context.
+    Per-reading summaries land on the readings themselves, matched by name
+    first, then by order; an older teachings.json without them falls back
+    to the single pair on the first reading. Lives here (not in
+    make_samples) so family.py can use it without the anthropic package."""
+    ctx["halakha"] = t["halakha_html"]
+    ctx["aggada"] = t["aggada_html"]
+    ctx["torah_summary"] = t.get("parashah_summary")
+    ctx["haftarah_summary"] = t.get("haftarah_summary")
+    readings = ctx.get("readings") or []
+    subs = t.get("reading_summaries") or []
+    by_name = {s.get("reading"): s for s in subs}
+    for i, r in enumerate(readings):
+        s = by_name.get(r["name"]) or (subs[i] if i < len(subs) else None)
+        if s:
+            r["torah_summary"] = (s.get("torah_summary") or "").strip() or None
+            r["haftarah_summary"] = (s.get("haftarah_summary") or "").strip() or None
+    if not subs and readings:
+        readings[0]["torah_summary"] = t.get("parashah_summary")
+        readings[0]["haftarah_summary"] = t.get("haftarah_summary")
+
+
 def build_body(ctx: dict) -> list[str]:
     body = []
     if ctx["readings"]:
-        # Each interpretation sits directly under what it interprets: the
-        # Torah summary under the first portion, the haftarah summary under
-        # the first haftarah (Marc's direction, 7 September 2026).
+        # Each interpretation sits directly under what it interprets: every
+        # reading carries its own summaries (Marc's direction, 7 September
+        # 2026), attached by apply_teachings.
         body.append('<h2>Torah Reading <span class="amp">&amp;</span> Haftarah</h2>')
-        placed_torah = placed_haft = False
         for r in ctx["readings"]:
             body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
-            if not placed_torah and ctx.get("torah_summary"):
-                body.append(f"<p>{ctx['torah_summary']}</p>")
-                placed_torah = True
+            if r.get("torah_summary"):
+                body.append(f"<p>{r['torah_summary']}</p>")
             if r["haftarah"]:
                 body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
-                if not placed_haft and ctx.get("haftarah_summary"):
-                    body.append(f"<p>{ctx['haftarah_summary']}</p>")
-                    placed_haft = True
+                if r.get("haftarah_summary"):
+                    body.append(f"<p>{r['haftarah_summary']}</p>")
     if ctx["observances"]:
         body.append("<h2>In the Week Ahead</h2>")
         body += [f"<p>{o}</p>" for o in ctx["observances"]]
@@ -582,7 +631,9 @@ def service_times_web(ctx: dict) -> str:
     if not items:
         return ""
     parts = ['    <section class="schedule" aria-label="Service times">',
-             '        <p class="schedule-note">Service Times for Kehillah Kedoshah Zikhron Zvi</p>']
+             '        <p class="schedule-note">Service Times for Kehillah Kedoshah Zikhron Zvi</p>',
+             '        <p style="margin: -1rem 0 0.4rem; font-family: var(--font-serif); '
+             'font-style: italic; color: var(--ink-mute); font-size: 0.9rem;">All times approximate</p>']
     rows: list[dict] = []
 
     def flush() -> None:
@@ -686,6 +737,7 @@ def render_web(ctx: dict) -> Path:
     html = (
         tpl.replace("{{PAGE_TITLE}}", ctx["title"])
         .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
+        .replace('        <p class="eyebrow"></p>\n', "")
         .replace("{{TITLE}}", mid(ctx["title"]))
         .replace("{{LEDE}}", mid(ctx["lede"]))
         .replace("{{BANNER}}", banner_web(ctx))
@@ -722,7 +774,9 @@ def services_schedule_fragment(ctx: dict) -> str:
              "font-variation-settings: 'opsz' 18, 'wght' 400; font-size: 0.84rem; "
              "color: var(--ink-mute); letter-spacing: 0; text-transform: none; margin-top: 0.2rem;")
 
-    parts: list[str] = []
+    parts: list[str] = ['            <p style="margin: 0.4rem 0 0; font-family: var(--font-serif); '
+                        'font-style: italic; color: var(--ink-mute); font-size: 0.9rem;">'
+                        'All times approximate</p>']
     rows: list[dict] = []
 
     def flush() -> None:
@@ -859,6 +913,16 @@ def e_p(html_text: str, color: str = E_INK, italic: bool = False, size: int = 14
 def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     times = []
     for label, small, value, final in ctx["times"]:
+        if label == "__bar__":
+            times.append(f"""      <tr><td colspan="2" style="padding:16px 0 2px;">
+          <img src="{base}/bulletin/assets/bar-pimpernel.jpg" width="548" alt="" style="display:block; width:100%; height:auto; border-top:2px solid #856a2e; border-bottom:2px solid #856a2e;">
+        </td></tr>""")
+            continue
+        if label == "__head__":
+            times.append(f"""      <tr><td colspan="2" style="padding:14px 0 3px;">
+          <div class="display" style="font-family:{SERIF}; font-size:11px; letter-spacing:2px; color:{E_GOLD_PALE}; text-transform:uppercase;">{split_heading_email(small)}</div>
+        </td></tr>""")
+            continue
         if not label and not value:
             # A description row (e.g. the Fast of Gedalia note).
             times.append(f"""      <tr>
@@ -882,18 +946,15 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
     sections = []
     if ctx["readings"]:
         sections.append(e_h2("Torah Reading &amp; Haftarah"))
-        placed_torah = placed_haft = False
         for r in ctx["readings"]:
             sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
-            if not placed_torah and ctx.get("torah_summary"):
-                sections.append(e_p(ctx["torah_summary"]))
-                placed_torah = True
+            if r.get("torah_summary"):
+                sections.append(e_p(r["torah_summary"]))
             if r["haftarah"]:
                 sections.append(e_p(r["haftarah"].replace(
                     "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
-                if not placed_haft and ctx.get("haftarah_summary"):
-                    sections.append(e_p(ctx["haftarah_summary"]))
-                    placed_haft = True
+                if r.get("haftarah_summary"):
+                    sections.append(e_p(r["haftarah_summary"]))
     if ctx["observances"]:
         sections.append(e_h2("In the Week Ahead"))
         for o in ctx["observances"]:
@@ -955,7 +1016,9 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         svc = (f'  <tr><td style="padding:24px 26px 0;">\n'
                f'    <div class="display" style="font-family:{SERIF}; font-size:12px; '
                f'letter-spacing:2px; color:{E_GOLD}; text-transform:uppercase; '
-               f'padding-bottom:4px;">Service Times for Kehillah Kedoshah Zikhron Zvi</div>\n'
+               f'padding-bottom:2px;">Service Times for Kehillah Kedoshah Zikhron Zvi</div>\n'
+               f'    <div style="font-family:{SERIF}; font-style:italic; font-size:12px; '
+               f'color:{E_MUTE}; padding-bottom:4px;">All times approximate</div>\n'
                f'    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n'
                + "\n".join(rows) + "\n    </table>\n  </td></tr>\n")
 
@@ -1025,6 +1088,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
         tpl.replace("{{BASE}}", base)
         .replace("{{PAGE_TITLE}}", ctx["title"])
         .replace("{{EYEBROW_LINE}}", ctx.get("eyebrow_line_html") or (
+            "" if not ctx.get("eyebrow", "Weekly Bulletin") else
             '    <div class="display" style="font-family:Georgia,\'Times New Roman\',serif; '
             'font-size:10px; letter-spacing:4px; color:#c79f50; text-transform:uppercase;">'
             "&mdash;&nbsp;&nbsp;" + ctx.get("eyebrow", "Weekly Bulletin") + "</div>"))
@@ -1054,13 +1118,17 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
 
 
 def render_text(ctx: dict) -> str:
-    lines = ["KEHILLAH KEDOSHAH ZIKHRON ZVI — WEEKLY BULLETIN", "", ctx["title"], ctx["lede"], ""]
+    head = "KEHILLAH KEDOSHAH ZIKHRON ZVI"
+    if ctx.get("eyebrow", "Weekly Bulletin"):
+        head += " — " + ctx.get("eyebrow", "Weekly Bulletin").upper()
+    lines = [head, "", ctx["title"], ctx["lede"], ""]
     if ctx.get("banner"):
         lines += [ctx["banner"]["heading"]] + ctx["banner"]["lines"] + [""]
     if ctx["guest_text"]:
         lines += [ctx["guest_text"], ""]
     if ctx.get("service_times"):
         lines.append("SERVICE TIMES FOR KEHILLAH KEDOSHAH ZIKHRON ZVI")
+        lines.append("All times approximate")
         for it in ctx["service_times"]:
             if it["kind"] == "heading":
                 lines.append(it["text"].upper())
@@ -1075,24 +1143,25 @@ def render_text(ctx: dict) -> str:
         lines.append("")
     lines.append(ctx["times_heading"].replace("°", ""))
     for label, small, value, _final in ctx["times"]:
-        if not label and not value:
+        if label == "__bar__":
+            lines.append("- - - - -")
+        elif label == "__head__":
+            lines.append(small.upper())
+        elif not label and not value:
             lines.append(small)
         else:
             lines.append(f"{label}: {value}  ({small})")
     lines.append("")
     if ctx["readings"]:
         lines.append("TORAH READING & HAFTARAH")
-        placed_torah = placed_haft = False
         for r in ctx["readings"]:
             lines.append(f"{r['name']}, {r['range']}.")
-            if not placed_torah and ctx.get("torah_summary"):
-                lines.append(ctx["torah_summary"])
-                placed_torah = True
+            if r.get("torah_summary"):
+                lines.append(r["torah_summary"])
             if r["haftarah"]:
                 lines.append(r["haftarah"])
-                if not placed_haft and ctx.get("haftarah_summary"):
-                    lines.append(ctx["haftarah_summary"])
-                    placed_haft = True
+                if r.get("haftarah_summary"):
+                    lines.append(r["haftarah_summary"])
         lines.append("")
     if ctx["observances"]:
         lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]

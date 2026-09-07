@@ -146,11 +146,7 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
         cur = json.loads(cur_file.read_text())
         tfile = ROOT / "bulletin" / "state" / cur["id"] / "teachings.json"
         if cur["id"] == sat.isoformat() and tfile.exists():
-            t = json.loads(tfile.read_text())
-            ctx["halakha"] = t["halakha_html"]
-            ctx["aggada"] = t["aggada_html"]
-            ctx["torah_summary"] = t.get("parashah_summary")
-            ctx["haftarah_summary"] = t.get("haftarah_summary")
+            bulletin.apply_teachings(ctx, json.loads(tfile.read_text()))
 
     html_p, txt_p = bulletin.render_email(ctx)
     label = f"Parashat {ctx['parashah']}" if ctx["parashah"] else ctx["title"]

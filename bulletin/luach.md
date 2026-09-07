@@ -88,11 +88,23 @@ rows; "Label =" with no time for a label-only row (BREAK); "* note"
 paragraphs wherever they fall; "---" for a William Morris separation bar
 (the pimpernel pattern; the email uses bar-pimpernel.jpg). The halakhic
 times block is headed "Halakhic (Ritual) Times — Poughkeepsie, NY 41.70 N
-73.92 W", split the same way. A fast named in FAST_NOTES (bulletin.py)
-carries a tiny description under its rows — the Fast of Gedalia text is
-Marc's own. In the readings section each interpretation sits directly
-under what it interprets: the Torah summary under the first portion, the
-haftarah summary under the first haftarah.
+73.92 W", split the same way. A trailing fast gets its own section
+inside the times block (Marc's layout, 7 September 2026): after the
+festival's ends-line, a Morris bar, a header with the fast's name, its
+tiny description (FAST_NOTES in bulletin.py — the Fast of Gedalia text
+is Marc's own), then "Fast begins" and "Fast ends" lines. In the
+readings section each reading carries its own interpretations: the
+drafting writes a Torah summary and a haftarah summary per reading, and
+each sits directly under what it interprets.
+
+More of Marc's directions, 7 September 2026: a festival bulletin carries
+no "Weekly Bulletin" eyebrow (ordinary Shabbat bulletins keep it).
+"All times approximate", in italics, stands under the service-times
+title everywhere the schedule appears. In-the-Week-Ahead can be
+overridden for one bulletin by bulletin/week-ahead/<saturday>.md — one
+line per item, replacing the computed list for that date alone (used
+first for Rosh Hashana 5787: just Shabbat Shuvah, and Yom Kippur as
+beginning Sunday night).
 
 Weeks with no services (settled 4 September 2026): the service times do
 not appear anywhere, and a line in red states, verbatim: No services will
