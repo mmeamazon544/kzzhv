@@ -1,0 +1,27 @@
+# Utility: add one member to the audience and tag them (no address ever
+# appears in code, workflow inputs, or logs — it arrives via the
+# NEW_MEMBER_* repository secrets, set just before a run and deleted
+# right after). Companion to mailchimp-untag. Manually triggered.
+name: mailchimp-add
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          NEW_MEMBER_EMAIL: ${{ secrets.NEW_MEMBER_EMAIL }}
+          NEW_MEMBER_FNAME: ${{ secrets.NEW_MEMBER_FNAME }}
+          NEW_MEMBER_LNAME: ${{ secrets.NEW_MEMBER_LNAME }}
+          NEW_MEMBER_TAGS: ${{ secrets.NEW_MEMBER_TAGS }}
+        run: |
+          set -o pipefail
+          python3 program/mailchimp_add.py | tee -a "$GITHUB_STEP_SUMMARY"
