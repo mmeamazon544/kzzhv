@@ -19,12 +19,16 @@ Usage: python3 program/family_catchup.py
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from datetime import date
+from pathlib import Path
 
 import family
 from mailchimp_catchup import addresses, ensure_segment
+
+ROOT = Path(__file__).resolve().parent.parent
 
 if __name__ == "__main__":
     member = os.environ.get("FAMILY_MEMBER", "").strip().lower()
@@ -37,7 +41,16 @@ if __name__ == "__main__":
     addrs = addresses()
     print(f"{member}'s letter for Shabbat {sat}, to {len(addrs)} address(es)")
 
-    ensure_segment(addrs)
+    sid = ensure_segment(addrs)
+
+    # build_and_send re-reads mailchimp.json from disk and refuses a
+    # segment key it cannot find there, so the new segment has to be
+    # visible in the file as well as in memory. This is the runner's
+    # ephemeral checkout; nothing is committed.
+    cfg_path = ROOT / "program" / "data" / "mailchimp.json"
+    cfg = json.loads(cfg_path.read_text())
+    cfg["catchup_segment_id"] = sid
+    cfg_path.write_text(json.dumps(cfg, indent=1) + "\n")
 
     # Send this one letter to the Catchup segment instead of the member's
     # own tag segment, so the person who already had it is not mailed twice.
