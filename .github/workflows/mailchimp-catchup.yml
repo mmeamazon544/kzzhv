@@ -1,0 +1,27 @@
+# Send the current bulletin to people who joined the list after it went
+# out, so they get it without a second copy landing on everyone else.
+# The addresses arrive in the CATCHUP_EMAILS repository secret (set just
+# before a run, deleted right after) and never appear in code, inputs, or
+# logs. Marc is copied automatically. Manually triggered.
+name: mailchimp-catchup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catchup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - working-directory: program
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          CATCHUP_EMAILS: ${{ secrets.CATCHUP_EMAILS }}
+          BULLETIN_DRY_RUN: ${{ vars.BULLETIN_DRY_RUN }}
+        run: |
+          set -o pipefail
+          python3 mailchimp_catchup.py | tee -a "$GITHUB_STEP_SUMMARY"

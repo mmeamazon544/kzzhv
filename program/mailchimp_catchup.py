@@ -1,0 +1,93 @@
+"""Send the current bulletin to people who joined the list after it went
+out — without a second copy landing on everyone who already has it.
+
+Builds (or refreshes) a static Mailchimp segment named "Catchup" from the
+addresses in the CATCHUP_EMAILS repository secret, then sends exactly the
+bytes already stored under bulletin/state/<id>/ — the same email the list
+received, not a rebuild. No address passes through code, workflow inputs,
+or logs; only hash prefixes and counts are printed.
+
+  CATCHUP_EMAILS   comma-separated addresses, already subscribed
+
+Refuses while BULLETIN_DRY_RUN is anything but "false", exactly as the
+congregational send does. Marc is copied automatically by mailchimp_send.
+
+Usage: python3 program/mailchimp_catchup.py
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+
+import mailchimp_send
+from mailchimp_send import CFG, api, send
+
+ROOT = Path(__file__).resolve().parent.parent
+SEGMENT_NAME = "Catchup"
+
+if __name__ == "__main__":
+    if os.environ.get("BULLETIN_DRY_RUN", "true").lower() != "false":
+        sys.exit("BULLETIN_DRY_RUN is not false; refusing to send")
+
+    addrs = [a.strip().lower() for a in
+             os.environ.get("CATCHUP_EMAILS", "").split(",") if a.strip()]
+    if not addrs:
+        sys.exit("CATCHUP_EMAILS missing")
+    for a in addrs:
+        if "@" not in a:
+            sys.exit("CATCHUP_EMAILS contains a malformed address")
+
+    cur = json.loads((ROOT / "bulletin" / "state" / "current.json").read_text())
+    state = ROOT / "bulletin" / "state" / cur["id"]
+    html = (state / "email.html").read_text()
+    text = (state / "email.txt").read_text()
+    print(f"bulletin {cur['id']} — {cur['subject']}")
+    print(f"status {cur['status']}, originally sent as campaign "
+          f"{cur.get('campaign', '(none recorded)')}")
+
+    lid = CFG["audience_id"]
+
+    # Everyone must already be subscribed: a static segment cannot pull in
+    # a stranger, and we must never quietly add one.
+    for a in addrs:
+        h = hashlib.md5(a.encode()).hexdigest()
+        st, r = api("GET", f"/lists/{lid}/members/{h}")
+        if st != 200:
+            sys.exit(f"{h[:8]}… is not on the audience; add them first")
+        if r.get("status") != "subscribed":
+            sys.exit(f"{h[:8]}… is {r.get('status')}, not subscribed")
+        print(f"  {h[:8]}… subscribed")
+
+    st, segs = api("GET", f"/lists/{lid}/segments?type=static&count=200")
+    seg = next((s for s in segs.get("segments", [])
+                if s["name"] == SEGMENT_NAME), None)
+    if seg is None:
+        st, seg = api("POST", f"/lists/{lid}/segments",
+                      {"name": SEGMENT_NAME, "static_segment": addrs})
+        if st != 200:
+            sys.exit(f"could not create the {SEGMENT_NAME} segment (HTTP {st})")
+        print(f"{SEGMENT_NAME} segment created")
+    else:
+        st, r = api("PATCH", f"/lists/{lid}/segments/{seg['id']}",
+                    {"name": SEGMENT_NAME, "static_segment": addrs})
+        if st != 200:
+            sys.exit(f"could not refresh the {SEGMENT_NAME} segment (HTTP {st})")
+        seg = r
+        print(f"{SEGMENT_NAME} segment refreshed")
+
+    st, r = api("GET", f"/lists/{lid}/segments/{seg['id']}")
+    count = r.get("member_count", -1)
+    print(f"{SEGMENT_NAME} holds {count} member(s); {len(addrs)} intended")
+    if count != len(addrs):
+        sys.exit("segment membership does not match the intended addresses; "
+                 "refusing to send")
+
+    mailchimp_send.CFG["catchup_segment_id"] = seg["id"]
+    cid = send(cur["subject"], html, text, proof=False,
+               segment_key="catchup_segment_id")
+    print(f"sent campaign {cid} to the {SEGMENT_NAME} segment "
+          f"({count} recipient(s))")
