@@ -34,12 +34,37 @@ jobs:
       go: ${{ steps.g.outputs.go }}
     steps:
       - id: g
+        env:
+          FIRED: ${{ github.event.schedule }}
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "06" ]; then
-            echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 am in New York"
-          else
-            echo "go=yes" >> "$GITHUB_OUTPUT"
+          set -o pipefail
+          # GitHub queues cron runs late — hours late, every single day —
+          # so the old "is it exactly 06 in New York" test never passed and
+          # no scheduled letter ever went out. Identify the run by WHICH
+          # cron fired instead: the 10:00 UTC one while New York is on EDT,
+          # the 11:00 UTC one while it is on EST. Exactly one matches each
+          # day, however long the queue delay.
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "$(TZ=America/New_York date +%z)" in
+              -0400) want="0 10 * * *" ;;
+              *)     want="0 11 * * *" ;;
+            esac
+            if [ -n "$FIRED" ]; then
+              if [ "$FIRED" != "$want" ]; then
+                echo "go=no" >> "$GITHUB_OUTPUT"
+                echo "cron '$FIRED' is not New York's 6 am cron today ('$want')"
+                exit 0
+              fi
+            else
+              h=$(TZ=America/New_York date +%H)
+              if [ "$h" -lt 6 ] || [ "$h" -ge 12 ]; then
+                echo "go=no" >> "$GITHUB_OUTPUT"
+                echo "no cron string, and ${h}:00 New York is outside the morning window"
+                exit 0
+              fi
+            fi
           fi
+          echo "go=yes" >> "$GITHUB_OUTPUT"
 
   send:
     needs: gate

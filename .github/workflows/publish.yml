@@ -26,13 +26,38 @@ jobs:
       go: ${{ steps.g.outputs.go }}
     steps:
       - id: g
+        env:
+          FIRED: ${{ github.event.schedule }}
         run: |
           set -o pipefail
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=America/New_York date +%H)" != "18" ]; then
-            echo "go=no" >> "$GITHUB_OUTPUT"; echo "not 6 pm in New York"
-          else
-            echo "go=yes" >> "$GITHUB_OUTPUT"
+          # GitHub queues cron runs hours late, so the old "is it exactly 18
+          # in New York" test never passed and the Wednesday evening
+          # publish-and-send never fired on its own. Identify the run by
+          # WHICH cron fired instead: the 22:00 UTC one on EDT, the 23:00
+          # UTC one on EST. Exactly one matches each Wednesday, however long
+          # the queue delay. (publish.py --if-due is the second guard: an
+          # already-published bulletin is not published or sent twice.)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "$(TZ=America/New_York date +%z)" in
+              -0400) want="0 22 * * 3" ;;
+              *)     want="0 23 * * 3" ;;
+            esac
+            if [ -n "$FIRED" ]; then
+              if [ "$FIRED" != "$want" ]; then
+                echo "go=no" >> "$GITHUB_OUTPUT"
+                echo "cron '$FIRED' is not New York's 6 pm cron today ('$want')"
+                exit 0
+              fi
+            else
+              h=$(TZ=America/New_York date +%H)
+              if [ "$h" -lt 18 ]; then
+                echo "go=no" >> "$GITHUB_OUTPUT"
+                echo "no cron string, and ${h}:00 New York is before the evening window"
+                exit 0
+              fi
+            fi
           fi
+          echo "go=yes" >> "$GITHUB_OUTPUT"
 
   run:
     needs: gate
