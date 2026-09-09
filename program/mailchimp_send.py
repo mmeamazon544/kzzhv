@@ -57,13 +57,62 @@ def api(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
             return e.code, {}
 
 
+def _campaign(subject: str, html: str, text: str, recipients: dict,
+              title: str, fatal: bool = True) -> str:
+    """Create, fill and send one campaign. With fatal=False a failure is
+    reported and skipped instead of ending the run — used for Marc's copy,
+    which must never cost a family member their letter."""
+    def fail(msg: str) -> str:
+        if fatal:
+            sys.exit(msg)
+        print(f"warning: {msg}")
+        return ""
+
+    st, camp = api("POST", "/campaigns", {
+        "type": "regular",
+        "recipients": recipients,
+        "settings": {
+            "subject_line": subject,
+            "title": title,
+            "from_name": FROM_NAME,
+            "reply_to": FROM_EMAIL,
+            "auto_footer": False,
+            "inline_css": False,
+        },
+    })
+    if st != 200:
+        return fail(f"campaign create failed (HTTP {st}): "
+                    f"{camp.get('detail','')} {camp.get('errors','')}")
+    cid = camp["id"]
+
+    st, r = api("PUT", f"/campaigns/{cid}/content", {
+        "html": html, "plain_text": text,
+    })
+    if st != 200:
+        return fail(f"content upload failed (HTTP {st}): {r.get('detail','')}")
+
+    st, r = api("POST", f"/campaigns/{cid}/actions/send")
+    if st != 204:
+        return fail(f"send failed (HTTP {st}): "
+                    f"{r.get('detail','')} {r.get('errors','')}")
+    return cid
+
+
 def send(subject: str, html: str, text: str, proof: bool,
-         segment_key: str | None = None) -> str:
+         segment_key: str | None = None, copy_to_marc: bool = True) -> str:
     """proof=True -> the Proof segment (Marc alone). Otherwise the segment
     named by segment_key ('weekly_segment_id', 'ari_segment_id'); the
     congregational default is the weekly tag segment, and only if no
-    weekly segment is configured does a send go to the entire audience."""
+    weekly segment is configured does a send go to the entire audience.
+
+    Marc's standing instruction (9 September 2026) is to be copied on
+    everything that goes out. He carries the Weekly tag, so a
+    congregational send already reaches him; only a letter aimed at
+    someone else's segment gets a second campaign to the Proof segment.
+    The copy carries the same subject he wants to see, and is marked as a
+    copy only in the Mailchimp title."""
     recipients: dict = {"list_id": CFG["audience_id"]}
+    key = None
     if proof:
         recipients["segment_opts"] = {"saved_segment_id": CFG["proof_segment_id"]}
     else:
@@ -73,31 +122,18 @@ def send(subject: str, html: str, text: str, proof: bool,
         elif segment_key:
             sys.exit(f"segment {segment_key} not configured in mailchimp.json")
 
-    st, camp = api("POST", "/campaigns", {
-        "type": "regular",
-        "recipients": recipients,
-        "settings": {
-            "subject_line": subject,
-            "title": ("PROOF " if proof else "") + subject,
-            "from_name": FROM_NAME,
-            "reply_to": FROM_EMAIL,
-            "auto_footer": False,
-            "inline_css": False,
-        },
-    })
-    if st != 200:
-        sys.exit(f"campaign create failed (HTTP {st}): {camp.get('detail','')} {camp.get('errors','')}")
-    cid = camp["id"]
+    cid = _campaign(subject, html, text, recipients,
+                    ("PROOF " if proof else "") + subject)
 
-    st, r = api("PUT", f"/campaigns/{cid}/content", {
-        "html": html, "plain_text": text,
-    })
-    if st != 200:
-        sys.exit(f"content upload failed (HTTP {st}): {r.get('detail','')}")
-
-    st, r = api("POST", f"/campaigns/{cid}/actions/send")
-    if st != 204:
-        sys.exit(f"send failed (HTTP {st}): {r.get('detail','')} {r.get('errors','')}")
+    if (copy_to_marc and not proof and key != "weekly_segment_id"
+            and "proof_segment_id" in CFG):
+        copy = _campaign(
+            subject, html, text,
+            {"list_id": CFG["audience_id"],
+             "segment_opts": {"saved_segment_id": CFG["proof_segment_id"]}},
+            "COPY TO MARC — " + subject, fatal=False)
+        print(f"    copy to Marc: {copy}" if copy
+              else "    copy to Marc: FAILED (the letter itself went)")
     return cid
 
 
