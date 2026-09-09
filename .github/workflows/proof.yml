@@ -52,7 +52,7 @@ jobs:
               fi
             else
               h=$(TZ=America/New_York date +%H)
-              if [ "$h" -lt 6 ] || [ "$h" -ge 12 ]; then
+              if [ "$h" -lt 6 ] || [ "$h" -ge 15 ]; then
                 echo "go=no" >> "$GITHUB_OUTPUT"
                 echo "no cron string, and ${h}:00 New York is outside the morning window"
                 exit 0
