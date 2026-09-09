@@ -1,0 +1,37 @@
+# Send one family member's letter to somebody not on that member's tag
+# segment (a partner added later, a household that joined mid-season),
+# without a second copy landing on whoever already has it. The addresses
+# arrive in the CATCHUP_EMAILS repository secret (set just before a run,
+# deleted right after) and never appear in code, inputs, or logs. Marc is
+# copied automatically. Manually triggered.
+name: family-catchup
+
+on:
+  workflow_dispatch:
+    inputs:
+      member:
+        description: "ari | misha | gabi | mom"
+        required: true
+      shabbat:
+        description: "Shabbat date (YYYY-MM-DD); empty = the coming Saturday"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  catchup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - working-directory: program
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          CATCHUP_EMAILS: ${{ secrets.CATCHUP_EMAILS }}
+          FAMILY_MEMBER: ${{ inputs.member }}
+          CATCHUP_SHABBAT: ${{ inputs.shabbat }}
+        run: |
+          set -o pipefail
+          python3 family_catchup.py | tee -a "$GITHUB_STEP_SUMMARY"

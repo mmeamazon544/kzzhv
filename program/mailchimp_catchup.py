@@ -29,10 +29,9 @@ from mailchimp_send import CFG, api, send
 ROOT = Path(__file__).resolve().parent.parent
 SEGMENT_NAME = "Catchup"
 
-if __name__ == "__main__":
-    if os.environ.get("BULLETIN_DRY_RUN", "true").lower() != "false":
-        sys.exit("BULLETIN_DRY_RUN is not false; refusing to send")
 
+def addresses() -> list[str]:
+    """The CATCHUP_EMAILS secret, validated. Never printed."""
     addrs = [a.strip().lower() for a in
              os.environ.get("CATCHUP_EMAILS", "").split(",") if a.strip()]
     if not addrs:
@@ -40,19 +39,17 @@ if __name__ == "__main__":
     for a in addrs:
         if "@" not in a:
             sys.exit("CATCHUP_EMAILS contains a malformed address")
+    return addrs
 
-    cur = json.loads((ROOT / "bulletin" / "state" / "current.json").read_text())
-    state = ROOT / "bulletin" / "state" / cur["id"]
-    html = (state / "email.html").read_text()
-    text = (state / "email.txt").read_text()
-    print(f"bulletin {cur['id']} — {cur['subject']}")
-    print(f"status {cur['status']}, originally sent as campaign "
-          f"{cur.get('campaign', '(none recorded)')}")
 
+def ensure_segment(addrs: list[str]) -> str:
+    """Build or refresh the static Catchup segment and return its id, after
+    proving every address is already a subscribed member and that the
+    segment holds exactly them. Refuses rather than sending too widely."""
     lid = CFG["audience_id"]
 
-    # Everyone must already be subscribed: a static segment cannot pull in
-    # a stranger, and we must never quietly add one.
+    # A static segment cannot pull in a stranger, and we must never
+    # quietly add one.
     for a in addrs:
         h = hashlib.md5(a.encode()).hexdigest()
         st, r = api("GET", f"/lists/{lid}/members/{h}")
@@ -85,9 +82,25 @@ if __name__ == "__main__":
     if count != len(addrs):
         sys.exit("segment membership does not match the intended addresses; "
                  "refusing to send")
-
     mailchimp_send.CFG["catchup_segment_id"] = seg["id"]
+    return seg["id"]
+
+
+if __name__ == "__main__":
+    if os.environ.get("BULLETIN_DRY_RUN", "true").lower() != "false":
+        sys.exit("BULLETIN_DRY_RUN is not false; refusing to send")
+
+    addrs = addresses()
+    cur = json.loads((ROOT / "bulletin" / "state" / "current.json").read_text())
+    state = ROOT / "bulletin" / "state" / cur["id"]
+    html = (state / "email.html").read_text()
+    text = (state / "email.txt").read_text()
+    print(f"bulletin {cur['id']} — {cur['subject']}")
+    print(f"status {cur['status']}, originally sent as campaign "
+          f"{cur.get('campaign', '(none recorded)')}")
+
+    ensure_segment(addrs)
     cid = send(cur["subject"], html, text, proof=False,
                segment_key="catchup_segment_id")
     print(f"sent campaign {cid} to the {SEGMENT_NAME} segment "
-          f"({count} recipient(s))")
+          f"({len(addrs)} recipient(s))")
