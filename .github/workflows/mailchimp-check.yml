@@ -1,0 +1,25 @@
+# Utility: look up whether one person is on the audience and under which
+# tags. Read-only — changes nothing. The address arrives in the
+# CHECK_MEMBER_EMAIL repository secret (set just before a run, deleted
+# right after) and never appears in code, inputs, or logs. Companion to
+# mailchimp-add and mailchimp-untag. Manually triggered.
+name: mailchimp-check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          CHECK_MEMBER_EMAIL: ${{ secrets.CHECK_MEMBER_EMAIL }}
+        run: |
+          set -o pipefail
+          python3 program/mailchimp_check.py | tee -a "$GITHUB_STEP_SUMMARY"
