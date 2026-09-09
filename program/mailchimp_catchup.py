@@ -59,22 +59,25 @@ def ensure_segment(addrs: list[str]) -> str:
             sys.exit(f"{h[:8]}… is {r.get('status')}, not subscribed")
         print(f"  {h[:8]}… subscribed")
 
+    # PATCH with static_segment ADDS to a static segment rather than
+    # replacing it, so a reused segment silently keeps the previous run's
+    # recipients. Delete it and build it again, which is the only way to
+    # guarantee the membership is exactly what was asked for. Deleting a
+    # segment does not touch anybody's subscription.
     st, segs = api("GET", f"/lists/{lid}/segments?type=static&count=200")
-    seg = next((s for s in segs.get("segments", [])
-                if s["name"] == SEGMENT_NAME), None)
-    if seg is None:
-        st, seg = api("POST", f"/lists/{lid}/segments",
-                      {"name": SEGMENT_NAME, "static_segment": addrs})
-        if st != 200:
-            sys.exit(f"could not create the {SEGMENT_NAME} segment (HTTP {st})")
-        print(f"{SEGMENT_NAME} segment created")
-    else:
-        st, r = api("PATCH", f"/lists/{lid}/segments/{seg['id']}",
-                    {"name": SEGMENT_NAME, "static_segment": addrs})
-        if st != 200:
-            sys.exit(f"could not refresh the {SEGMENT_NAME} segment (HTTP {st})")
-        seg = r
-        print(f"{SEGMENT_NAME} segment refreshed")
+    for s in segs.get("segments", []):
+        if s["name"] == SEGMENT_NAME:
+            st, _ = api("DELETE", f"/lists/{lid}/segments/{s['id']}")
+            if st not in (200, 204):
+                sys.exit(f"could not clear the old {SEGMENT_NAME} segment "
+                         f"(HTTP {st})")
+            print(f"{SEGMENT_NAME} segment from a previous run deleted")
+
+    st, seg = api("POST", f"/lists/{lid}/segments",
+                  {"name": SEGMENT_NAME, "static_segment": addrs})
+    if st != 200:
+        sys.exit(f"could not create the {SEGMENT_NAME} segment (HTTP {st})")
+    print(f"{SEGMENT_NAME} segment created")
 
     st, r = api("GET", f"/lists/{lid}/segments/{seg['id']}")
     count = r.get("member_count", -1)
