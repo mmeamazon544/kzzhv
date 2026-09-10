@@ -89,7 +89,28 @@ def ensure_segment(addrs: list[str]) -> str:
     return seg["id"]
 
 
+def drop_segment() -> None:
+    """Delete the Catchup segment so nobody is left sitting in it — it
+    surfaces on a member's record as a tag and reads like a status they
+    were given. Subscriptions are untouched."""
+    lid = CFG["audience_id"]
+    st, segs = api("GET", f"/lists/{lid}/segments?type=static&count=200")
+    gone = 0
+    for s in segs.get("segments", []):
+        if s["name"] == SEGMENT_NAME:
+            st, _ = api("DELETE", f"/lists/{lid}/segments/{s['id']}")
+            if st not in (200, 204):
+                sys.exit(f"could not delete the {SEGMENT_NAME} segment "
+                         f"(HTTP {st})")
+            gone += 1
+    print(f"{SEGMENT_NAME} segment(s) deleted: {gone}")
+
+
 if __name__ == "__main__":
+    if "--cleanup" in sys.argv:
+        drop_segment()
+        sys.exit(0)
+
     if os.environ.get("BULLETIN_DRY_RUN", "true").lower() != "false":
         sys.exit("BULLETIN_DRY_RUN is not false; refusing to send")
 

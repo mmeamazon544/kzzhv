@@ -7,6 +7,11 @@ name: mailchimp-catchup
 
 on:
   workflow_dispatch:
+    inputs:
+      cleanup:
+        description: "true = only delete the leftover Catchup segment, send nothing"
+        required: false
+        default: "false"
 
 permissions:
   contents: read
@@ -24,4 +29,8 @@ jobs:
           BULLETIN_DRY_RUN: ${{ vars.BULLETIN_DRY_RUN }}
         run: |
           set -o pipefail
-          python3 mailchimp_catchup.py | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "${{ inputs.cleanup }}" = "true" ]; then
+            python3 mailchimp_catchup.py --cleanup | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            python3 mailchimp_catchup.py | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
