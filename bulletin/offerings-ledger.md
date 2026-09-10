@@ -10,10 +10,11 @@ PayPal.
 One line per offering:
 date | project | amount | public note (optional)
 
-Projects: restoration, siddur, mahzor, kiddush, meal, general.
+Projects: restoration, torah, siddur, mahzor, kiddush, meal, general.
 Example:
 2026-09-06 | restoration | 250 | In memory of a beloved teacher
 -->
 2026-09-06 | restoration | 1800 | Contributions received toward the murals
+2026-09-09 | torah | 20000 | Contributions received toward the Torah scroll restoration
 2026-09-06 | siddur | 36 |
 2026-09-06 | mahzor | 36 |

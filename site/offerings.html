@@ -177,6 +177,22 @@
         </figure>
     </section>
 
+    <section class="prose" aria-label="Torah Scroll Restoration">
+        <h2>Torah Scroll Restoration</h2>
+        <p>The Kehillah reads from an eighteenth-century Bavarian scroll whose letterforms are unlike those of any scroll in ordinary use. Restoring it is the work of a sofer: the parchment repaired, and the letters that have cracked or faded written again. The campaign is $23,000, and all but $3,000 has been raised.</p>
+
+        <!-- goal:torah:begin -->
+            <div class="offering-goal" role="progressbar" aria-valuemin="0" aria-valuemax="23000" aria-valuenow="20000" aria-label="Torah: $20,000 raised of $23,000">
+                <div class="offering-rule">
+                    <div class="offering-fill" style="width: 87.0%;"><span class="offering-mark" aria-hidden="true">&#9670;</span></div>
+                </div>
+                <p class="offering-figures"><span class="amp">$</span>20,000 of <span class="amp">$</span>23,000 &nbsp;<em>toward the Torah scroll</em></p>
+            </div>
+            <!-- goal:torah:end -->
+
+        <p class="offering-act"><a class="btn" href="#offering" data-purpose="torah">Direct an offering toward the Torah scroll</a></p>
+    </section>
+
     <section class="prose" aria-label="The KKZZ Siddur Project">
         <h2>The KKZZ Siddur Project</h2>
         <p>The Kehillah prays from its own pages. This project designs, typesets, and prints KKZZ&rsquo;s own siddurim &mdash; traditional and egalitarian, in the congregation&rsquo;s liturgical practice and in its own aesthetic.</p>
@@ -256,6 +272,7 @@
                 <select id="of-purpose">
                     <option value="general">General support of the Kehillah</option>
                     <option value="restoration">Restoration of the 1904 murals and floors</option>
+                    <option value="torah">Torah Scroll Restoration</option>
                     <option value="siddur">The KKZZ Siddur Project</option>
                     <option value="mahzor">The KKZZ Mahzor Project</option>
                     <option value="kiddush">Kiddush sponsorship &mdash; $100</option>
@@ -324,6 +341,7 @@
         var PURPOSES = {
             general:     { label: "General support of the Kehillah", fixed: null },
             restoration: { label: "Restoration of the 1904 murals and floors", fixed: null },
+            torah:       { label: "Torah Scroll Restoration", fixed: null },
             siddur:      { label: "The KKZZ Siddur Project", fixed: null },
             mahzor:      { label: "The KKZZ Mahzor Project", fixed: null },
             kiddush:     { label: "Shabbat or holiday Kiddush sponsorship", fixed: 100 },

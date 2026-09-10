@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 GOALS = {
     "restoration": (6000, "toward the restoration"),
+    "torah": (23000, "toward the Torah scroll"),
     "siddur": (1000, "toward the siddurim"),
     "mahzor": (1600, "toward the mahzorim"),
 }
