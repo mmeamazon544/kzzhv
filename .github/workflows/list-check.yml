@@ -1,0 +1,22 @@
+# Read-only report: audience total, each segment's size, and whether Marc
+# is inside it. Prints no addresses (public repo, public logs). Sends
+# nothing.
+name: list-check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        run: |
+          set -o pipefail
+          python3 program/list_check.py | tee -a "$GITHUB_STEP_SUMMARY"
