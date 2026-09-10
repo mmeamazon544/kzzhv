@@ -70,6 +70,20 @@ FAMILY = {
 }
 
 
+def cc_marc() -> bool:
+    """Marc sees one copy of every letter his family receives (his word,
+    9 September 2026). Set the repository variable CC_MARC to "false" to
+    stop the copies."""
+    return os.environ.get("CC_MARC", "true").lower() != "false"
+
+
+def copy_subject(member: str, subject: str) -> str:
+    """A copy is labeled so Marc can tell whose letter he is reading."""
+    who = {"ari": "ÁRI", "misha": "MISHA and HANNAH",
+           "gabi": "GABI and PASCALE", "mom": "MOM"}.get(member, member.upper())
+    return f"COPY OF {who}'S LETTER · {subject}"
+
+
 def next_saturday() -> date:
     t = datetime.now(ZoneInfo("America/New_York")).date()
     return t + timedelta(days=(5 - t.weekday()) % 7)
@@ -161,10 +175,16 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
     html_p, txt_p = bulletin.render_email(ctx)
     label = f"Parashat {ctx['parashah']}" if ctx["parashah"] else ctx["title"]
     subject = m["subject"].format(label=label)
-    cid = send(subject, html_p.read_text(), txt_p.read_text(),
-               proof=proof, segment_key=m["segment_key"])
-    print(f"{member}: campaign {cid} "
-          + ("(to Marc as a proof)" if proof else "(sent)"))
+    html, text = html_p.read_text(), txt_p.read_text()
+    if proof:
+        cid = send(copy_subject(member, subject), html, text, proof=True)
+        print(f"{member}: campaign {cid} (to Marc as a copy of {member}'s letter)")
+        return
+    cid = send(subject, html, text, proof=False, segment_key=m["segment_key"])
+    print(f"{member}: campaign {cid} (sent)")
+    if cc_marc():
+        ccid = send(copy_subject(member, subject), html, text, proof=True)
+        print(f"{member}: copy {ccid} to Marc")
 
 
 if __name__ == "__main__":

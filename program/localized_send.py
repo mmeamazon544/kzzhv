@@ -23,7 +23,7 @@ from datetime import date
 from pathlib import Path
 
 import bulletin
-from family import FAMILY, next_saturday
+from family import FAMILY, cc_marc, copy_subject, next_saturday
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -93,10 +93,17 @@ def main() -> None:
             print(f"{member}: rendered {out_h.name} (subject: {subject})")
             continue
         from mailchimp_send import send
-        cid = send(subject, html_p.read_text(), txt_p.read_text(),
-                   proof=not live, segment_key=FAMILY[member]["segment_key"])
-        print(f"{member}: campaign {cid} "
-              + ("(sent live)" if live else "(to Marc as a proof)"))
+        html, text = html_p.read_text(), txt_p.read_text()
+        if live:
+            cid = send(subject, html, text, proof=False,
+                       segment_key=FAMILY[member]["segment_key"])
+            print(f"{member}: campaign {cid} (sent live)")
+            if cc_marc():
+                ccid = send(copy_subject(member, subject), html, text, proof=True)
+                print(f"{member}: copy {ccid} to Marc")
+        else:
+            cid = send(copy_subject(member, subject), html, text, proof=True)
+            print(f"{member}: campaign {cid} (to Marc as a copy of {member}'s letter)")
 
 
 if __name__ == "__main__":
