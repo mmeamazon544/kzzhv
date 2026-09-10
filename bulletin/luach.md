@@ -168,6 +168,13 @@ York). Teachings come from the published state, never redrafted. Manual
 workflow only; proof by default, live at Marc's word. First used for
 Rosh Hashana 5787.
 
+Copies to Marc (his word, 9 September 2026): every live family or
+localized send also mails him one copy, its subject labeled with whose
+letter it is, so he can see what each of them received. He is himself on
+the Weekly segment, so the congregational bulletin reaches him once by
+that route and gets no extra copy. The repository variable CC_MARC set
+to "false" stops the family copies.
+
 Sister congregations
 
 Congregation Shearith Israel, New York — Kippur, by default.
