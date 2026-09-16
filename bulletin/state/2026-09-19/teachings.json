@@ -1,0 +1,82 @@
+{
+ "plan": {
+  "halakhic_topic": "From the ninth of Tishri into Kol Nidre: eating and confessing on Erev Kippur, the added measure of the fast before sunset, and the Western Sephardic order of Kol Nidre \u2014 when it is said (before sunset, with the Sefarim taken out and held), how many times, and where Sheheheyanu is placed",
+  "kst_queries": [
+   "Kal Nidre and Seheheyanu",
+   "Kippur Ngarbit customs and greetings up to Kal Nidre",
+   "Sefarim, Seganim, Mi Sheberakh and Derashot Kippur Ngarbit"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Rest on the Tenth of Tishrei 1:1",
+   "Mishneh Torah, Rest on the Tenth of Tishrei 1:4",
+   "Mishneh Torah, Rest on the Tenth of Tishrei 1:6",
+   "Mishneh Torah, Rest on the Tenth of Tishrei 2:9",
+   "Mishneh Torah, Repentance 2:7",
+   "Mishneh Torah, Repentance 2:8"
+  ],
+  "aggadic_topic": "\"May my teaching drop like rain, my word flow like dew\" (Deut. 32:2): why Moses' last song asks to be received as rain and dew rather than as thunder \u2014 Torah that soaks in slowly, and a word of gentleness as we enter the Day of Atonement",
+  "sefaria_refs_aggada": [
+   "Rashi on Deuteronomy 32:2:1",
+   "Rashi on Deuteronomy 32:2:2",
+   "Ibn Ezra on Deuteronomy 32:2:1",
+   "Ramban on Deuteronomy 32:2:1",
+   "Sifrei Devarim 306:11",
+   "Taanit 7a"
+  ]
+ },
+ "halakha_html": "<p>The Rambam rules that the fast begins while it is still the ninth of Tishri. We add from the ordinary to the holy at both ends of the day, taking the affliction upon ourselves in the late afternoon and letting it run a little past nightfall on the tenth.<sup>1</sup> Before that, we eat. And before we eat, we confess. The Rambam places the first viddui of Kippur on the eve of the day, before the last meal, so that no one comes to the table with those words still unsaid.<sup>2</sup> The confession then returns at every service \nemdash evening, morning, musaf, minhah, ne'ila.</p><p>The wording of Kol Nidre has never been settled. Rav Saadia Gaon's text releases vows already made: from the Kippur that has passed until this Kippur that has come upon us.<sup>3</sup> Rabbenu Tam emended it toward the year ahead, and some Geonim objected to the practice altogether and said the two academies never followed it.<sup>4</sup> Congregations divided over this long ago and have kept their own texts since. Each of these is a real custom, and a congregation keeps the one it has.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Rest.on.the.Tenth.of.Tishrei.1:6\">Mishneh Torah, Rest on the Tenth of Tishrei 1:6</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Repentance.2:7\">Mishneh Torah, Repentance 2:7</a> &nbsp; 3. Keter Shem Tob, vol. 6, p. 310 &nbsp; 4. Keter Shem Tob, vol. 6, p. 309</p>",
+ "aggada_html": "<p>Moses begins his last song by asking for weather. Let my teaching come down as rain, my word settle as dew. Rashi reads <em>likhi</em> as the Torah given to Israel, and says it is life to the world as rain is life to the world.<sup>1</sup> The Talmud hears both speeds in the verse \nemdash rain that drops hard on a field, dew that arrives without a sound \nemdash and Rabbi Abbahu taught that the day of rain is great because rain comes down on everyone alike.<sup>2</sup> Words work the same way. On the eve of Kippur we want the kind that soaks in slowly.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Rashi.on.Deuteronomy.32:2:1\">Rashi on Deuteronomy 32:2</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Taanit.7a\">Ta'anit 7a</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Rest on the Tenth of Tishrei 1:6",
+   "sefaria_ref": "Mishneh Torah, Rest on the Tenth of Tishrei 1:6",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Repentance 2:7",
+   "sefaria_ref": "Mishneh Torah, Repentance 2:7",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 6, p. 310",
+   "sefaria_ref": null,
+   "kst": true
+  },
+  {
+   "display": "Keter Shem Tob, vol. 6, p. 309",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Rashi on Deuteronomy 32:2",
+   "sefaria_ref": "Rashi on Deuteronomy 32:2:1",
+   "kst": false
+  },
+  {
+   "display": "Ta'anit 7a",
+   "sefaria_ref": "Taanit 7a",
+   "kst": false
+  }
+ ],
+ "reading_summaries": [
+  {
+   "reading": "Ha'azinu, Deuteronomy 32:1\n2013\n52",
+   "torah_summary": "Moses sings. He calls heaven and earth to listen, names the Eternal as the Rock whose ways are just, and tells the people to ask their elders about the days of old. The song remembers a people found in a howling waste, guarded like the pupil of an eye, carried like a young eagle on its parent's wings. Then Jeshurun grows fat and kicks and forgets the Rock, and the song turns to hard words about what follows. At the end, Moses is told to climb Mount Nebo and see the land from there.",
+   "haftarah_summary": "Hosea opens with \"Return, O Israel,\" and tells the people to come back with words in hand. What follows is tender. The Eternal will heal their turning away and love them freely, will be like dew to Israel, and they will blossom like the lily and take root deep as Lebanon. Ephraim puts down the idols his own hands made. The prophet closes by saying the wise understand these paths. Micah adds three verses: who is a God like You, pardoning wrongdoing and casting our sins into the depths of the sea."
+  },
+  {
+   "reading": "Kippur, Leviticus 16:1\n2013\n34; maftir Numbers 29:7\n2013\n11",
+   "torah_summary": "The reading begins after the death of Aaron's two sons. Aaron may not enter the Shrine whenever he wishes. On this one day he bathes, dresses in plain linen, and brings a bull for himself and his household and two goats from the community. Lots are drawn: one goat for the Eternal, one sent off to the wilderness for Azazel. Incense makes a screening cloud. Blood purges the Shrine, the Tent and the altar. Aaron lays both hands on the live goat and confesses over it. The maftir in Numbers gives the offerings of the tenth day.",
+   "haftarah_summary": "Isaiah is told to cry out with full throat and raise his voice like a shofar. The people seek God daily and ask why their fasting goes unseen. The answer is plain: they fast and press their workers, they fast and quarrel and strike with a wicked fist. The fast the Eternal desires unlocks fetters, frees the oppressed, shares bread with the hungry, brings the poor into the house, clothes the naked, and does not hide from one's own kin. Then light breaks through like the dawn. The passage ends with the honoring of Shabbat."
+  },
+  {
+   "reading": "Kippur, Minhah reading, Leviticus 18:1\n2013\n30",
+   "torah_summary": "The Eternal tells Moses to speak to the people: I am the Eternal your God. Israel is not to copy the practices of Egypt, where they lived, or of Canaan, where they are going. They are to keep God's laws and rules, by which a person lives. Then comes the long list of relations within a household that may not be uncovered \n2014 parents, sisters, aunts, in-laws \n2014 together with the warning against giving children to Molech. The chapter closes with the land itself: keep these things, so that the land does not spew you out.",
+   "haftarah_summary": "Jonah is sent to Nineveh and sails the other way. A storm comes. The sailors pray, cast lots, and put him overboard only when nothing else will serve. A great fish swallows him, and he prays from inside it. Nineveh hears his few words and turns, from the king down to the animals, and the city is spared. Jonah sulks under a plant that withers, and the book ends with a question from the Eternal about a great city full of people who do not know their right hand from their left. Micah's three verses follow."
+  }
+ ],
+ "parashah_summary": "Moses sings. He calls heaven and earth to listen, names the Eternal as the Rock whose ways are just, and tells the people to ask their elders about the days of old. The song remembers a people found in a howling waste, guarded like the pupil of an eye, carried like a young eagle on its parent's wings. Then Jeshurun grows fat and kicks and forgets the Rock, and the song turns to hard words about what follows. At the end, Moses is told to climb Mount Nebo and see the land from there.",
+ "haftarah_summary": "Hosea opens with \"Return, O Israel,\" and tells the people to come back with words in hand. What follows is tender. The Eternal will heal their turning away and love them freely, will be like dew to Israel, and they will blossom like the lily and take root deep as Lebanon. Ephraim puts down the idols his own hands made. The prophet closes by saying the wise understand these paths. Micah adds three verses: who is a God like You, pardoning wrongdoing and casting our sins into the depths of the sea."
+}
