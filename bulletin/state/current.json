@@ -1,8 +1,9 @@
 {
  "id": "2026-09-19",
- "rev": "20260916T103018",
+ "rev": "20260917T094035",
  "status": "proofed",
  "title": "Shabbat Ha'azinu and Kippur 5787",
  "subject": "Shabbat Ha'azinu and Kippur 5787 \u00b7 18\u201321 September 2026",
- "proofed_at": "20260916T103018"
+ "proofed_at": "20260917T094035",
+ "note": "Three things I couldn't finish:\n\n1. Kippur times. There is no Kippur file yet (bulletin/service-times/ has only rosh-hashana.md), and nothing in the files gives Kippur times. Please send the FAST BEGINS and FAST ENDS times, and the rest of the Kippur schedule you want listed (Kol Nidre / 'Arbit, Shahrit, Sefer, Musaf, Minhah, Ne'ilah, etc.) so I can build the page. I won't guess at times.\n\n2. Putting FAST BEGINS and FAST ENDS in red is a typography/design matter \u2014 the content files hold only text, with no way to set a colour. That one needs to go to Claude for the template.\n\n3. \"emdash\": the literal word \"emdash\" does not appear anywhere in the content files I can edit \u2014 every dash in them is a real em-dash character (the Rosh Hashana headings, the \"Pesukei DeZimrah \u2014 Psalms\" note, and the \"\u2014\" placeholders in the greetings file). So it looks like it's coming from the template or the build rather than the text. Could you tell me exactly where on the proof you saw it (which section/line)? If it's the template, that's one for Claude as well. If you'd point me at the spot, I'll happily read the wording there again for other typos."
 }
