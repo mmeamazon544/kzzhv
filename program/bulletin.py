@@ -376,6 +376,24 @@ def build_times(sat: date, fri: date, cluster: dict | None,
     return shabbat_times
 
 
+def load_away(sat: date) -> dict | None:
+    """A festival in this week's cluster that the Kehillah does not keep.
+    bulletin/away/<saturday>.md turns the bulletin into a Shabbat bulletin
+    with the festival set apart after the readings: a red banner naming
+    the reader's own city, the note under it, that city's festival times,
+    the festival's readings, and a closing notice. Date-keyed, so a stale
+    file cannot reach another week."""
+    f = ROOT / "bulletin" / "away" / f"{sat.isoformat()}.md"
+    if not f.exists():
+        return None
+    out = {}
+    for line in strip_comments(f.read_text()).splitlines():
+        if "=" in line:
+            k, v = line.split("=", 1)
+            out[k.strip()] = v.strip()
+    return out or None
+
+
 def build_context(sat: date) -> dict:
     fri = sat - timedelta(days=1)
     item = leyning(sat)
@@ -459,6 +477,20 @@ def build_context(sat: date) -> dict:
         times_heading = TIMES_HEADING_FESTIVAL_TEXT
         reflections_heading = f"Reflections on the Parasha and {cluster['name']}"
         readings = ([reading_from_item(item)] if item else []) + readings
+        away = load_away(sat)
+        if away:
+            # The Shabbat is the bulletin; the festival is set apart after
+            # the readings (Marc's order, 17 September 2026).
+            shabbat_only = build_times(sat, fri, None, KKZZ_LAT, KKZZ_LON)
+            festival_rows = cluster_times(cluster, KKZZ_LAT, KKZZ_LON)
+            fest_readings = cluster_readings(cluster)
+            names = {r["name"] for r in fest_readings}
+            times = shabbat_only
+            times_heading = TIMES_HEADING_TEXT
+            title = away.get("title") or title
+            reflections_heading = "Reflections on the Parasha"
+            readings = [r for r in readings if r["name"] not in names]
+            away = dict(away, times=festival_rows, readings=fest_readings)
     else:
         title = f"Shabbat {parashah}" if parashah else "Shabbat"
         lede = " · ".join(lede_bits)
@@ -481,6 +513,8 @@ def build_context(sat: date) -> dict:
         "times_heading": times_heading,
         "reflections_heading": reflections_heading,
         "readings": readings,
+        "away": locals().get("away") if cluster else None,
+        "place": GUESTS_PLACE.get(loc, loc),
         "torah_summary": None,      # filled by the teachings pipeline
         "haftarah_summary": None,
         "observances": observances,
@@ -605,6 +639,99 @@ def apply_teachings(ctx: dict, t: dict) -> None:
         readings[0]["haftarah_summary"] = t.get("haftarah_summary")
 
 
+def away_heading(ctx: dict) -> str:
+    a = ctx.get("away") or {}
+    return (a.get("heading") or "").format(place=ctx.get("place") or "")
+
+
+def away_web(ctx: dict) -> list[str]:
+    """The away festival, set apart after the Shabbat readings: a red
+    banner naming the reader's own city, the note, that city's times, the
+    festival's readings, and the closing notice."""
+    a = ctx.get("away")
+    if not a:
+        return []
+    out = [f'<h2 style="color: {NO_SERVICES_RED}; border-bottom-color: {NO_SERVICES_RED};">'
+           f'{away_heading(ctx)}</h2>']
+    if a.get("note"):
+        out.append(f'<p style="font-style: italic; color: var(--ink-soft);">{a["note"]}</p>')
+    if a.get("times"):
+        out.append('<section class="schedule" aria-label="Fast times" '
+                   'style="margin: 1.2rem 0; padding: 0;">\n        <dl>\n'
+                   + times_rows_html({"times": a["times"]})
+                   + "\n        </dl>\n    </section>")
+    for r in a.get("readings") or []:
+        out.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
+        if r.get("torah_summary"):
+            out.append(f"<p>{r['torah_summary']}</p>")
+        if r["haftarah"]:
+            out.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
+            if r.get("haftarah_summary"):
+                out.append(f"<p>{r['haftarah_summary']}</p>")
+    if a.get("resume"):
+        out.append(f'<p style="color: {NO_SERVICES_RED};">{a["resume"]}</p>')
+    return out
+
+
+def away_email(ctx: dict) -> list[str]:
+    a = ctx.get("away")
+    if not a:
+        return []
+    out = [f'  <tr><td style="padding:20px 26px 2px;">'
+           f'<div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:2px; '
+           f'color:{NO_SERVICES_RED}; text-transform:uppercase; border-bottom:1px solid {NO_SERVICES_RED}; '
+           f'padding-bottom:7px;">{e_disp(away_heading(ctx))}</div></td></tr>\n']
+    if a.get("note"):
+        out.append(e_p(a["note"], color=E_SOFT, italic=True, size=13))
+    if a.get("times"):
+        out.append('  <tr><td style="padding:14px 26px 0;">\n'
+                   '    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n'
+                   + "\n".join(email_times_rows(a["times"]))
+                   + "\n    </table>\n  </td></tr>\n")
+    for r in a.get("readings") or []:
+        out.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
+        if r.get("torah_summary"):
+            out.append(e_p(r["torah_summary"]))
+        if r["haftarah"]:
+            out.append(e_p(r["haftarah"].replace(
+                "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
+            if r.get("haftarah_summary"):
+                out.append(e_p(r["haftarah_summary"]))
+    if a.get("resume"):
+        out.append(e_p(a["resume"], color=NO_SERVICES_RED))
+    return out
+
+
+def away_text(ctx: dict) -> list[str]:
+    a = ctx.get("away")
+    if not a:
+        return []
+    out = ["", away_heading(ctx).upper()]
+    if a.get("note"):
+        out.append(a["note"])
+    for label, small, value, _f in a.get("times") or []:
+        if label == "__bar__":
+            out.append("- - - - -")
+        elif label == "__head__":
+            out.append(small.upper())
+        elif not label and not value:
+            out.append(small)
+        else:
+            out.append(f"{label}: {value}  ({small})")
+    for r in a.get("readings") or []:
+        out.append(f"{r['name']}, {r['range']}.")
+        if r.get("torah_summary"):
+            out.append(r["torah_summary"])
+        if r["haftarah"]:
+            out.append(r["haftarah"])
+            if r.get("haftarah_summary"):
+                out.append(r["haftarah_summary"])
+    if a.get("resume"):
+        out.append(a["resume"])
+    out.append("")
+    return out
+
+
 def build_body(ctx: dict) -> list[str]:
     body = []
     if ctx["readings"]:
@@ -620,6 +747,7 @@ def build_body(ctx: dict) -> list[str]:
                 body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
                 if r.get("haftarah_summary"):
                     body.append(f"<p>{r['haftarah_summary']}</p>")
+    body += away_web(ctx)
     if ctx["observances"]:
         body.append("<h2>In the Week Ahead</h2>")
         body += [f"<p>{o}</p>" for o in ctx["observances"]]
@@ -689,6 +817,7 @@ def service_times_web(ctx: dict) -> str:
     return "\n".join(parts)
 
 
+GUESTS_PLACE = {"Poughkeepsie": "Poughkeepsie"}
 NO_SERVICES_RED = "#ff6b6b"
 FAST_RED = NO_SERVICES_RED   # the fast lines, at Marc's request
 
@@ -935,9 +1064,11 @@ def e_p(html_text: str, color: str = E_INK, italic: bool = False, size: int = 14
     return f'  <tr><td style="padding:10px 26px 0;"><div style="{style}">{html_text}</div></td></tr>\n'
 
 
-def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
+def email_times_rows(rows: list) -> list[str]:
+    """The <tr> rows of a times table. Shared by the week's own times and
+    by an away festival's block."""
     times = []
-    for label, small, value, final in ctx["times"]:
+    for label, small, value, final in rows:
         if label == "__bar__":
             times.append(f"""      <tr><td colspan="2" style="padding:16px 0 2px;">
           <img src="{base}/bulletin/assets/bar-pimpernel.jpg" width="548" alt="" style="display:block; width:100%; height:auto; border-top:2px solid #856a2e; border-bottom:2px solid #856a2e;">
@@ -969,6 +1100,11 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
           <div class="display" style="font-family:{SERIF}; font-size:16px; letter-spacing:1px; color:{vcolor};">{value}</div>
         </td>
       </tr>""")
+    return times
+
+
+def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
+    times = email_times_rows(ctx["times"])
 
     sections = []
     if ctx["readings"]:
@@ -982,6 +1118,7 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
                     "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
                 if r.get("haftarah_summary"):
                     sections.append(e_p(r["haftarah_summary"]))
+    sections += away_email(ctx)
     if ctx["observances"]:
         sections.append(e_h2("In the Week Ahead"))
         for o in ctx["observances"]:
@@ -1190,6 +1327,7 @@ def render_text(ctx: dict) -> str:
                 if r.get("haftarah_summary"):
                     lines.append(r["haftarah_summary"])
         lines.append("")
+    lines += away_text(ctx)
     if ctx["observances"]:
         lines += ["IN THE WEEK AHEAD"] + ctx["observances"] + [""]
     if ctx["kiddush"]:
