@@ -447,6 +447,26 @@ def fetch_reading_text(ref: str, cap: int = 9000) -> str | None:
     return "\n".join(parts) or None
 
 
+# The model sometimes spells a dash out instead of writing one: an
+# em-dash arrives as a newline followed by the literal word "emdash"
+# (and the same trick has been seen for "endash"). It reached a proof on
+# 17 September 2026 — three times in one bulletin, with no real em-dash
+# anywhere in the drafted text — so every drafted string is repaired
+# before it is used. Mends the damage; never touches a real dash.
+_SPELLED_DASH = re.compile(r"\s*\\?[nr]?\s*\b(em|en)dash\b\s*", re.I)
+
+
+def mend_dashes(value):
+    """Put back dashes the model spelled out. Recurses through the draft."""
+    if isinstance(value, str):
+        return _SPELLED_DASH.sub(lambda m: " — " if m.group(1).lower() == "em" else " – ", value)
+    if isinstance(value, dict):
+        return {k: mend_dashes(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [mend_dashes(v) for v in value]
+    return value
+
+
 def generate(week_description: str, reading_refs: list | None = None) -> dict:
     p = plan(week_description)
     print("plan:", json.dumps({k: p[k] for k in ("halakhic_topic", "aggadic_topic")}), file=sys.stderr)
@@ -498,6 +518,8 @@ def generate(week_description: str, reading_refs: list | None = None) -> dict:
         problems = check(d["halakha"], supplied, kst_ranges) + check(d["aggada"], supplied, kst_ranges)
         if problems:
             raise RuntimeError("citations still failing after redrafts: " + "; ".join(problems))
+
+    d = mend_dashes(d)
 
     summaries = [{"reading": (s.get("reading") or "").strip(),
                   "torah_summary": (s.get("torah_summary") or "").strip(),

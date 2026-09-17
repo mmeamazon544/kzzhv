@@ -294,8 +294,19 @@ def cluster_times(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -
                      f"{long_day(prev)}, after the first day ends · from a flame lit before the festival",
                      format_time(habdala(prev, lat, lon)), False))
     fast = cluster["fast"]
-    rows.append((f"{name} ends", f"{long_day(days[-1])} · Habdala",
-                 format_time(habdala(days[-1], lat, lon)), fast is None))
+    # Kippur is itself a fast, so it carries "Fast begins" and "Fast ends"
+    # rather than a bare "ends" line (Marc, 17 September 2026). The fast
+    # starts with candle lighting — you stop eating before you light — and
+    # ends at the same Habdala that ends the day, so the two are one line
+    # rather than two saying the same thing.
+    if "kippur" in name.lower():
+        rows.append(("Fast begins", f"{ev_label}, {long_day(eve)} · with candle lighting",
+                     format_time(candles), False))
+        rows.append(("Fast ends", f"{long_day(days[-1])} · Habdala, {name} ends",
+                     format_time(habdala(days[-1], lat, lon)), fast is None))
+    else:
+        rows.append((f"{name} ends", f"{long_day(days[-1])} · Habdala",
+                     format_time(habdala(days[-1], lat, lon)), fast is None))
     if fast:
         # The fast gets its own section (Marc's layout, 7 September 2026):
         # a Morris bar, a header, the description, then the time lines.
@@ -554,6 +565,14 @@ def times_rows_html(ctx: dict) -> str:
                          "                </dt>\n            </div>")
             continue
         cls = ' class="row row--final"' if final else ' class="row"'
+        if is_fast_row(label):
+            times.append(f"""            <div class="row">
+                <dt style="color: {FAST_RED};">{label}
+                    <small>{small.replace("·", "&middot;")}</small>
+                </dt>
+                <dd style="color: {FAST_RED};">{value}</dd>
+            </div>""")
+            continue
         times.append(f"""            <div{cls}>
                 <dt>{label}
                     <small>{small.replace("·", "&middot;")}</small>
@@ -671,6 +690,12 @@ def service_times_web(ctx: dict) -> str:
 
 
 NO_SERVICES_RED = "#ff6b6b"
+FAST_RED = NO_SERVICES_RED   # the fast lines, at Marc's request
+
+
+def is_fast_row(label: str) -> bool:
+    """The rows that begin and end a fast, in any bulletin that has one."""
+    return label in ("Fast begins", "Fast ends")
 
 
 def banner_web(ctx: dict) -> str:
@@ -933,6 +958,8 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
             continue
         color = E_GOLD_PALE if final else E_INK
         vcolor = E_GOLD_PALE if final else E_FUCHSIA
+        if is_fast_row(label):
+            color = vcolor = FAST_RED
         times.append(f"""      <tr>
         <td style="padding:13px 0 3px; border-bottom:1px solid {E_LINE};">
           <div class="display" style="font-family:{SERIF}; font-size:14px; letter-spacing:1px; color:{color}; text-transform:uppercase;">{label}</div>

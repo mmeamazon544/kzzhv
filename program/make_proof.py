@@ -240,7 +240,18 @@ def main() -> None:
     if instructions:
         week += ("\n\nInstructions from Marc for this revision (follow them):\n"
                  + instructions)
-    t = teachings.generate(week, reading_refs=reading_refs(ctx))
+    # --keep-teachings re-renders a bulletin using the divrei torah it
+    # already has, instead of drafting new ones. For a layout or wording
+    # fix there is no reason to throw away teachings Marc has read (and
+    # every reason not to: a redraft comes back different).
+    stored = ROOT / "bulletin" / "state" / bulletin_id / "teachings.json"
+    if "--keep-teachings" in sys.argv:
+        if not stored.exists():
+            sys.exit(f"--keep-teachings: no teachings stored for {bulletin_id}")
+        t = json.loads(stored.read_text())
+        print(f"keeping the teachings already drafted for {bulletin_id}")
+    else:
+        t = teachings.generate(week, reading_refs=reading_refs(ctx))
     apply_teachings(ctx, t)
 
     web = bulletin.render_web(ctx)

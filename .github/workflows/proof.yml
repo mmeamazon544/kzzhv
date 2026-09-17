@@ -15,6 +15,10 @@ on:
         description: "Shabbat date (YYYY-MM-DD); empty = next Saturday"
         required: false
         default: ""
+      keep_teachings:
+        description: "true = re-render with the divrei torah already drafted, do not write new ones"
+        required: false
+        default: "false"
   repository_dispatch:
     types: [bulletin-changes]
 
@@ -111,10 +115,12 @@ jobs:
           INSTRUCTIONS: ${{ github.event.client_payload.instructions }}
         run: |
           set -o pipefail
+          KEEP=""
+          [ "${{ inputs.keep_teachings }}" = "true" ] && KEEP="--keep-teachings"
           if [ -n "$INSTRUCTIONS" ]; then
-            python make_proof.py "${{ steps.decide.outputs.id }}" --instructions "$INSTRUCTIONS" | tee -a "$GITHUB_STEP_SUMMARY"
+            python make_proof.py "${{ steps.decide.outputs.id }}" $KEEP --instructions "$INSTRUCTIONS" | tee -a "$GITHUB_STEP_SUMMARY"
           else
-            python make_proof.py "${{ steps.decide.outputs.id }}" | tee -a "$GITHUB_STEP_SUMMARY"
+            python make_proof.py "${{ steps.decide.outputs.id }}" $KEEP | tee -a "$GITHUB_STEP_SUMMARY"
           fi
       - name: Commit the proof state
         if: steps.decide.outputs.id != ''
