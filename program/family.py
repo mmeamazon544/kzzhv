@@ -35,6 +35,7 @@ FAMILY = {
         "segment_key": "ari_segment_id",
         "lat": 42.4075, "lon": -71.1190,
         "heading": "Times for Tufts University, Medford, MA (42.41° N, 71.12° W)",
+        "place": "Medford",
         "subject": "Ári ❤️! Shabbat Times For Tufts University: {label}",
         "sponsor": ("SPONSORED BY YOUR HOME CONGREGATION",
                     "KEHILLAH KEDOSHAH ZIKHRON ZVI"),
@@ -44,6 +45,7 @@ FAMILY = {
         "segment_key": "misha_segment_id",
         "lat": 39.9526, "lon": -75.1652,
         "heading": "Times for Philadelphia, PA (39.95° N, 75.17° W)",
+        "place": "Philadelphia",
         "subject": "Misha and Hannah ❤️! Shabbat Times For Philly: {label}",
         "sponsor": ("SPONSORED BY",
                     "CONGREGATION KEHILLAH KEDOSHAH ZIKHRON ZVI"),
@@ -53,6 +55,7 @@ FAMILY = {
         "segment_key": "gabi_segment_id",
         "lat": 39.9526, "lon": -75.1652,
         "heading": "Times for Philadelphia, PA (39.95° N, 75.17° W)",
+        "place": "Philadelphia",
         "subject": "Gabi and Pascale ❤️! Shabbat Times For Philly: {label}",
         "sponsor": ("SPONSORED BY",
                     "CONGREGATION KEHILLAH KEDOSHAH ZIKHRON ZVI"),
@@ -62,6 +65,7 @@ FAMILY = {
         "segment_key": "mom_segment_id",
         "lat": 40.7690, "lon": -73.9813,
         "heading": "Times for New York City, NY (40.77° N, 73.98° W)",
+        "place": "New York",
         "subject": "Mom ❤️! Shabbat Times For NYC: {label}",
         "sponsor": ("SPONSORED BY",
                     "CONGREGATION KEHILLAH KEDOSHAH ZIKHRON ZVI"),
@@ -141,11 +145,11 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
         return
 
     ctx = bulletin.build_context(sat)
-    ctx["times"] = bulletin.build_times(sat, ctx["fri"], ctx["cluster"],
-                                        m["lat"], m["lon"])
+    bulletin.relocate_times(ctx, m["lat"], m["lon"])
     events = bulletin.fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
     ctx["observances"] = bulletin.observance_lines(sat, events, m["lat"], m["lon"])
     ctx["times_heading"] = m["heading"]
+    ctx["place"] = m["place"]
     ctx["eyebrow_line_html"] = (
         '    <div class="display" style="font-family:Georgia,\'Times New Roman\',serif; '
         "font-size:13px; letter-spacing:3px; color:#c79f50; text-transform:uppercase; "

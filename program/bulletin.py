@@ -394,6 +394,19 @@ def load_away(sat: date) -> dict | None:
     return out or None
 
 
+def relocate_times(ctx: dict, lat: float, lon: float) -> None:
+    """Recompute this bulletin's times for somebody else's sky, in place.
+    Keeps the away split: with an away festival the main block holds only
+    the Shabbat, and the festival's own times stay in the away block, so a
+    family letter never shows the festival twice."""
+    cluster = ctx.get("cluster")
+    if ctx.get("away"):
+        ctx["times"] = build_times(ctx["sat"], ctx["fri"], None, lat, lon)
+        ctx["away"] = dict(ctx["away"], times=cluster_times(cluster, lat, lon))
+    else:
+        ctx["times"] = build_times(ctx["sat"], ctx["fri"], cluster, lat, lon)
+
+
 def build_context(sat: date) -> dict:
     fri = sat - timedelta(days=1)
     item = leyning(sat)

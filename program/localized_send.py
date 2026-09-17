@@ -47,9 +47,9 @@ PLACE_SHORT = {
 def build(member: str, sat: date) -> tuple[dict, str]:
     m = FAMILY[member]
     ctx = bulletin.build_context(sat)
-    ctx["times"] = bulletin.build_times(sat, ctx["fri"], ctx["cluster"],
-                                        m["lat"], m["lon"])
+    bulletin.relocate_times(ctx, m["lat"], m["lon"])
     ctx["times_heading"] = HALAKHIC_HEADINGS[member]
+    ctx["place"] = m["place"]
     ctx["service_times"] = []
 
     cur = json.loads((ROOT / "bulletin" / "state" / "current.json").read_text())
