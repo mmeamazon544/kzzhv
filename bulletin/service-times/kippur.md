@@ -6,7 +6,7 @@ as in rosh-hashana.md. -->
 * Please feel free to come and go as you wish.
 Berakhot = 10:00 am | Morning Blessings
 Zemirot = 10:15 am | Pesukei DeZimrah — Psalms
-Shahrit = 10:30 am | Morning Service
+Shaḥrit = 10:30 am | Morning Service
 Sefer = 11:00 am | Reading of the Torah and Haftarah
 Musaf = 12:00 noon | Additional Service
 Conclusion of Services & Kiddush = 12:30 pm | You can come just for this if prayer and Torah reading is not your thing

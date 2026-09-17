@@ -9,13 +9,13 @@ paragraphs in place, and "---" for a William Morris separation bar. -->
 * Please feel free to come and go as you wish.
 ZEMIROT = 10:00 am | Morning Blessings
 PESUKEI DEZIMRAH = 10:15 am | Psalms
-SHAHRIT = 10:30 am | Morning Service
+SHAḤRIT = 10:30 am | Morning Service
 SEFER = 12:00 noon | Reading of the Torah and Haftarah
 MUSAF = 1:00 pm | Additional Service
 CONCLUSION OF SERVICES & KIDDUSH = 2:30 pm | You can come just for this if prayer and Torah reading is not your thing
 * No Shofar blowing on Shabbat.
 BREAK =
-MINHAH = 5:00 pm
+MINḤAH = 5:00 pm
 ---
 # SECOND NIGHT — SATURDAY NIGHT
 'ARBIT = 7:45 pm | Evening service
@@ -23,11 +23,11 @@ MINHAH = 5:00 pm
 * Please feel free to come and go as you wish.
 ZEMIROT = 10:00 am | Morning Blessings
 PESUKEI DEZIMRAH = 10:15 am | Psalms
-SHAHRIT = 10:30 am | Morning Service
+SHAḤRIT = 10:30 am | Morning Service
 SEFER = 12:00 noon | Reading of the Torah and Haftarah
 SHOFAR SERVICE = 1:00 pm
 MUSAF = 1:30 pm | Additional Service
 CONCLUSION OF SERVICES & KIDDUSH = 2:30 pm | You can come just for this if prayer and Torah reading is not your thing
 BREAK =
-MINHAH = 5:00 pm
+MINḤAH = 5:00 pm
 ---
