@@ -1,9 +1,10 @@
 {
  "id": "2026-09-19",
  "rev": "20260917T102712",
- "status": "proofed",
+ "status": "approved",
  "title": "Shabbat Shuvah (Parashat Ha'azinu)",
  "subject": "Shabbat Shuvah (Parashat Ha'azinu) \u00b7 18\u201321 September 2026",
  "proofed_at": "20260917T102712",
- "note": "Done in the content files: every transliterated \u05d7 now carries the underdot \u2014 Sha\u1e25rit (standing schedule, Shabbat Shuvah, both Rosh Hashana days) and Min\u1e25ah (both Rosh Hashana days). I left the other h's alone because they aren't \u05d7: Berakhot, Haftarah, Torah, Shabbat Shuvah, Kiddush, Rosh Hashana, and in the greetings file \"bi-khayr\" (Arabic \u062e) and \"chronia\" (Greek \u03c7). Say the word if you want any of those treated differently.\n\nOne thing I can't do from here: whether the underdotted \u1e25/\u1e24 actually renders in the bulletin, the email, and the services page depends on the fonts and templates the program uses \u2014 if it shows as a box or a plain h anywhere, that's a typography/template fix to raise with Claude."
+ "note": "Done in the content files: every transliterated \u05d7 now carries the underdot \u2014 Sha\u1e25rit (standing schedule, Shabbat Shuvah, both Rosh Hashana days) and Min\u1e25ah (both Rosh Hashana days). I left the other h's alone because they aren't \u05d7: Berakhot, Haftarah, Torah, Shabbat Shuvah, Kiddush, Rosh Hashana, and in the greetings file \"bi-khayr\" (Arabic \u062e) and \"chronia\" (Greek \u03c7). Say the word if you want any of those treated differently.\n\nOne thing I can't do from here: whether the underdotted \u1e25/\u1e24 actually renders in the bulletin, the email, and the services page depends on the fonts and templates the program uses \u2014 if it shows as a box or a plain h anywhere, that's a typography/template fix to raise with Claude.",
+ "approved_at": "2026-09-17T12:25:17.473331-04:00"
 }
