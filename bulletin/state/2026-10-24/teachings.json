@@ -1,0 +1,77 @@
+{
+ "plan": {
+  "halakhic_topic": "Berit Milah: the eighth day and the order of the blessings \u2014 Maimonides on when the circumcision is performed and who blesses what, together with the Western Sephardic practice at a berit (the mohel's and father's blessings, the cup of wine and the naming, Elijah's chair, the congregation's 'ke-shem she-nikhnas')",
+  "kst_queries": [
+   "Blessings, customs, and prayers of circumcision",
+   "Honoring the Mohel and blessing over wine",
+   "Taking the boy to be circumcised"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Circumcision 1:1",
+   "Mishneh Torah, Circumcision 1:8",
+   "Mishneh Torah, Circumcision 1:9",
+   "Mishneh Torah, Circumcision 2:1",
+   "Mishneh Torah, Circumcision 3:1",
+   "Mishneh Torah, Circumcision 3:2"
+  ],
+  "aggadic_topic": "\"Lekh lekha\" and \"heyeh berakhah\": the midrash of the palace in flames (Abram sees a lit birah and asks who is its master) read alongside Rashi's \"go for your own benefit\" \u2014 the call to leave is not an uprooting but a commission, and the blessing is placed into Abram's own hand, as the haftarah names him \"Abraham who loved Me\"",
+  "sefaria_refs_aggada": [
+   "Genesis 12:1",
+   "Genesis 12:2",
+   "Genesis 12:3",
+   "Bereshit Rabbah 39:1",
+   "Bereshit Rabbah 39:11",
+   "Rashi on Genesis 12:1:1"
+  ]
+ },
+ "halakha_html": "<p>A boy enters the covenant on the eighth day, and the circumcision is done by day. The Rambam rules that it is performed after sunrise, and although the whole day is fit, it is a mitzvah to do it early in the morning, since the eager are early to the mitzvot.<sup>1</sup> When the eighth day falls on Shabbat, a circumcision at its proper time goes forward; one already delayed waits for a weekday.<sup>2</sup> Two blessings open the ceremony. The mohel blesses <em>al ha-milah</em> before cutting, and the parent blesses on bringing the child into the covenant of Abraham our father. The Rambam holds that this second blessing belongs to the parent, and that if the father is absent it is not said by another.<sup>3</sup></p><p>In London and Amsterdam the child is carried in while the company sings <em>Berukhim atem kehal emunai</em>, and the mohel is honored with the cup even when the rabbi of the kahal is present; in the Land of Israel, the eastern communities and the cities of Morocco, the rav or another scholar blesses, and the mohel only if he is himself learned. In Eretz Yisrael the sandeket brings the baby from the house to the synagogue door, the child is set on the chair of Elijah, and all answer <em>ke-shem she-nikhnas</em>.<sup>4</sup> With us both parents say the blessing, since both bring the child into the covenant.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Circumcision.1:8\">Mishneh Torah, Circumcision 1:8</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Circumcision.1:9\">Mishneh Torah, Circumcision 1:9</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Circumcision.3:1\">Mishneh Torah, Circumcision 3:1</a> &nbsp; 4. Keter Shem Tob, vol. 2, pp. 555\u2013557</p>",
+ "aggada_html": "<p>Rabbi Yitz\u1e25ak tells of a traveler passing from place to place who sees a palace with a light burning inside. He asks whether a palace like this can have no one in charge. The owner looks out and says, I am the owner of the palace. So Abram asked about the world, and the Holy One looked out at him.<sup>1</sup> The call comes to someone already looking. Rashi reads <em>lekh lekha</em> as go for your own good,<sup>2</sup> and the promise ends with <em>ve-heyeh berakhah</em>, you shall be a blessing.<sup>3</sup> The blessing is put into Abram's own hand to give away. The haftarah remembers him simply as Abraham who loved Me.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Bereshit.Rabbah.39:1\">Bereshit Rabbah 39:1</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Rashi.on.Genesis.12:1:1\">Rashi on Genesis 12:1</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Genesis.12:2\">Genesis 12:2</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Circumcision 1:8",
+   "sefaria_ref": "Mishneh Torah, Circumcision 1:8",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Circumcision 1:9",
+   "sefaria_ref": "Mishneh Torah, Circumcision 1:9",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Circumcision 3:1",
+   "sefaria_ref": "Mishneh Torah, Circumcision 3:1",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, pp. 555\u2013557",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Bereshit Rabbah 39:1",
+   "sefaria_ref": "Bereshit Rabbah 39:1",
+   "kst": false
+  },
+  {
+   "display": "Rashi on Genesis 12:1",
+   "sefaria_ref": "Rashi on Genesis 12:1:1",
+   "kst": false
+  },
+  {
+   "display": "Genesis 12:2",
+   "sefaria_ref": "Genesis 12:2",
+   "kst": false
+  }
+ ],
+ "reading_summaries": [
+  {
+   "reading": "Shabbat Lekh Lekha",
+   "torah_summary": "Abram is told to leave his land and his father's house for a land he will be shown, with the promise of a great nation, a great name, and blessing. He and Sarai travel to Canaan, build altars, go down to Egypt in famine, and return. Abram and Lot part in peace over crowded pasture, and Abram later rescues Lot from the four kings and is blessed by Malki-tzedek. God promises offspring like the stars and seals a covenant between the pieces. Hagar bears Ishmael. At ninety-nine Abram becomes Abraham, Sarai becomes Sarah, and circumcision is given as the sign of the covenant.",
+   "haftarah_summary": "Israel complains that its way is hidden from the Eternal and its cause ignored. The prophet answers that the Creator of the ends of the earth never grows faint, gives strength to the weary, and renews the spent, so that those who trust will run and not tire. Nations are called to argue their case, and their crafted idols are shown to be nothing. Tradition hears Abraham in the one roused from the East, summoned and kept safe. Then comes the tenderest line: you, Israel, My servant, seed of Abraham who loved Me, do not be afraid, for I am with you."
+  }
+ ],
+ "parashah_summary": "Abram is told to leave his land and his father's house for a land he will be shown, with the promise of a great nation, a great name, and blessing. He and Sarai travel to Canaan, build altars, go down to Egypt in famine, and return. Abram and Lot part in peace over crowded pasture, and Abram later rescues Lot from the four kings and is blessed by Malki-tzedek. God promises offspring like the stars and seals a covenant between the pieces. Hagar bears Ishmael. At ninety-nine Abram becomes Abraham, Sarai becomes Sarah, and circumcision is given as the sign of the covenant.",
+ "haftarah_summary": "Israel complains that its way is hidden from the Eternal and its cause ignored. The prophet answers that the Creator of the ends of the earth never grows faint, gives strength to the weary, and renews the spent, so that those who trust will run and not tire. Nations are called to argue their case, and their crafted idols are shown to be nothing. Tradition hears Abraham in the one roused from the East, summoned and kept safe. Then comes the tenderest line: you, Israel, My servant, seed of Abraham who loved Me, do not be afraid, for I am with you."
+}
