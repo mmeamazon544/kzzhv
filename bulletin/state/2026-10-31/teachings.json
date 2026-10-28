@@ -1,0 +1,72 @@
+{
+ "plan": {
+  "halakhic_topic": "Berit Milah on the eighth day \u2014 from Isaac's circumcision in the parashah (Gen. 21:4): Maimonides on why the milah is by day and on the eighth day, the blessings of the mohel, of the parents, and of the congregation; and the Western Sephardic practice of the berit \u2014 the honors (mohel, sandak/syndicus), the chair of Elijah, the cup of wine with 'asher kiddesh yedid mibeten' and the naming, and the parents' Hatob Vehametib",
+  "kst_queries": [
+   "Blessings, customs, and prayers of circumcision",
+   "Honoring the Mohel and blessing over wine",
+   "Taking the boy to be circumcised"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Circumcision 1:1",
+   "Mishneh Torah, Circumcision 1:2",
+   "Mishneh Torah, Circumcision 1:8",
+   "Mishneh Torah, Circumcision 1:9",
+   "Mishneh Torah, Circumcision 3:1",
+   "Mishneh Torah, Circumcision 3:3"
+  ],
+  "aggadic_topic": "Abraham at the door of the tent (Gen. 18:1-8): the third day after his own circumcision, he runs from the Presence of God to greet three dusty travelers \u2014 'greater is hospitality than receiving the Shekhinah.' A word on welcome as the first Abrahamic act, echoed in the haftarah by the Shunammite who builds a small upper chamber for a passing prophet.",
+  "sefaria_refs_aggada": [
+   "Rashi on Genesis 18:1:1",
+   "Rashi on Genesis 18:1:4",
+   "Rashi on Genesis 18:2:2",
+   "Bereshit Rabbah 48:9",
+   "Shabbat 127a",
+   "II Kings 4:8-10"
+  ]
+ },
+ "halakha_html": "<p>Abraham circumcises Isaac on the eighth day, and the Rambam reads that verse closely. The milah is performed by day, after sunrise, never at night, and it is a mitzvah to do it early in the morning, since those who are eager are early for mitzvot. Done at any hour of the day, it is valid.<sup>1</sup> The one who circumcises blesses <em>al hamilah</em>; the parent blesses for bringing the child into the covenant of Abraham our father; afterwards comes the blessing over the cup, <em>asher kiddesh yedid mibeten</em>, and sheheheyanu.<sup>2</sup></p><p>In London and Amsterdam the child is brought in while the congregation sings <em>Berukhim atem kehal emunai</em>, the last verse \u2014 this child has merited his covenant \u2014 sung after the milah; the mohel is placed on the chair of Elijah and the father blesses to bring him in.<sup>3</sup> In Eretz Yisrael, Syria, Turkey and Egypt a sandeket and a company of women carry the baby from the house to the door of the synagogue. The cup is contested: our communities honor the mohel with it even when the rabbi is present, while in Egypt and the cities of Morocco it goes to the rabbi or another scholar.<sup>4</sup> With us both parents say the blessing of entering the covenant, and the honors of the day are given to women and men alike.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Circumcision.1:8\">Mishneh Torah, Circumcision 1:8</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Circumcision.3:1\">Mishneh Torah, Circumcision 3:1; 3:3</a> &nbsp; 3. Keter Shem Tob, vol. 2, p. 556, se'if 3 &nbsp; 4. Keter Shem Tob, vol. 2, p. 555, se'if 1</p>",
+ "aggada_html": "<p>Rashi, following the Talmud, says the Holy One came to Abraham on the third day after his circumcision, to visit the sick. He was sitting at the door of his tent to see whether anyone was passing, so that he could bring them in.<sup>1</sup> The midrash says his tent stood open on both sides, like a wide plaza, and that he watched the road to see whether the three travelers would turn his way.<sup>2</sup> The haftarah keeps the same shape: the woman of Shunem makes a small upper room with a bed, a table, a chair and a lamp, so that a prophet passing by has somewhere to stop. Welcome, in both stories, is a matter of building \u2014 a door set where strangers can find it, a room furnished before any guest arrives.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Rashi.on.Genesis.18:1:1\">Rashi on Genesis 18:1</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Bereshit.Rabbah.48:9\">Bereshit Rabbah 48:9</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Circumcision 1:8",
+   "sefaria_ref": "Mishneh Torah, Circumcision 1:8",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Circumcision 3:1; 3:3",
+   "sefaria_ref": "Mishneh Torah, Circumcision 3:1",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, p. 556, se'if 3",
+   "sefaria_ref": null,
+   "kst": true
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, p. 555, se'if 1",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Rashi on Genesis 18:1",
+   "sefaria_ref": "Rashi on Genesis 18:1:1",
+   "kst": false
+  },
+  {
+   "display": "Bereshit Rabbah 48:9",
+   "sefaria_ref": "Bereshit Rabbah 48:9",
+   "kst": false
+  }
+ ],
+ "reading_summaries": [
+  {
+   "reading": "Shabbat Vayera",
+   "torah_summary": "The Eternal appears to Abraham at Mamre, and three travelers arrive in the heat of the day. Abraham runs to meet them, Sarah bakes, and they are promised a son; Sarah laughs behind the tent door. Sodom is destroyed and Lot taken out of it. Abraham and Sarah sojourn in Gerar, where Abimelech is warned in a dream. Isaac is born and circumcised at eight days. Hagar and Ishmael are sent off into the wilderness, where God hears the boy's cry. The parashah ends with the binding of Isaac and the ram caught in the thicket.",
+   "haftarah_summary": "Elisha meets a widow whose creditor is coming for her two children. She has one jug of oil; she borrows every empty vessel she can, shuts the door, and pours until the vessels run out. The debt is paid and her family lives on the rest. Then the parashah's own music returns. A woman of Shunem builds a small upper room for Elisha, and he tells her that at this season next year she will hold a son. The child is born, grows, and one day collapses in the field. She lays him on the prophet's bed and sets out to find Elisha."
+  }
+ ],
+ "parashah_summary": "The Eternal appears to Abraham at Mamre, and three travelers arrive in the heat of the day. Abraham runs to meet them, Sarah bakes, and they are promised a son; Sarah laughs behind the tent door. Sodom is destroyed and Lot taken out of it. Abraham and Sarah sojourn in Gerar, where Abimelech is warned in a dream. Isaac is born and circumcised at eight days. Hagar and Ishmael are sent off into the wilderness, where God hears the boy's cry. The parashah ends with the binding of Isaac and the ram caught in the thicket.",
+ "haftarah_summary": "Elisha meets a widow whose creditor is coming for her two children. She has one jug of oil; she borrows every empty vessel she can, shuts the door, and pours until the vessels run out. The debt is paid and her family lives on the rest. Then the parashah's own music returns. A woman of Shunem builds a small upper room for Elisha, and he tells her that at this season next year she will hold a son. The child is born, grows, and one day collapses in the field. She lays him on the prophet's bed and sets out to find Elisha."
+}
