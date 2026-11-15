@@ -127,7 +127,7 @@ def decide_auto() -> date | None:
 
 def festival_greeting(cluster: dict) -> str:
     """The sign-off for a letter that is not a Shabbat letter: a festival
-    or fast bulletin of its own. Marc may change these words here."""
+    or fast bulletin of its own. Wording approved by Marc, 15 Nov 2026."""
     kind = cluster["kind"]
     if kind == "yomtov":
         return "GOOD YONTIF!"

@@ -194,7 +194,10 @@ up. The family letters (family.py --auto, daily at 6:00 am) go out on
 every bulletin's mailing day — Fridays and the eves of standalone
 festivals and fasts — with "Festival Times" or "Fast Times" in the
 subject and a festival sign-off in place of GOOD SHABBOS when the letter
-is not a Shabbat letter (the words live in family.festival_greeting).
+is not a Shabbat letter: GOOD YONTIF! for a yom tob, AN EASY AND
+MEANINGFUL FAST! for a fast, HAPPY HANUKKAH!, HAPPY PURIM!, HAPPY TU
+BISHBAT!, HAPPY LAG LAOMER! (approved by Marc 15 November 2026; the
+words live in family.festival_greeting).
 Nothing is ever published or sent without approval.
 
 (History of the schedule: Thursday proof and Thursday 6:00 pm send in the
