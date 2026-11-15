@@ -1,8 +1,11 @@
 {
- "id": "2026-10-31",
- "rev": "20261028T122456",
+ "id": "2026-11-21",
+ "rev": "20261115T101935",
  "status": "proofed",
- "title": "Shabbat Vayera",
- "subject": "Shabbat Vayera \u00b7 30\u201331 October 2026",
- "proofed_at": "20261028T122456"
+ "title": "Shabbat Vayetze",
+ "subject": "Shabbat Vayetze \u00b7 20\u201321 November 2026",
+ "proofed_at": "20261115T101935",
+ "proof_day": "2026-11-19",
+ "send_day": "2026-11-20",
+ "send_moment": "2026-11-20T06:00:00-05:00"
 }

@@ -1,0 +1,77 @@
+{
+ "plan": {
+  "halakhic_topic": "Tefilat HaDerekh \u2014 the wayfarer's prayer: when it is said, in what form, and the Western Sephardic usage; with Birkat HaGomel on safe arrival. The topic rises from Jacob's departure from Beersheba and his vow, 'if God will be with me and guard me on this way that I go' (Gen. 28:20), the classic scriptural anchor of the traveler's prayer; it is also a seasonal word for a congregation whose members travel in the short days of Kislev.",
+  "kst_queries": [
+   "Tefilat Haderekh",
+   "At Home and Away \u2014 Tefilat Haderekh",
+   "vol. 2 pp. 634\u2013635 Tefilat Haderekh"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Blessings 10:25",
+   "Mishneh Torah, Blessings 10:8",
+   "Mishneh Torah, Blessings 10:9",
+   "Berakhot 29b",
+   "Berakhot 30a",
+   "Berakhot 54b"
+  ],
+  "aggadic_topic": "'Surely the Lord is in this place, and I did not know it' (Gen. 28:16) \u2014 Jacob wakes to a Presence that was there all along; the place that is not a place one arrives at but one that one notices. A short parshanut paragraph on the gap between God's nearness and our awareness of it, and on sleep, dream, and awakening as the measure of attention.",
+  "sefaria_refs_aggada": [
+   "Genesis 28:16",
+   "Genesis 28:17",
+   "Rashi on Genesis 28:16:1",
+   "Rashi on Genesis 28:11:2",
+   "Ibn Ezra on Genesis 28:16:1",
+   "Ramban on Genesis 28:17:1"
+  ]
+ },
+ "halakha_html": "<p>The Rambam gives the traveler a small liturgy for both ends of the road. On leaving a town one asks to depart in peace; having departed safely, one gives thanks and asks to be led in peace, to have one's steps set in peace, to be supported, and to be saved from enemies and from those who lie in wait along the way.<sup>1</sup> The Talmud fixes the hour: the prayer is said once one has actually set out, for a journey of a parasang or more, standing still if standing is possible.<sup>2</sup> On safe arrival, the one who has come through a sea voyage or a long road gives thanks before ten.<sup>3</sup> We say that blessing before a minyan of ten adults, women and men alike, since in our congregation a minyan is made of all who are obligated in prayer.</p><p>The prayer books of London and Amsterdam say the traveler's prayer in the plural \u2014 lead US in peace \u2014 while the wording in the Talmud and the rites of the Land of Israel and of the Eastern Sephardim keep the singular. The reason given for the plural is that a person joins himself to the community even when praying alone. Abudarham added a request to be brought home in peace. Our old siddurim then repeat three times that the Holy One will guard us, rescue us, and help us, after the psalm's promise of angels who guard you on your way.<sup>4</sup></p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Blessings.10:25\">Mishneh Torah, Blessings 10:25</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Berakhot.30a\">Berakhot 30a</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Blessings.10:8\">Mishneh Torah, Blessings 10:8</a> &nbsp; 4. Keter Shem Tob, vol. 2, pp. 634\u2013635</p>",
+ "aggada_html": "<p>Jacob wakes from the dream and says that the Eternal was in this place and he did not know it.<sup>1</sup> Rashi hears regret in the words: had he known, he would not have lain down to sleep there.<sup>2</sup> Ibn Ezra says only that there are places where wonders are seen, and that he cannot explain why, since the matter is deep.<sup>3</sup> Between the two readings stands the plain sense of the verse. The Presence did not arrive with the ladder. It was in the place already, while Jacob was choosing a stone and settling down for the night. What changed by morning was Jacob's attention.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Genesis.28:16\">Genesis 28:16</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Rashi.on.Genesis.28:16:1\">Rashi on Genesis 28:16:1</a> &nbsp; 3. <a href=\"https://www.sefaria.org/Ibn.Ezra.on.Genesis.28:16:1\">Ibn Ezra on Genesis 28:16:1</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Blessings 10:25",
+   "sefaria_ref": "Mishneh Torah, Blessings 10:25",
+   "kst": false
+  },
+  {
+   "display": "Berakhot 30a",
+   "sefaria_ref": "Berakhot 30a",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Blessings 10:8",
+   "sefaria_ref": "Mishneh Torah, Blessings 10:8",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, pp. 634\u2013635",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Genesis 28:16",
+   "sefaria_ref": "Genesis 28:16",
+   "kst": false
+  },
+  {
+   "display": "Rashi on Genesis 28:16:1",
+   "sefaria_ref": "Rashi on Genesis 28:16:1",
+   "kst": false
+  },
+  {
+   "display": "Ibn Ezra on Genesis 28:16:1",
+   "sefaria_ref": "Ibn Ezra on Genesis 28:16:1",
+   "kst": false
+  }
+ ],
+ "reading_summaries": [
+  {
+   "reading": "Shabbat Vayetze",
+   "torah_summary": "Jacob leaves Beersheba for Haran. He stops for the night, puts a stone under his head, and dreams of a stairway set on the ground with its top in the sky and angels going up and down. The Holy One stands beside him and promises land, offspring, and safe return. Jacob wakes, names the place Bethel, and vows. At a well he meets Rachel and rolls away the stone. He serves Laban fourteen years for Leah and Rachel, and the children are born. Wages are changed and flocks multiply. He leaves with his household, Laban pursues, and they make a covenant of peace. Angels meet him, and he calls the place Mahanaim.",
+   "haftarah_summary": "Hosea speaks in the voice of the Holy One, who loved Israel as a child and called him from Egypt, taught Ephraim to walk and took him up in loving arms. The people turn elsewhere, and judgment is announced; then the tenderness overturns it. The Eternal says, I am God and not human, the Holy One in your midst, and will not come in fury. The prophet then recalls Jacob himself \u2014 grasping at his brother in the womb, striving with an angel, meeting God at Bethel, fleeing to Aram and serving for a wife. The call is plain: return to your God, keep kindness and justice, and wait for the Eternal always."
+  }
+ ],
+ "parashah_summary": "Jacob leaves Beersheba for Haran. He stops for the night, puts a stone under his head, and dreams of a stairway set on the ground with its top in the sky and angels going up and down. The Holy One stands beside him and promises land, offspring, and safe return. Jacob wakes, names the place Bethel, and vows. At a well he meets Rachel and rolls away the stone. He serves Laban fourteen years for Leah and Rachel, and the children are born. Wages are changed and flocks multiply. He leaves with his household, Laban pursues, and they make a covenant of peace. Angels meet him, and he calls the place Mahanaim.",
+ "haftarah_summary": "Hosea speaks in the voice of the Holy One, who loved Israel as a child and called him from Egypt, taught Ephraim to walk and took him up in loving arms. The people turn elsewhere, and judgment is announced; then the tenderness overturns it. The Eternal says, I am God and not human, the Holy One in your midst, and will not come in fury. The prophet then recalls Jacob himself \u2014 grasping at his brother in the womb, striving with an angel, meeting God at Bethel, fleeing to Aram and serving for a wife. The call is plain: return to your God, keep kindness and justice, and wait for the Eternal always."
+}
