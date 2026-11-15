@@ -200,6 +200,16 @@ BISHBAT!, HAPPY LAG LAOMER! (approved by Marc 15 November 2026; the
 words live in family.festival_greeting).
 Nothing is ever published or sent without approval.
 
+Proof mailbox (Marc's order, 15 November 2026): everything the program
+sends Marc — the proof, the "awaiting approval" reminder and his copy of
+each family letter — goes to the congregation's own Gmail mailbox, not
+his personal one, so KKZZ business stays apart from his own. Mailchimp's
+Proof segment holds that one address (moved with the
+mailchimp-repoint-proof workflow; the address travels as a temporary
+repository secret and appears nowhere in code or logs). A filter in that
+mailbox files all mail from shabbat@kzzhv.org under the label
+Shabbat-Holiday PROOFS. The proof itself stays Thursday night.
+
 (History of the schedule: Thursday proof and Thursday 6:00 pm send in the
 brief; Wednesday 6:00 am / 6:00 pm from 3 September 2026; Thursday proof
 and Friday send from 15 November 2026. Between 30 September and 11
