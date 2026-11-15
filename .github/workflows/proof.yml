@@ -1,14 +1,20 @@
-# The weekly proof (build order step 7). Fires at 6:00 am New York on
-# Wednesdays (both candidate UTC hours; a guard checks local time), on a
-# Request-changes dispatch from the site, or by hand. Builds the bulletin,
-# stores it under bulletin/state/<id>/, commits, then mails the proof —
-# always and only to the Proof segment (Marc).
+# The proof (build order step 7). Runs every day at 10:00 am New York —
+# both candidate UTC hours; the gate keeps the one that is 10 am today —
+# and asks program/schedule.py whether today is a proof day: the day before
+# the bulletin's first eve, so Thursday for a plain Shabbat and earlier on
+# a festival week (Marc's rule, 15 November 2026). GitHub queues these
+# crons hours late, which is why the nominal hour is 10 am: the proof lands
+# in Marc's hands during Thursday afternoon or evening, in time for his
+# review that night. Also runs on a Request-changes dispatch from the site,
+# or by hand. Builds the bulletin, stores it under bulletin/state/<id>/,
+# commits, then mails the proof — always and only to the Proof segment
+# (Marc). The Desk at kzzhv.org/private shows the same proof.
 name: proof
 
 on:
   schedule:
-    - cron: "0 10 * * 3"
-    - cron: "0 11 * * 3"
+    - cron: "0 14 * * *"
+    - cron: "0 15 * * *"
   workflow_dispatch:
     inputs:
       shabbat:
@@ -38,27 +44,27 @@ jobs:
           FIRED: ${{ github.event.schedule }}
         run: |
           set -o pipefail
-          # GitHub queues cron runs hours late, so the old "is it exactly 06
-          # in New York" test never passed and the Wednesday proof never
-          # built itself. Identify the run by WHICH cron fired instead: the
-          # 10:00 UTC one on EDT, the 11:00 UTC one on EST. Exactly one
-          # matches each Wednesday, however long the queue delay.
+          # GitHub queues cron runs hours late, so a wall-clock test never
+          # passes. Identify the run by WHICH cron fired instead: the 14:00
+          # UTC one on EDT, the 15:00 UTC one on EST. Exactly one matches
+          # each day, however long the queue delay. If a cron above is ever
+          # edited, edit its "want" here in the same commit.
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "$(TZ=America/New_York date +%z)" in
-              -0400) want="0 10 * * 3" ;;
-              *)     want="0 11 * * 3" ;;
+              -0400) want="0 14 * * *" ;;
+              *)     want="0 15 * * *" ;;
             esac
             if [ -n "$FIRED" ]; then
               if [ "$FIRED" != "$want" ]; then
                 echo "go=no" >> "$GITHUB_OUTPUT"
-                echo "cron '$FIRED' is not New York's 6 am cron today ('$want')"
+                echo "cron '$FIRED' is not New York's 10 am cron today ('$want')"
                 exit 0
               fi
             else
               h=$(TZ=America/New_York date +%H)
-              if [ "$h" -lt 6 ] || [ "$h" -ge 15 ]; then
+              if [ "$h" -lt 10 ] || [ "$h" -ge 22 ]; then
                 echo "go=no" >> "$GITHUB_OUTPUT"
-                echo "no cron string, and ${h}:00 New York is outside the morning window"
+                echo "no cron string, and ${h}:00 New York is outside the daytime window"
                 exit 0
               fi
             fi
@@ -75,10 +81,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: |
-          set -o pipefail
-          pip install anthropic playwright pillow
-          python -m playwright install --with-deps chromium
       - name: Decide the bulletin and any instructions
         id: decide
         env:
@@ -97,15 +99,39 @@ jobs:
           elif [ -n "$INPUT_SHABBAT" ]; then
             echo "id=$INPUT_SHABBAT" >> "$GITHUB_OUTPUT"
           else
-            ID=$(TZ=America/New_York python3 -c 'from datetime import date,timedelta;t=date.today();print((t+timedelta(days=(5-t.weekday())%7)).isoformat())')
+            # Every day asks; only the proof day answers with an id.
+            ID=$(python3 program/schedule.py --proof-today)
+            if [ -z "$ID" ]; then
+              echo "today is not a proof day; nothing to build"
+              python3 program/schedule.py
+              echo "id=" >> "$GITHUB_OUTPUT"; exit 0
+            fi
             CUR_ID=$(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['id'])" 2>/dev/null || echo "")
             if [ "$ID" = "$CUR_ID" ]; then
-              echo "a proof for $ID already exists (built early or already approved); not rebuilding"
-              echo "id=" >> "$GITHUB_OUTPUT"
+              STATUS=$(python3 -c "import json;print(json.load(open('bulletin/state/current.json')).get('status',''))")
+              BUILT=$(python3 -c "import json;print(json.load(open('bulletin/state/current.json')).get('proofed_at','')[:8])")
+              TODAY=$(TZ=America/New_York date +%Y%m%d)
+              if [ "$STATUS" = "proofed" ] && [ -n "$BUILT" ] && [ "$BUILT" \< "$TODAY" ]; then
+                # Built ahead of its day and still unapproved: refresh it so
+                # announcements and times saved since are in the proof Marc
+                # reviews tonight, keeping the divrei torah he may have read.
+                echo "a proof for $ID was built early ($BUILT) and is unapproved; refreshing it with today's content files, same divrei torah"
+                echo "id=$ID" >> "$GITHUB_OUTPUT"
+                echo "keep=true" >> "$GITHUB_OUTPUT"
+              else
+                echo "a proof for $ID already exists ($STATUS); not rebuilding"
+                echo "id=" >> "$GITHUB_OUTPUT"
+              fi
             else
               echo "id=$ID" >> "$GITHUB_OUTPUT"
             fi
           fi
+      - name: Install the build tools
+        if: steps.decide.outputs.id != ''
+        run: |
+          set -o pipefail
+          pip install anthropic playwright pillow
+          python -m playwright install --with-deps chromium
       - name: Build the proof
         if: steps.decide.outputs.id != ''
         working-directory: program
@@ -116,7 +142,9 @@ jobs:
         run: |
           set -o pipefail
           KEEP=""
-          [ "${{ inputs.keep_teachings }}" = "true" ] && KEEP="--keep-teachings"
+          if [ "${{ inputs.keep_teachings }}" = "true" ] || [ "${{ steps.decide.outputs.keep }}" = "true" ]; then
+            KEEP="--keep-teachings"
+          fi
           if [ -n "$INSTRUCTIONS" ]; then
             python make_proof.py "${{ steps.decide.outputs.id }}" $KEEP --instructions "$INSTRUCTIONS" | tee -a "$GITHUB_STEP_SUMMARY"
           else
@@ -129,12 +157,20 @@ jobs:
           git config user.name "kkzz-bulletin"
           git config user.email "shabbat@kzzhv.org"
           # Content-file edits from a change request commit with the state.
-          git add bulletin
+          # The Keter Shem Tob page-offset cache is kept too: a week that
+          # consults a volume not yet probed rewrites it, and left behind
+          # as an unstaged change it made "git pull --rebase" refuse and
+          # killed the run before the proof was mailed — five of the seven
+          # Wednesdays from 30 September to 11 November 2026.
+          git add bulletin program/data/kst-offsets.json
           git commit -m "Proof ${{ steps.decide.outputs.id }}"
-          # The build renders site/bulletin/index.html as a side effect; the
-          # publish step later ships it from state. Discard it so the rebase
-          # is clean.
-          git checkout -- site/ 2>/dev/null || true
+          # Whatever else the build touched — the page render under site/,
+          # any other cache — is incidental. Show it in the log, then drop
+          # it, so the rebase always starts clean.
+          echo "left behind by the build (discarded):"
+          git status --porcelain
+          git checkout -- .
+          git clean -fd
           git pull --rebase origin main
           git push
       - name: Send the proof to Marc

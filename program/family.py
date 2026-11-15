@@ -184,7 +184,12 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
         cid = send(copy_subject(member, subject), html, text, proof=True)
         print(f"{member}: campaign {cid} (to Marc as a copy of {member}'s letter)")
         return
-    cid = send(subject, html, text, proof=False, segment_key=m["segment_key"])
+    # copy_to_marc=False: mailchimp_send.send() would otherwise mail Marc
+    # its own unlabeled copy as well, and he received every letter twice
+    # (eight emails each Friday, found 15 November 2026). The labeled copy
+    # below is his one copy.
+    cid = send(subject, html, text, proof=False, segment_key=m["segment_key"],
+               copy_to_marc=False)
     print(f"{member}: campaign {cid} (sent)")
     if cc_marc():
         ccid = send(copy_subject(member, subject), html, text, proof=True)

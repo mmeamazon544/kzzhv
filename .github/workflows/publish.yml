@@ -1,15 +1,24 @@
-# Publication (build order step 7). An Approve click dispatches here and is
-# recorded; publication happens at 6:00 pm New York on Wednesday (both
-# candidate UTC hours, guarded), or immediately when approval arrives after
-# that hour. Publishing commits the proofed page to the site (the push
-# deploys it) and then sends the email — to the Proof segment only, until
-# the repository variable BULLETIN_DRY_RUN is set to "false".
+# Publication (build order step 7). An Approve click — from the proof email
+# or from the Desk at kzzhv.org/private — dispatches here and is recorded.
+# Publication happens on the bulletin's mailing day: the Friday before a
+# plain Shabbat, the first eve of a festival cluster when that comes
+# earlier (Marc's rule, 15 November 2026; program/schedule.py). This runs
+# every day at 6:00 am and again at 10:00 am New York (two cron pairs, one
+# per daylight-saving state; GitHub queues them hours late) and lets
+# publish.py --if-due decide: it publishes and sends only an approved
+# bulletin whose send moment has come, and does nothing twice. An approval
+# that arrives after the send moment publishes and sends at once.
+# Publishing commits the proofed page to the site (the push deploys it)
+# and then sends the email — to the Proof segment only, until the
+# repository variable BULLETIN_DRY_RUN is set to "false".
 name: publish
 
 on:
   schedule:
-    - cron: "0 22 * * 3"
-    - cron: "0 23 * * 3"
+    - cron: "0 10 * * *"
+    - cron: "0 11 * * *"
+    - cron: "0 14 * * *"
+    - cron: "0 15 * * *"
   repository_dispatch:
     types: [bulletin-approve]
   workflow_dispatch:
@@ -30,29 +39,29 @@ jobs:
           FIRED: ${{ github.event.schedule }}
         run: |
           set -o pipefail
-          # GitHub queues cron runs hours late, so the old "is it exactly 18
-          # in New York" test never passed and the Wednesday evening
-          # publish-and-send never fired on its own. Identify the run by
-          # WHICH cron fired instead: the 22:00 UTC one on EDT, the 23:00
-          # UTC one on EST. Exactly one matches each Wednesday, however long
-          # the queue delay. (publish.py --if-due is the second guard: an
-          # already-published bulletin is not published or sent twice.)
+          # Identify the run by WHICH cron fired (a queue delay cannot
+          # change that string): on EDT the 10:00 and 14:00 UTC crons are
+          # New York's 6 am and 10 am, on EST the 11:00 and 15:00 ones. The
+          # other pair is rejected. Two runs a day are safe because
+          # publish.py --if-due publishes and sends nothing twice; the
+          # second run is the safety net for a first one queued very late.
+          # If a cron above is ever edited, edit the wants here too.
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "$(TZ=America/New_York date +%z)" in
-              -0400) want="0 22 * * 3" ;;
-              *)     want="0 23 * * 3" ;;
+              -0400) want1="0 10 * * *"; want2="0 14 * * *" ;;
+              *)     want1="0 11 * * *"; want2="0 15 * * *" ;;
             esac
             if [ -n "$FIRED" ]; then
-              if [ "$FIRED" != "$want" ]; then
+              if [ "$FIRED" != "$want1" ] && [ "$FIRED" != "$want2" ]; then
                 echo "go=no" >> "$GITHUB_OUTPUT"
-                echo "cron '$FIRED' is not New York's 6 pm cron today ('$want')"
+                echo "cron '$FIRED' is not one of New York's crons today ('$want1', '$want2')"
                 exit 0
               fi
             else
               h=$(TZ=America/New_York date +%H)
-              if [ "$h" -lt 18 ]; then
+              if [ "$h" -lt 6 ]; then
                 echo "go=no" >> "$GITHUB_OUTPUT"
-                echo "no cron string, and ${h}:00 New York is before the evening window"
+                echo "no cron string, and ${h}:00 New York is before the morning window"
                 exit 0
               fi
             fi
@@ -97,9 +106,16 @@ jobs:
             git commit -m "Publish $(python3 -c "import json;print(json.load(open('bulletin/state/current.json'))['id'])")"
             git pull --rebase origin main
             git push
+          fi
+          # Send after a fresh publication, and also pick up a bulletin that
+          # was published earlier but whose send did not complete; an
+          # already-sent bulletin prints "already sent" and nothing moves.
+          if grep -qE "^(published|already published)" pub.log; then
             python3 program/publish.py --send | tee -a "$GITHUB_STEP_SUMMARY"
-            git add bulletin/state/current.json
-            git commit -m "Record send"
-            git pull --rebase origin main
-            git push
+            if ! git diff --quiet bulletin/state/current.json; then
+              git add bulletin/state/current.json
+              git commit -m "Record send"
+              git pull --rebase origin main
+              git push
+            fi
           fi

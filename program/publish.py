@@ -13,11 +13,13 @@ Modes:
                              archive; --if-due no-ops before the send moment.
   --send                     send the approved email; to the Proof segment
                              unless BULLETIN_DRY_RUN=false.
-  --remind                   if still unapproved near the send moment,
-                             mail Marc the approval links again.
+  --remind                   if still unapproved on the evening before the
+                             mailing day, mail Marc the approval links again.
 
-The send moment for a Shabbat bulletin is 6:00 pm America/New_York on the
-Wednesday before it (bulletin/luach.md).
+The send moment is 6:00 am America/New_York on the bulletin's mailing day
+(program/schedule.py, Marc's rule of 15 November 2026): the Friday before
+a plain Shabbat, or the first eve of a festival cluster when that comes
+earlier in the week. The proof is built the day before.
 """
 
 from __future__ import annotations
@@ -31,6 +33,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import proof_links
+import schedule
 
 ROOT = Path(__file__).resolve().parent.parent
 NY = ZoneInfo("America/New_York")
@@ -46,9 +49,13 @@ def save(cur: dict) -> None:
 
 
 def send_moment(bulletin_id: str) -> datetime:
-    sat = date.fromisoformat(bulletin_id)
-    wed = sat - timedelta(days=3)
-    return datetime(wed.year, wed.month, wed.day, 18, 0, tzinfo=NY)
+    """The proof records its send moment in current.json (schedule.py);
+    an older proof without one is computed on the spot."""
+    if CURRENT.exists():
+        cur = load()
+        if cur.get("id") == bulletin_id and cur.get("send_moment"):
+            return datetime.fromisoformat(cur["send_moment"])
+    return schedule.send_moment(date.fromisoformat(bulletin_id))
 
 
 def now() -> datetime:
@@ -176,6 +183,14 @@ def remind() -> None:
     cur = load()
     if cur["status"] != "proofed":
         print(f"status is {cur['status']}; no reminder needed")
+        return
+    # The reminder runs every evening and speaks only on the eve of the
+    # mailing day — Thursday night for a plain Shabbat. A proof that has
+    # gone stale (its mailing day passed unapproved) gets no weekly nag:
+    # the Desk shows it, and the next proof supersedes it.
+    moment = send_moment(cur["id"])
+    if now().date() != moment.date() - timedelta(days=1):
+        print(f"mailing day is {moment:%A %d %B}; today is not its eve — no reminder")
         return
     approve, changes = proof_links.links(cur["id"], cur["rev"])
     html = f"""<div style="font-family:Georgia,serif; background:#170611; color:#f1dccc; padding:30px;">

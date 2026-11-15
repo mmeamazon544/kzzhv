@@ -95,8 +95,11 @@ def main() -> None:
         from mailchimp_send import send
         html, text = html_p.read_text(), txt_p.read_text()
         if live:
+            # copy_to_marc=False: the labeled copy below is Marc's one copy
+            # (the shared sender's own copy doubled it; fixed 15 Nov 2026).
             cid = send(subject, html, text, proof=False,
-                       segment_key=FAMILY[member]["segment_key"])
+                       segment_key=FAMILY[member]["segment_key"],
+                       copy_to_marc=False)
             print(f"{member}: campaign {cid} (sent live)")
             if cc_marc():
                 ccid = send(copy_subject(member, subject), html, text, proof=True)

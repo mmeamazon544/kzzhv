@@ -141,12 +141,45 @@ Second-day Yom Tob is observed (diaspora).
 
 Schedule
 
-Shabbat: proof to Marc at 6:00 am Wednesday, America/New_York. Publish and
-send at 6:00 pm Wednesday once approved; if approval comes later, publish
-and send immediately on approval. Reminder to Marc at 5:00 pm Wednesday if
-not yet approved. (Moved from Thursday to Wednesday at Marc's direction,
-3 September 2026.) Festivals and fasts: same pattern, proof at 6:00 am two
-days before the eve. Nothing is ever published or sent without approval.
+Shabbat (Marc's rule, 15 November 2026): the proof reaches Marc on
+Thursday, for his review on Thursday night. It is built at 10:00 am New
+York nominal and lands during the afternoon or evening, since GitHub queues
+its crons hours late. The bulletin goes out on Friday: the send moment is
+6:00 am Friday, America/New_York, and the morning runs (6:00 and 10:00
+nominal) publish and send an approved bulletin as soon as the first of
+them starts; an approval that arrives after the send moment publishes and
+sends at once. A reminder goes to Marc on Thursday evening if the proof is
+still unapproved; a proof whose mailing day has passed is not nagged about
+again — the Desk shows it, and the next proof supersedes it.
+
+Festivals and fasts follow the same two days measured from the cluster's
+first eve: proof the day before the eve, mail on the eve. So Pesah
+beginning Thursday 22 April 2027 is proofed Tuesday the 20th and mailed
+Wednesday the 21st; Shabuot beginning Friday 11 June 2027 is proofed
+Wednesday the 9th and mailed Thursday the 10th. program/schedule.py is the
+one place this rule lives; each proof records its proof_day, send_day and
+send_moment in current.json, and publish.py and the reminder read them
+from there. Nothing is ever published or sent without approval.
+
+(History of the schedule: Thursday proof and Thursday 6:00 pm send in the
+brief; Wednesday 6:00 am / 6:00 pm from 3 September 2026; Thursday proof
+and Friday send from 15 November 2026. Between 30 September and 11
+November 2026 five of seven Wednesday proofs died unmailed because a
+rewritten cache file blocked the workflow's rebase, and the two that
+arrived sat unread; the site stood at Shabbat Shuvah for eight weeks.
+The commit step now keeps that cache and discards everything else before
+rebasing.)
+
+The Desk (kzzhv.org/private, 15 November 2026): the private page shows
+the bulletin in hand with its status, Approve and Request-changes on the
+page itself, the proof image, and previews of the email and the web page;
+a ledger of the last six weeks' mailings read live from Mailchimp — the
+congregational send, each family letter and who received it, the students
+on the latest congregational mailing, and the people named in the Netlify
+variable DESK_WATCH; what the live site is showing and whether it is
+behind; the coming proof and mailing days; then the announcements and
+location form as before. It reads Mailchimp with the Netlify variable
+MAILCHIMP_API_KEY and never shows an address.
 
 Request changes on a proof: the box's instructions edit the content files
 Marc owns — banner, announcements, location, service times, greetings —
@@ -173,7 +206,11 @@ localized send also mails him one copy, its subject labeled with whose
 letter it is, so he can see what each of them received. He is himself on
 the Weekly segment, so the congregational bulletin reaches him once by
 that route and gets no extra copy. The repository variable CC_MARC set
-to "false" stops the family copies.
+to "false" stops the family copies. One copy per letter: from 9 September
+to 15 November 2026 the shared sender's own copy mechanism doubled every
+family copy, so each Friday brought him eight emails for four letters;
+the family and localized senders now switch that mechanism off and send
+the one labeled copy.
 
 Sister congregations
 

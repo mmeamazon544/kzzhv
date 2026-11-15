@@ -1,0 +1,22 @@
+# Read-only probe of the Mailchimp responses the Desk depends on: campaign
+# list, sent-to reports, the student tag. Prints shapes, counts and first
+# names only — never an address (public repo, public logs). Sends nothing.
+name: mailchimp-probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+        run: |
+          set -o pipefail
+          python3 program/mailchimp_probe.py | tee -a "$GITHUB_STEP_SUMMARY"

@@ -270,10 +270,16 @@ def main() -> None:
     capture(state / "web.html", state)
 
     greg = ctx["lede"].split(" · ")[0] if " · " in ctx["lede"] else ctx["lede"]
+    import schedule
+    when = schedule.plan(sat)
     current = {
         "id": bulletin_id, "rev": rev, "status": "proofed",
         "title": ctx["title"], "subject": f"{ctx['title']} · {greg}",
         "proofed_at": rev,
+        # When it goes out (schedule.py): publish.py --if-due and the
+        # reminder read these rather than recomputing them.
+        "proof_day": when["proof_day"], "send_day": when["send_day"],
+        "send_moment": when["send_moment"],
     }
     if note:
         current["note"] = note
