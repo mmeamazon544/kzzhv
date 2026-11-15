@@ -1,0 +1,77 @@
+{
+ "written": "2026-11-15",
+ "bulletins": [
+  {
+   "id": "2026-11-21",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 21 November",
+   "proof_day": "2026-11-19",
+   "send_day": "2026-11-20",
+   "send_moment": "2026-11-20T06:00:00-05:00"
+  },
+  {
+   "id": "2026-11-28",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 28 November",
+   "proof_day": "2026-11-26",
+   "send_day": "2026-11-27",
+   "send_moment": "2026-11-27T06:00:00-05:00"
+  },
+  {
+   "id": "2026-12-05",
+   "shabbat": true,
+   "cluster": "Hanukkah",
+   "title": "Shabbat 5 December and Hanukkah",
+   "proof_day": "2026-12-03",
+   "send_day": "2026-12-04",
+   "send_moment": "2026-12-04T06:00:00-05:00"
+  },
+  {
+   "id": "2026-12-12",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 12 December",
+   "proof_day": "2026-12-10",
+   "send_day": "2026-12-11",
+   "send_moment": "2026-12-11T06:00:00-05:00"
+  },
+  {
+   "id": "2026-12-19",
+   "shabbat": true,
+   "cluster": "Fast of Tebet",
+   "title": "Shabbat 19 December and Fast of Tebet",
+   "proof_day": "2026-12-17",
+   "send_day": "2026-12-18",
+   "send_moment": "2026-12-18T06:00:00-05:00"
+  },
+  {
+   "id": "2026-12-26",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 26 December",
+   "proof_day": "2026-12-24",
+   "send_day": "2026-12-25",
+   "send_moment": "2026-12-25T06:00:00-05:00"
+  },
+  {
+   "id": "2027-01-02",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 2 January",
+   "proof_day": "2026-12-31",
+   "send_day": "2027-01-01",
+   "send_moment": "2027-01-01T06:00:00-05:00"
+  },
+  {
+   "id": "2027-01-09",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 9 January",
+   "proof_day": "2027-01-07",
+   "send_day": "2027-01-08",
+   "send_moment": "2027-01-08T06:00:00-05:00"
+  }
+ ]
+}

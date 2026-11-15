@@ -6,7 +6,10 @@ ahead, and the week's Reflections, under a centered masthead with Ahad
 Haʿam's words. Each goes exclusively to its own Mailchimp tag segment.
 
 Scheduled runs send only the members named in FAMILY_ARMED
-(comma-separated, from the repository variable).
+(comma-separated, from the repository variable), on every bulletin's
+mailing day — Friday for a Shabbat, the eve of a festival or fast that
+has a bulletin of its own (program/schedule.py; Marc's order of
+15 November 2026 that the letters go out for every Shabbat and holiday).
 
 Usage: python3 program/family.py (--proof | --live) --member ari|misha|gabi|mom|armed [YYYY-MM-DD]
 """
@@ -94,12 +97,13 @@ def next_saturday() -> date:
 
 
 def decide_auto() -> date | None:
-    """The anchor Saturday for a scheduled run, or None when today is not a
-    send day. Send days: every Friday, and the eve of any festival's first
-    day. Never on Shabbat or on a yom tob itself. A send day listed in
+    """The bulletin anchor for a scheduled run, or None when today is not a
+    mailing day. Mailing days are the schedule's (program/schedule.py):
+    every Friday, and the eve of a festival or fast whose bulletin stands
+    on its own. Never on Shabbat. A mailing day listed in
     bulletin/family-skip.md (one ISO date per line) is skipped for every
     member — date-keyed, so a skip can never outlive its day."""
-    from hebcal_client import holidays as hol_items
+    import schedule
 
     ny = datetime.now(ZoneInfo("America/New_York")).date()
     skip_file = ROOT / "bulletin" / "family-skip.md"
@@ -113,27 +117,25 @@ def decide_auto() -> date | None:
     if ny.weekday() == 5:
         print("today is Shabbat; no send")
         return None
-    if ny.weekday() == 4:
-        return ny + timedelta(days=1)
-    tom = ny + timedelta(days=1)
-    events = bulletin.fetch_events(ny - timedelta(days=1), tom + timedelta(days=1))
-    yt = {h["date"] for h in hol_items(events) if h["yomtov"]}
-    if ny in yt:
-        print("today is yom tob; no send")
+    p = schedule.sending_on(ny)
+    if not p:
+        print("not a mailing day (program/schedule.py); no send")
         return None
-    if tom not in yt:
-        print("not Friday and not a festival eve; no send")
-        return None
-    prev_sat = ny - timedelta(days=(ny.weekday() - 5) % 7)
-    next_sat = ny + timedelta(days=(5 - ny.weekday()) % 7)
-    for sat in (next_sat, prev_sat):
-        c = bulletin.detect_cluster(
-            sat, bulletin.fetch_events(sat - timedelta(days=3), sat + timedelta(days=8)))
-        if c and tom in c["days"]:
-            return sat
-    print("festival eve, but no covering cluster yet; skipping "
-          "(cluster logic covers festivals within two days of a Shabbat)")
-    return None
+    print(f"mailing day of {p['title']} ({p['id']})")
+    return date.fromisoformat(p["id"])
+
+
+def festival_greeting(cluster: dict) -> str:
+    """The sign-off for a letter that is not a Shabbat letter: a festival
+    or fast bulletin of its own. Marc may change these words here."""
+    kind = cluster["kind"]
+    if kind == "yomtov":
+        return "GOOD YONTIF!"
+    if kind == "fast":
+        return "AN EASY AND MEANINGFUL FAST!"
+    if kind == "hanukkah":
+        return "HAPPY HANUKKAH!"
+    return f"HAPPY {cluster['label'].upper()}!"      # Purim, Tu BiShbat, Lag LaOmer
 
 
 def build_and_send(member: str, sat: date, proof: bool) -> None:
@@ -146,8 +148,10 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
 
     ctx = bulletin.build_context(sat)
     bulletin.relocate_times(ctx, m["lat"], m["lon"])
-    events = bulletin.fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
-    ctx["observances"] = bulletin.observance_lines(sat, events, m["lat"], m["lon"])
+    events = bulletin.fetch_events(sat - timedelta(days=10), sat + timedelta(days=10))
+    ctx["observances"] = bulletin.observance_lines(
+        sat, events, m["lat"], m["lon"],
+        exclude=bulletin.observance_exclusions(ctx.get("cluster"), events))
     ctx["times_heading"] = m["heading"]
     ctx["place"] = m["place"]
     ctx["eyebrow_line_html"] = (
@@ -155,10 +159,13 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
         "font-size:13px; letter-spacing:3px; color:#c79f50; text-transform:uppercase; "
         'text-align:center; line-height:1.7;">'
         f"{m['sponsor'][0]}<br>{m['sponsor'][1]}</div>")
+    love = m["love"]
+    if ctx.get("standalone"):
+        love = love.replace("GOOD SHABBOS!", festival_greeting(ctx["cluster"]))
     ctx["eyebrow_extra_html"] = (
         '    <div style="font-family:Georgia,\'Times New Roman\',serif; font-size:16px; '
         'letter-spacing:2px; color:#e376a3; padding-top:12px; text-align:center;">'
-        f"{m['love']}</div>\n" + QUOTE_HTML)
+        f"{love}</div>\n" + QUOTE_HTML)
     ctx["service_times"] = []
     ctx["kiddush"] = []
     ctx["announcements"] = []
@@ -179,6 +186,10 @@ def build_and_send(member: str, sat: date, proof: bool) -> None:
     html_p, txt_p = bulletin.render_email(ctx)
     label = f"Parashat {ctx['parashah']}" if ctx["parashah"] else ctx["title"]
     subject = m["subject"].format(label=label)
+    if ctx.get("standalone"):
+        # "Shabbat Times For NYC: Purim 5787" would be wrong twice over.
+        what = "Fast Times" if ctx["cluster"]["kind"] == "fast" else "Festival Times"
+        subject = subject.replace("Shabbat Times", what)
     html, text = html_p.read_text(), txt_p.read_text()
     if proof:
         cid = send(copy_subject(member, subject), html, text, proof=True)

@@ -25,8 +25,10 @@ import urllib.request
 from datetime import date, timedelta
 from pathlib import Path
 
+import occasions
 from hebcal_client import fetch_events, holidays
-from zemanim import KKZZ_LAT, KKZZ_LON, candle_lighting, dawn, format_time, habdala
+from zemanim import (KKZZ_LAT, KKZZ_LON, candle_lighting, dawn, format_time, habdala,
+                     sunrise, sunset)
 
 ROOT = Path(__file__).resolve().parent.parent
 SECRETARY = "kehillatzikhronzvi@gmail.com"
@@ -45,11 +47,29 @@ def load_names() -> dict[str, str]:
 
 
 NAMES = load_names()
+ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"]
+
+
+DAY_WORDS = {"I": "first", "II": "second", "III": "third", "IV": "fourth", "V": "fifth",
+             "VI": "sixth", "VII": "seventh", "VIII": "eighth"}
 
 
 def display_name(hebcal_name: str) -> str:
+    """names.md first; then the festival-day forms Hebcal builds from a
+    stem — 'Pesach VII', 'Sukkot II (on Shabbat)', "Pesach IV (CH''M)",
+    'Chanukah Day 3' — rendered from the stem's entry."""
+    hebcal_name = hebcal_name.replace("\u2019", "'")
     if hebcal_name in NAMES:
         return NAMES[hebcal_name]
+    m = re.match(r"^(Pesach|Sukkot|Shavuot|Rosh Hashana) (I{1,3}|IV|V|VI|VII|VIII)( \(on Shabbat\))?( \(CH''M\))?$", hebcal_name)
+    if m:
+        stem = NAMES.get(m.group(1), m.group(1))
+        if m.group(4):
+            return f"Hol HaMoed {stem}{m.group(3) or ''}"
+        return f"{stem}, {DAY_WORDS[m.group(2)]} day{m.group(3) or ''}"
+    m = re.match(r"^Chanukah Day (\d)$", hebcal_name)
+    if m:
+        return f"Hanukkah, {ORDINALS[int(m.group(1)) - 1]} day"
     if "-" in hebcal_name:
         parts = [NAMES.get(p.strip(), p.strip()) for p in hebcal_name.split("-")]
         return "–".join(parts)
@@ -129,16 +149,28 @@ def strip_comments(text: str) -> str:
     return re.sub(r"<!--.*?-->", "", text, flags=re.S).strip()
 
 
+def service_times_file(cluster: dict) -> Path | None:
+    """bulletin/service-times/<slug>.md for this cluster's festival, when
+    Marc has written one (kippur.md, rosh-hashana.md, ...)."""
+    slug_name = re.sub(r"[^a-z0-9]+", "-", cluster["name"].lower()).strip("-")
+    cand = ROOT / "bulletin" / "service-times" / f"{slug_name}.md"
+    return cand if cand.exists() else None
+
+
 def service_times(cluster: dict | None = None) -> list[dict]:
     """Structured service schedule: items of kind heading / row / note.
     A festival cluster with its own file (bulletin/service-times/<slug>.md)
     overrides the standing Shabbat schedule in bulletin/service-times.md."""
     path = ROOT / "bulletin" / "service-times.md"
     if cluster:
-        slug_name = re.sub(r"[^a-z0-9]+", "-", cluster["name"].lower()).strip("-")
-        cand = ROOT / "bulletin" / "service-times" / f"{slug_name}.md"
-        if cand.exists():
+        cand = service_times_file(cluster)
+        if cand:
             path = cand
+        elif cluster.get("standalone"):
+            # A festival or fast bulletin of its own lists services only
+            # when Marc has written that festival's file; the standing
+            # Shabbat-morning schedule is not its schedule.
+            return []
     out: list[dict] = []
     raw = strip_comments(path.read_text())
     for line in raw.splitlines():
@@ -192,20 +224,46 @@ def load_greetings(cluster: dict | None) -> list[dict]:
     return out
 
 
+def observance_exclusions(cluster: dict | None, events: list[dict]) -> set | None:
+    """What the week-ahead lines leave out because the bulletin already
+    carries it: a standalone bulletin's own occasion, and the nightly
+    Hanukkah candle entries when the times block lists all eight."""
+    if not cluster:
+        return None
+    out: set = set()
+    if cluster.get("standalone"):
+        out |= {(o["date"], o["title"]) for o in cluster["items"]}
+    if any(o["kind"] == "hanukkah" for o in cluster["items"]):
+        out |= {(h["date"], occasions.norm(h["title"])) for h in holidays(events)
+                if occasions.norm(h["title"]).startswith("Chanukah:")}
+    return out or None
+
+
 def observance_lines(sat: date, events: list[dict],
-                     lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list[str]:
+                     lat: float = KKZZ_LAT, lon: float = KKZZ_LON,
+                     exclude: set | None = None) -> list[str]:
+    """The week-ahead lines. `exclude` holds (date, Hebcal title) pairs
+    the bulletin itself is about — a standalone festival bulletin does not
+    announce its own festival again here."""
     out = []
     for e in sorted(
         (e for e in holidays(events) if sat <= e["date"] <= sat + timedelta(days=7)),
         key=lambda x: x["date"],
     ):
-        base = re.sub(r" \d{4,5}$", "", e["title"])
+        base = occasions.norm(re.sub(r" \d{4,5}$", "", e["title"]))
+        if exclude and (e["date"], occasions.norm(e["title"])) in exclude:
+            continue
         if e["date"] == sat and e["category"] != "roshchodesh" and base not in NAMES and not e["title"].startswith("Leil"):
             continue
         shown = NAMES.get(base)
         if base.startswith("Rosh Chodesh"):
             month = base.removeprefix("Rosh Chodesh ").strip()
             shown = "Rosh Hodesh " + NAMES.get(month, month)
+        m = re.match(r"Chanukah: (\d) Candles?$", base)
+        if m:
+            shown = f"Hanukkah, {ORDINALS[int(m.group(1)) - 1]} candle"
+        elif base == "Chanukah: 8th Day":
+            shown = "Hanukkah, eighth day"
         if shown is None:
             shown = display_name(base)
         if base == "Leil Selichot":
@@ -257,70 +315,214 @@ def reading_from_item(item: dict) -> dict:
     }
 
 
+NUMERALS = {"I": "first", "II": "second", "VII": "seventh", "VIII": "eighth"}
+# Yom tob days after which the festival itself is over (not merely its
+# first days): "Pesah ends" rather than "Yom Tob ends".
+LAST_DAYS = {"Pesach VIII", "Shavuot II", "Simchat Torah", "Rosh Hashana II", "Yom Kippur"}
+
+
+def festival_stem(base: str) -> str:
+    """'Pesach VII' -> 'Pesah'; 'Yom Kippur' -> 'Kippur'."""
+    stem = occasions.strip_day(base)
+    return NAMES.get(stem, display_name(stem))
+
+
+def day_name(o: dict, items: list[dict] | None = None) -> str:
+    """One occasion day for the reader: 'Pesah, seventh day', 'Kippur',
+    'Fast of Tebet'. Rosh Hashana's first day carries no numeral in
+    Hebcal's title, so it is named by the second day's presence."""
+    base = o["base"]
+    if base in NAMES and o["kind"] != "yomtov":
+        return NAMES[base]
+    m = re.search(r" (I|II|VII|VIII)$", base)
+    if m:
+        return f"{festival_stem(base)}, {NUMERALS[m.group(1)]} day"
+    if base == "Rosh Hashana" and items and any(i["base"] == "Rosh Hashana II" for i in items):
+        return "Rosh Hashana, first day"
+    return NAMES.get(base, display_name(base))
+
+
+def cluster_label(items: list[dict]) -> tuple[str, str, dict]:
+    """(name, label, lead) for a bulletin's occasions: name is the lead
+    occasion's display name (slugs for service-times and greetings files
+    hang on it); label is what the title calls the whole — 'Shemini
+    Atseret and Simhat Torah', 'the Last Days of Pesah', 'Purim'."""
+    lead = min(items, key=lambda o: (occasions.RANK[o["kind"]], o["date"]))
+    if lead["kind"] != "yomtov":
+        name = NAMES.get(lead["base"], display_name(lead["base"]))
+        return name, name, lead
+    stems: list[str] = []
+    for o in items:
+        if o["kind"] == "yomtov":
+            s = festival_stem(o["base"])
+            if s not in stems:
+                stems.append(s)
+    titles = {o["base"] for o in items if o["kind"] == "yomtov"}
+    label = " and ".join(stems)
+    if titles & {"Pesach VII", "Pesach VIII"} and not titles & {"Pesach I", "Pesach II"}:
+        label = "the Last Days of Pesah"
+    return stems[0], label, lead
+
+
+def cluster_from(b: dict) -> dict:
+    """An occasions.bulletins() entry as the cluster dict the renderers
+    read. Old keys kept — name, eve (the bulletin's first eve), days (the
+    yom tob days), fast (the first fast) — and the whole picture added:
+    items (every occasion), dates (every day covered, Shabbat included),
+    kind and lead, label, standalone, shabbat, anchor."""
+    items = b["occasions"]
+    name, label, lead = cluster_label(items)
+    fasts = [{"date": o["date"], "title": o["title"], "base": o["base"],
+              "category": "holiday", "subcat": "fast", "yomtov": False}
+             for o in items if o["kind"] == "fast"]
+    return {
+        "name": name, "label": label, "eve": b["eve"],
+        "days": sorted(o["date"] for o in items if o["kind"] == "yomtov"),
+        "fast": fasts[0] if fasts else None, "fasts": fasts,
+        "items": items, "dates": b["dates"], "kind": lead["kind"], "lead": lead,
+        "standalone": b["shabbat"] is None, "shabbat": b["shabbat"], "anchor": b["id"],
+    }
+
+
 def detect_cluster(sat: date, events: list[dict]) -> dict | None:
-    """A festival cluster touching this Shabbat: consecutive yom tob days
-    within two days of it, plus a fast within two days after them (the
-    brief's clustering rule). None for a plain Shabbat."""
-    hols = holidays(events)
-    yt = sorted({h["date"] for h in hols if h["yomtov"] and abs((h["date"] - sat).days) <= 2})
-    if not yt:
+    """The festivals and fasts this Shabbat's bulletin carries: every
+    occasion within two days of it, or of another that is (the brief's
+    clustering rule, program/occasions.py). None for a plain Shabbat."""
+    b = occasions.bulletin_for(sat, events)
+    if not b or not b["occasions"]:
         return None
-    chain = [yt[0]]
-    for d in yt[1:]:
-        if (d - chain[-1]).days <= 2:
-            chain.append(d)
-    fast = next(
-        (h for h in hols
-         if not h["yomtov"]
-         and (h.get("subcat") == "fast" or strip_year(h["title"]).startswith(("Tzom", "Ta'anit", "Asara")))
-         and 0 < (h["date"] - chain[-1]).days <= 2),
-        None)
-    first_title = next(h["title"] for h in hols if h["date"] == chain[0] and h["yomtov"])
-    base = re.sub(r" I+$", "", strip_year(first_title))
-    return {"name": NAMES.get(base, base), "eve": chain[0] - timedelta(days=1),
-            "days": chain, "fast": fast}
+    return cluster_from(b)
 
 
-def cluster_times(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list:
-    rows = []
-    eve, days, name = cluster["eve"], cluster["days"], cluster["name"]
-    ev_label = f"Erev {name}" + (" and Shabbat" if eve.weekday() == 4 else "")
-    candles, printed = candle_lighting(eve, lat, lon)
-    rows.append(("Candle lighting", f"{ev_label}, {long_day(eve)} · 18 minutes to sunset",
-                 format_time(candles), False))
-    rows.append(("Sunset", long_day(eve), format_time(printed), False))
-    for prev, d in zip(days, days[1:]):
-        rows.append(("Candle lighting, second day",
-                     f"{long_day(prev)}, after the first day ends · from a flame lit before the festival",
-                     format_time(habdala(prev, lat, lon)), False))
-    fast = cluster["fast"]
-    # Kippur is itself a fast, so it carries "Fast begins" and "Fast ends"
-    # rather than a bare "ends" line (Marc, 17 September 2026). The fast
-    # starts with candle lighting — you stop eating before you light — and
-    # ends at the same Habdala that ends the day, so the two are one line
-    # rather than two saying the same thing.
-    if "kippur" in name.lower():
-        rows.append(("Fast begins", f"{ev_label}, {long_day(eve)} · with candle lighting",
+def detect_standalone(day: date, events: list[dict]) -> dict | None:
+    """The cluster of a bulletin that stands on its own — a festival or
+    fast too far from any Shabbat — when `day` is its first day."""
+    b = occasions.bulletin_for(day, events)
+    if not b or b["shabbat"] is not None or not b["occasions"]:
+        return None
+    return cluster_from(b)
+
+
+def times_sections(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list:
+    """The times of a cluster as sections — (first date, heading, rows):
+    the yom tob days (candles, second-day lighting, the end), Hanukkah's
+    eight candles, Purim's Megillah, each fast — in date order."""
+    items = cluster["items"]
+    days = cluster["days"]
+    sections: list = []
+
+    if days:
+        rows: list = []
+        first = next(o for o in items if o["date"] == days[0] and o["kind"] == "yomtov")
+        last = next(o for o in items if o["date"] == days[-1] and o["kind"] == "yomtov")
+        stem = festival_stem(first["base"])
+        eve = days[0] - timedelta(days=1)
+        numeral = re.search(r" (VII|VIII|II)$", first["base"])
+        ev_name = f"Eve of {day_name(first, items)}" if numeral else f"Erev {stem}"
+        ev_label = ev_name + (" and Shabbat" if eve.weekday() == 4 else "")
+        candles, printed = candle_lighting(eve, lat, lon)
+        rows.append(("Candle lighting", f"{ev_label}, {long_day(eve)} · 18 minutes to sunset",
                      format_time(candles), False))
-        rows.append(("Fast ends", f"{long_day(days[-1])} · Habdala, {name} ends",
-                     format_time(habdala(days[-1], lat, lon)), fast is None))
-    else:
-        rows.append((f"{name} ends", f"{long_day(days[-1])} · Habdala",
-                     format_time(habdala(days[-1], lat, lon)), fast is None))
-    if fast:
-        # The fast gets its own section (Marc's layout, 7 September 2026):
-        # a Morris bar, a header, the description, then the time lines.
-        fname = NAMES.get(strip_year(fast["title"]), strip_year(fast["title"]))
-        rows.append(("__bar__", "", "", False))
-        rows.append(("__head__", fname, "", False))
+        rows.append(("Sunset", long_day(eve), format_time(printed), False))
+        for prev, d in zip(days, days[1:]):
+            rows.append(("Candle lighting, second day",
+                         f"{long_day(prev)}, after the first day ends · from a flame lit before the festival",
+                         format_time(habdala(prev, lat, lon)), False))
+        # Kippur is itself a fast, so it carries "Fast begins" and "Fast
+        # ends" rather than a bare "ends" line (Marc, 17 September 2026).
+        # The fast starts with candle lighting — you stop eating before you
+        # light — and ends at the same Habdala that ends the day, so the
+        # two are one line rather than two saying the same thing.
+        if "kippur" in stem.lower():
+            rows.append(("Fast begins", f"{ev_label}, {long_day(eve)} · with candle lighting",
+                         format_time(candles), False))
+            rows.append(("Fast ends", f"{long_day(days[-1])} · Habdala, {stem} ends",
+                         format_time(habdala(days[-1], lat, lon)), False))
+        else:
+            ends = f"{festival_stem(last['base'])} ends" if last["base"] in LAST_DAYS else "Yom Tob ends"
+            if last["base"] in ("Shmini Atzeret", "Simchat Torah"):
+                ends = f"{day_name(last)} ends"
+            rows.append((ends, f"{long_day(days[-1])} · Habdala",
+                         format_time(habdala(days[-1], lat, lon)), False))
+        sections.append((eve, cluster["label"], rows))
+
+    for o in items:
+        if o["kind"] != "hanukkah":
+            continue
+        rows = []
+        for i in range(8):
+            d = o["date"] - timedelta(days=1) + timedelta(days=i)
+            if d.weekday() == 4:
+                t, note = candle_lighting(d, lat, lon)[0], "before the Shabbat candles"
+            elif d.weekday() == 5:
+                t, note = habdala(d, lat, lon), "after Habdala"
+            else:
+                t, note = habdala(d, lat, lon), "nightfall"
+            rows.append((f"Hanukkah, {ORDINALS[i]} candle", f"{long_day(d)} · {note}",
+                         format_time(t), False))
+        sections.append((o["date"] - timedelta(days=1), "Hanukkah", rows))
+
+    for o in items:
+        if o["kind"] != "festival":      # Purim
+            continue
+        eve = o["date"] - timedelta(days=1)
+        rows = [("Megillah, evening reading", f"{long_day(eve)} · nightfall",
+                 format_time(habdala(eve, lat, lon)), False),
+                ("Megillah, morning reading", f"{long_day(o['date'])} · after sunrise",
+                 format_time(sunrise(o["date"], lat, lon)), False)]
+        sections.append((eve, NAMES.get(o["base"], o["base"]), rows))
+
+    for fast in cluster["fasts"]:
+        # Each fast its own section: heading, the description, then the
+        # time lines. Tish'a Be'Ab begins at sunset the evening before;
+        # the minor fasts begin at dawn.
+        fname = NAMES.get(fast["base"], fast["base"])
+        rows = []
         if fname in FAST_NOTES:
             # A description row: empty label and value, small text only.
             rows.append(("", FAST_NOTES[fname], "", False))
-        rows.append(("Fast begins", f"{long_day(fast['date'])} · dawn",
-                     format_time(dawn(fast["date"], lat, lon)), False))
+        if fast["base"] == "Tish'a B'Av":
+            eve = fast["date"] - timedelta(days=1)
+            rows.append(("Fast begins", f"{long_day(eve)} · sunset",
+                         format_time(sunset(eve, lat, lon)), False))
+            start = eve
+        else:
+            rows.append(("Fast begins", f"{long_day(fast['date'])} · dawn",
+                         format_time(dawn(fast["date"], lat, lon)), False))
+            start = fast["date"]
         rows.append(("Fast ends", f"{long_day(fast['date'])} · nightfall",
-                     format_time(habdala(fast["date"], lat, lon)), True))
+                     format_time(habdala(fast["date"], lat, lon)), False))
+        sections.append((start, fname, rows))
+
+    return sorted(sections, key=lambda sec: sec[0])
+
+
+def assemble_times(sections: list) -> list:
+    """Sections into one list of rows: a Morris bar and a heading before
+    every section but the first (Marc's layout, 7 September 2026); the
+    first gets its heading alone when others follow it, nothing when it
+    stands alone. The last time line carries the final-row style."""
+    rows: list = []
+    for i, (_, head, srows) in enumerate(sections):
+        if i > 0:
+            rows.append(("__bar__", "", "", False))
+            if head:
+                rows.append(("__head__", head, "", False))
+        elif head and len(sections) > 1:
+            rows.append(("__head__", head, "", False))
+        rows += [r[:3] + (False,) for r in srows]
+    for i in range(len(rows) - 1, -1, -1):
+        label, small, value, _ = rows[i]
+        if label and value and not label.startswith("__"):
+            rows[i] = (label, small, value, True)
+            break
     return rows
+
+
+def cluster_times(cluster: dict, lat: float = KKZZ_LAT, lon: float = KKZZ_LON) -> list:
+    """The festival's own rows, without any Shabbat (an away block, a
+    standalone bulletin, a Shabbat that is itself yom tob)."""
+    return assemble_times(times_sections(cluster, lat, lon))
 
 
 def leyning_range(start: date, end: date) -> list[dict]:
@@ -330,11 +532,21 @@ def leyning_range(start: date, end: date) -> list[dict]:
     return j.get("items", [])
 
 
-def cluster_readings(cluster: dict) -> list[dict]:
+def cluster_readings(cluster: dict, all_kinds: bool = False) -> list[dict]:
+    """The festival readings a bulletin prints: the yom tob days', Purim's,
+    and Tish'a Be'Ab's; a standalone fast bulletin (all_kinds) prints its
+    own fast's reading too. Minha readings and the eve's Megillah entry
+    are not separate readings here."""
+    want = {o["date"] for o in cluster["items"]
+            if all_kinds or o["kind"] in ("yomtov", "festival") or o["base"] == "Tish'a B'Av"}
+    if not want:
+        return []
     out = []
-    for it in leyning_range(cluster["days"][0], cluster["days"][-1]):
+    for it in leyning_range(min(want), max(want)):
         d = date.fromisoformat(it["date"])
-        if d in cluster["days"] and it.get("fullkriyah") and it.get("type") in ("holiday", "shabbat"):
+        name = (it.get("name") or {}).get("en", "")
+        if (d in want and it.get("fullkriyah") and it.get("type") in ("holiday", "shabbat")
+                and "(Mincha)" not in name and not name.startswith("Erev")):
             out.append(reading_from_item(it))
     return out
 
@@ -368,11 +580,15 @@ def build_times(sat: date, fri: date, cluster: dict | None,
         ("Sunset", f"Erev Shabbat, {long_day(fri)}", format_time(printed), False),
         ("Habdala", f"{long_day(sat)} · end of Shabbat", format_time(ends), True),
     ]
+    if cluster and cluster.get("standalone"):
+        # A festival or fast bulletin of its own: no Shabbat rows at all.
+        return cluster_times(cluster, lat, lon)
     if cluster and sat in cluster["days"]:
         return cluster_times(cluster, lat, lon)
     if cluster:
-        shabbat_times[-1] = shabbat_times[-1][:3] + (False,)
-        return shabbat_times + cluster_times(cluster, lat, lon)
+        # Shabbat and the festival in date order, each under its heading.
+        sections = times_sections(cluster, lat, lon) + [(fri, "Shabbat", shabbat_times)]
+        return assemble_times(sorted(sections, key=lambda sec: sec[0]))
     return shabbat_times
 
 
@@ -407,11 +623,26 @@ def relocate_times(ctx: dict, lat: float, lon: float) -> None:
         ctx["times"] = build_times(ctx["sat"], ctx["fri"], cluster, lat, lon)
 
 
-def build_context(sat: date) -> dict:
+def build_context(anchor: date) -> dict:
+    """The bulletin anchored on this day: a Saturday (the Shabbat bulletin,
+    with any festival or fast clustered to it) or the first day of a
+    standalone festival or fast (program/occasions.py). ctx["sat"] keeps
+    its old name and holds the anchor either way."""
+    sat = anchor
     fri = sat - timedelta(days=1)
-    item = leyning(sat)
-    events = fetch_events(sat - timedelta(days=3), sat + timedelta(days=8))
+    events = fetch_events(sat - timedelta(days=10), sat + timedelta(days=10))
     loc = strip_comments((ROOT / "bulletin" / "location.md").read_text()) or "Poughkeepsie"
+
+    if sat.weekday() == 5:
+        cluster = detect_cluster(sat, events)
+        item = leyning(sat)
+    else:
+        cluster = detect_standalone(sat, events)
+        if cluster is None:
+            raise ValueError(f"{sat} is neither a Saturday nor the first day of a "
+                             "festival or fast with a bulletin of its own")
+        item = None
+    standalone = bool(cluster and cluster.get("standalone"))
 
     parashah = display_name(item["name"]["en"]) if item else None
     sat_hebrew = hebrew_date(sat)
@@ -421,17 +652,25 @@ def build_context(sat: date) -> dict:
     if special:
         lede_bits.insert(0, special)
 
+    # A festival or fast bulletin of its own lists services only when Marc
+    # has written that festival's service-times file; the week's location
+    # then applies to it as to a Shabbat. Otherwise it carries no service
+    # schedule, no Kiddush, no guest notice.
+    holds_services = (not standalone) or bool(service_times_file(cluster))
     guest_text = None
     no_services = loc == "Poughkeepsie, no services this week"
-    if no_services:
+    if not holds_services:
+        no_services = False
+    elif no_services:
         guest_text = "No services will be held this week"
     elif loc != "Poughkeepsie":
-        guest_text = f"This Shabbat the congregation is guests of {GUESTS.get(loc, loc)}."
-
-    cluster = detect_cluster(sat, events)
+        when = f"For {cluster['label']}" if standalone else "This Shabbat"
+        guest_text = f"{when} the congregation is guests of {GUESTS.get(loc, loc)}."
 
     readings: list[dict] = []
-    if cluster:
+    if standalone:
+        readings = cluster_readings(cluster, all_kinds=True)
+    elif cluster:
         readings = cluster_readings(cluster)
     elif item:
         readings = [reading_from_item(item)]
@@ -441,7 +680,7 @@ def build_context(sat: date) -> dict:
                      if p.strip()]
 
     kiddush = []
-    if loc == "Poughkeepsie":
+    if loc == "Poughkeepsie" and holds_services:
         kiddush = [
             "Kiddush follows the service. Meals are dairy and vegetarian.",
             "We meet in a private home; our address is shared by message. If prayer "
@@ -453,10 +692,10 @@ def build_context(sat: date) -> dict:
     times = build_times(sat, fri, cluster)
 
     # In-the-Week-Ahead: an editorial override at
-    # bulletin/week-ahead/<saturday>.md (one line per item) replaces the
+    # bulletin/week-ahead/<anchor>.md (one line per item) replaces the
     # computed list for that bulletin alone; keyed by date, so a stale
     # file can never leak into another week.
-    observances = observance_lines(sat, events)
+    observances = observance_lines(sat, events, exclude=observance_exclusions(cluster, events))
     override = ROOT / "bulletin" / "week-ahead" / f"{sat.isoformat()}.md"
     if override.exists():
         wa = [l.strip() for l in strip_comments(override.read_text()).splitlines() if l.strip()]
@@ -464,31 +703,59 @@ def build_context(sat: date) -> dict:
             observances = wa
 
     eyebrow = "Weekly Bulletin"
-    if cluster and sat in cluster["days"]:
+    away = None
+    if standalone:
+        # A festival or fast bulletin of its own (Marc's order that every
+        # holiday get a bulletin, 15 November 2026): no "Weekly Bulletin"
+        # eyebrow, the festival's name and year for a title.
+        eyebrow = ""
+        first, last = cluster["dates"][0], cluster["dates"][-1]
+        hd, hm, hy = hebrew_date(first)
+        title = f"{cluster['label']} {hy}"
+        if cluster["kind"] in ("fast", "minor") and first == last:
+            lede = f"{long_day(first)} {first.year} · {hd} {hm} {hy}"
+        else:
+            lede = (span_gregorian(cluster["eve"], last) + " · "
+                    + span_hebrew_parts(hebrew_date(cluster["eve"]), hebrew_date(last)))
+        times_heading = TIMES_HEADING_FESTIVAL_TEXT
+        reflections_heading = f"Reflections on {cluster['label']}"
+    elif cluster and sat in cluster["days"]:
         # The Shabbat is itself a festival day (Rosh Hashana on Shabbat):
         # a festival bulletin, so no "Weekly Bulletin" eyebrow (Marc's
         # direction, 7 September 2026).
         eyebrow = ""
-        span_end = cluster["fast"]["date"] if cluster["fast"] else cluster["days"][-1]
+        span_end = cluster["dates"][-1]
         hy = hebrew_date(cluster["days"][0])[2]
-        title = f"{cluster['name']} {hy}"
+        title = f"{cluster['label']} {hy}"
         lede = (span_gregorian(cluster["eve"], span_end) + " · "
                 + span_hebrew_parts(hebrew_date(cluster["eve"]), hebrew_date(span_end)))
         times_heading = TIMES_HEADING_FESTIVAL_TEXT
-        reflections_heading = f"Reflections on {cluster['name']}"
+        reflections_heading = f"Reflections on {cluster['label']}"
         parashah = None
     elif cluster:
-        # A festival within two days of an ordinary Shabbat: one bulletin
-        # covers both (the brief's clustering rule). Shabbat first, then
-        # the festival's own times and readings.
-        span_end = cluster["fast"]["date"] if cluster["fast"] else cluster["days"][-1]
-        hy = hebrew_date(cluster["days"][0])[2]
-        title = (f"Shabbat {parashah} and {cluster['name']} {hy}"
-                 if parashah else f"Shabbat and {cluster['name']} {hy}")
-        lede = (span_gregorian(fri, span_end) + " · "
-                + span_hebrew_parts(hebrew_date(fri), hebrew_date(span_end)))
+        # A festival or fast within two days of an ordinary Shabbat: one
+        # bulletin covers both (the brief's clustering rule), the times in
+        # date order, each under its heading. A fast alone keeps the
+        # Shabbat's title and gets its own times section. A Shabbat that
+        # is itself an intermediate day of the festival makes this the
+        # festival's bulletin, named for the festival.
+        span_start = min(fri, cluster["eve"])
+        span_end = cluster["dates"][-1]
+        hy = hebrew_date(cluster["lead"]["date"])[2]
+        if parashah and parashah.startswith("Shabbat Hol HaMoed"):
+            eyebrow = ""
+            title = f"{cluster['label']} {hy}"
+            reflections_heading = f"Reflections on {cluster['label']}"
+        elif cluster["kind"] == "fast":
+            title = f"Shabbat {parashah}" if parashah else "Shabbat"
+            reflections_heading = "Reflections on the Parasha"
+        else:
+            title = (f"Shabbat {parashah} and {cluster['label']} {hy}"
+                     if parashah else f"Shabbat and {cluster['label']} {hy}")
+            reflections_heading = f"Reflections on the Parasha and {cluster['label']}"
+        lede = (span_gregorian(span_start, span_end) + " · "
+                + span_hebrew_parts(hebrew_date(span_start), hebrew_date(span_end)))
         times_heading = TIMES_HEADING_FESTIVAL_TEXT
-        reflections_heading = f"Reflections on the Parasha and {cluster['name']}"
         readings = ([reading_from_item(item)] if item else []) + readings
         away = load_away(sat)
         if away:
@@ -511,7 +778,9 @@ def build_context(sat: date) -> dict:
         reflections_heading = "Reflections on the Parasha"
 
     return {
-        "sat": sat, "fri": fri,
+        "sat": sat, "fri": fri, "anchor": sat,
+        "standalone": standalone,
+        "label": cluster["label"] if cluster else None,
         "sat_hebrew": sat_hebrew,
         "cluster": cluster,
         "parashah": parashah,
@@ -526,12 +795,12 @@ def build_context(sat: date) -> dict:
         "times_heading": times_heading,
         "reflections_heading": reflections_heading,
         "readings": readings,
-        "away": locals().get("away") if cluster else None,
+        "away": away,
         "place": GUESTS_PLACE.get(loc, loc),
         "torah_summary": None,      # filled by the teachings pipeline
         "haftarah_summary": None,
         "observances": observances,
-        "service_times": service_times(cluster) if loc == "Poughkeepsie" else [],
+        "service_times": service_times(cluster) if loc == "Poughkeepsie" and holds_services else [],
         "kiddush": kiddush,
         "announcements": announcements,
         "halakha": None,   # filled by the teachings pipeline (step 4)
@@ -901,6 +1170,10 @@ def render_web(ctx: dict) -> Path:
     guest = guest_notice_web(ctx)
 
     tpl = (ROOT / "bulletin" / "templates" / "web.html").read_text()
+    if not ctx["times"]:
+        # A festival with no times of its own (Lag LaOmer, Tu BiShbat on a
+        # weekday): no empty times block.
+        tpl = re.sub(r'\n    <section class="schedule" aria-label="Times">.*?</section>\n', "\n", tpl, flags=re.S)
     html = (
         tpl.replace("{{PAGE_TITLE}}", ctx["title"])
         .replace("{{EYEBROW}}", ctx.get("eyebrow", "Weekly Bulletin"))
@@ -1003,10 +1276,21 @@ def render_services_fragments(ctx: dict) -> dict:
     hand-written page around them is never touched."""
     sat = ctx["sat"]
     hd, hm, hy = ctx["sat_hebrew"]
-    name = mid(ctx["parashah"]) if ctx["parashah"] else mid(ctx["title"])
-    label = f"Shabbat Parashat {name}" if ctx["parashah"] else mid(ctx["title"])
-    box = f'''<div class="upcoming-dates">
-                <p class="upcoming-month">This Shabbat &nbsp;<span class="mid">·</span>&nbsp; Saturday, {sat.day} {MONTHS[sat.month]} {sat.year} &nbsp;<span class="mid">·</span>&nbsp; {hd} {hm} {hy}</p>
+    if ctx.get("standalone"):
+        # A festival or fast bulletin of its own: the day, not "This Shabbat".
+        head = (f"{mid(ctx['label'])} &nbsp;<span class=\"mid\">·</span>&nbsp; "
+                f"{sat.strftime('%A')}, {sat.day} {MONTHS[sat.month]} {sat.year} "
+                f"&nbsp;<span class=\"mid\">·</span>&nbsp; {hd} {hm} {hy}")
+        label = mid(ctx["title"])
+    else:
+        name = mid(ctx["parashah"]) if ctx["parashah"] else mid(ctx["title"])
+        label = f"Shabbat Parashat {name}" if ctx["parashah"] else mid(ctx["title"])
+        head = (f"This Shabbat &nbsp;<span class=\"mid\">·</span>&nbsp; Saturday, "
+                f"{sat.day} {MONTHS[sat.month]} {sat.year} &nbsp;<span class=\"mid\">·</span>&nbsp; {hd} {hm} {hy}")
+    # The id comment is read by the Desk (netlify/functions/private.mjs)
+    # to tell which bulletin the live services page is showing.
+    box = f'''<div class="upcoming-dates"><!-- bulletin-id:{sat.isoformat()} -->
+                <p class="upcoming-month">{head}</p>
                 <p class="upcoming-list">{label}</p>
             </div>'''
 
@@ -1077,9 +1361,11 @@ def e_p(html_text: str, color: str = E_INK, italic: bool = False, size: int = 14
     return f'  <tr><td style="padding:10px 26px 0;"><div style="{style}">{html_text}</div></td></tr>\n'
 
 
-def email_times_rows(rows: list) -> list[str]:
+def email_times_rows(rows: list, base: str = SITE) -> list[str]:
     """The <tr> rows of a times table. Shared by the week's own times and
-    by an away festival's block."""
+    by an away festival's block. (base was unbound here until 15 November
+    2026, so any email with a Morris bar in its times block — a fast
+    section after Shabbat — could not be rendered.)"""
     times = []
     for label, small, value, final in rows:
         if label == "__bar__":
@@ -1117,7 +1403,7 @@ def email_times_rows(rows: list) -> list[str]:
 
 
 def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
-    times = email_times_rows(ctx["times"])
+    times = email_times_rows(ctx["times"], base)
 
     sections = []
     if ctx["readings"]:
@@ -1261,6 +1547,8 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
                    f"<br>© Kehillah Kedoshah Zikhron Zvi")
 
     tpl = (ROOT / "bulletin" / "templates" / "email.html").read_text()
+    if not ctx["times"]:
+        tpl = re.sub(r'\n  <tr><td style="padding:22px 26px 0;">\n    <div class="display"[^\n]*\{\{TIMES_HEADING\}\}</div>.*?</td></tr>\n', "\n", tpl, flags=re.S)
     html = (
         tpl.replace("{{BASE}}", base)
         .replace("{{PAGE_TITLE}}", ctx["title"])
@@ -1318,17 +1606,18 @@ def render_text(ctx: dict) -> str:
             else:
                 lines.append(it["label"])
         lines.append("")
-    lines.append(ctx["times_heading"].replace("°", ""))
-    for label, small, value, _final in ctx["times"]:
-        if label == "__bar__":
-            lines.append("- - - - -")
-        elif label == "__head__":
-            lines.append(small.upper())
-        elif not label and not value:
-            lines.append(small)
-        else:
-            lines.append(f"{label}: {value}  ({small})")
-    lines.append("")
+    if ctx["times"]:
+        lines.append(ctx["times_heading"].replace("°", ""))
+        for label, small, value, _final in ctx["times"]:
+            if label == "__bar__":
+                lines.append("- - - - -")
+            elif label == "__head__":
+                lines.append(small.upper())
+            elif not label and not value:
+                lines.append(small)
+            else:
+                lines.append(f"{label}: {value}  ({small})")
+        lines.append("")
     if ctx["readings"]:
         lines.append("TORAH READING & HAFTARAH")
         for r in ctx["readings"]:
@@ -1384,8 +1673,9 @@ if __name__ == "__main__":
     if "--base" in sys.argv:
         base = sys.argv[sys.argv.index("--base") + 1]
     sat = date.fromisoformat(args[0]) if args else next_saturday(date.today())
-    if sat.weekday() != 5:
-        sys.exit("date must be a Saturday")
+    if sat.weekday() != 5 and not occasions.bulletin_for(sat):
+        sys.exit("date must be a Saturday or the first day of a festival or fast "
+                 "with a bulletin of its own (python3 occasions.py <year> lists them)")
     ctx = build_context(sat)
     print(render_web(ctx))
     for p in render_email(ctx, base):

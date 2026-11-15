@@ -1,6 +1,8 @@
 """Build and send a proof (build order step 7).
 
-For a given Shabbat: builds the bulletin (teachings included), renders
+For a given bulletin — a Saturday, or the first day of a festival or fast
+that has a bulletin of its own (program/occasions.py) — builds it (teachings
+included), renders
 web + email + text, captures the web page as PNG and PDF, stores all of
 it under bulletin/state/<id>/ (committed by the workflow — the publish
 step later ships exactly these bytes), updates bulletin/state/current.json,
@@ -231,6 +233,10 @@ def main() -> None:
 
     sat = date.fromisoformat(args[0])
     bulletin_id = sat.isoformat()
+    import occasions
+    if not occasions.bulletin_for(sat):
+        sys.exit(f"{bulletin_id} is neither a Saturday nor the first day of a festival "
+                 "or fast with a bulletin of its own (program/occasions.py)")
     rev = datetime.now(ZoneInfo("America/New_York")).strftime("%Y%m%dT%H%M%S")
 
     note = apply_instructions(instructions) if instructions else ""
@@ -285,6 +291,9 @@ def main() -> None:
         current["note"] = note
     (ROOT / "bulletin" / "state" / "current.json").write_text(
         json.dumps(current, indent=1) + "\n")
+    # The Desk's "Coming up": the next bulletins and their days, refreshed
+    # with every proof so it is never more than a week old.
+    schedule.write_schedule()
     print(f"proofed {bulletin_id} rev {rev}; commit, then --send-only")
 
 

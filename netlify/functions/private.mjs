@@ -6,7 +6,9 @@
 // Mailchimp — the congregational send, each family letter and who got it,
 // the students on the latest congregational mailing, the people named in
 // the Netlify variable DESK_WATCH — and what the live site is showing;
-// then the announcements and location form, whose Save commits
+// A bulletin is a Shabbat's or a festival's own (program/occasions.py),
+// and the page speaks of "its day", not "its Shabbat".
+// Then the announcements and location form, whose Save commits
 // bulletin/announcements.md and bulletin/location.md through the GitHub
 // API as before. No address is ever shown; names come from Mailchimp.
 import {
@@ -147,6 +149,15 @@ async function current() {
   }
 }
 
+async function scheduleFile() {
+  const f = await readFile("bulletin/state/schedule.json");
+  try {
+    return JSON.parse(f.text || "{}");
+  } catch {
+    return {};
+  }
+}
+
 async function mailchimpConfig() {
   const f = await readFile("program/data/mailchimp.json");
   try {
@@ -235,9 +246,12 @@ async function siteStatus() {
   const [bul, svc] = await Promise.all([fetchText(`${SITE}/bulletin/`), fetchText(`${SITE}/services.html`)]);
   const title = ((bul.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "")
     .replace(/\s*—\s*Kehillah.*$/s, "").trim();
+  // The services fragment carries "<!-- bulletin-id:YYYY-MM-DD -->" since
+  // 15 November 2026; older pages are read by their "Saturday, D Month YYYY".
+  const idm = svc.match(/bulletin-id:(\d{4}-\d{2}-\d{2})/);
   const m = svc.match(/Saturday,\s*(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
-  let iso = "";
-  if (m) {
+  let iso = idm ? idm[1] : "";
+  if (!iso && m) {
     const mi = MONTHS.findIndex((x) => x.toLowerCase() === m[2].toLowerCase());
     if (mi >= 0) iso = `${m[3]}-${String(mi + 1).padStart(2, "0")}-${String(m[1]).padStart(2, "0")}`;
   }
@@ -262,7 +276,7 @@ function statusCopy(cur, now) {
   const sendDay = cur.send_day || addDays(cur.id, -1);
   const moment = cur.send_moment ? new Date(cur.send_moment) : fromNY(sendDay + "T06:00:00");
   const passed = now >= moment;
-  // A proof whose Shabbat has gone by is stale: it is shown, never offered
+  // A proof whose day has gone by is stale: it is shown, never offered
   // for approval (approving it would mail last month's bulletin).
   const stale = cur.id < nyDate(now) && st !== "sent";
   let text = "";
@@ -270,7 +284,7 @@ function statusCopy(cur, now) {
   if (st === "proofed") {
     text = `Proofed ${fmtWhen(fromNY(cur.proofed_at || cur.rev))}.`;
     if (stale) {
-      text += ` Its Shabbat passed without approval; nothing went out. The next proof supersedes it.`;
+      text += ` Its day passed without approval; nothing went out. The next proof supersedes it.`;
       cls = "no";
     } else if (passed) {
       text += ` Awaiting your word.`;
@@ -279,7 +293,7 @@ function statusCopy(cur, now) {
       text += ` Awaiting your word. Once approved it goes out on ${fmtDay(sendDay)}, in the morning.`;
     }
   } else if (st === "approved" && stale) {
-    text = `Approved ${fmtWhen(new Date(cur.approved_at))}, but its Shabbat passed before it went out. Tell Claude.`;
+    text = `Approved ${fmtWhen(new Date(cur.approved_at))}, but its day passed before it went out. Tell Claude.`;
     cls = "no";
   } else if (st === "approved") {
     text = `Approved ${fmtWhen(new Date(cur.approved_at))}. ` +
@@ -330,7 +344,7 @@ ${canChange ? `<form method="POST">
   }
   const note = cur.note ? `<p class="note">Not changed from the last proof cycle — bring it to Claude: ${esc(cur.note)}</p>` : "";
   return `<div class="card">
-<p class="mute small" style="margin:0 0 0.2rem; letter-spacing:0.18em; text-transform:uppercase; font-size:0.66rem;">Bulletin for Shabbat ${esc(fmtDate(cur.id))}</p>
+<p class="mute small" style="margin:0 0 0.2rem; letter-spacing:0.18em; text-transform:uppercase; font-size:0.66rem;">${weekday(cur.id) === 6 ? `Bulletin for Shabbat ${esc(fmtDate(cur.id))}` : `Festival bulletin for ${esc(fmtDay(cur.id))} ${esc(cur.id.slice(0, 4))}`}</p>
 <p style="margin:0; font-size:1.25rem; color:#e6c780;">${esc(cur.title || cur.id)}</p>
 <p class="status ${s.cls}">${esc(s.text)}</p>
 ${flash ? `<div class="flash">${esc(flash)}</div>` : ""}
@@ -362,9 +376,9 @@ Mailchimp's own records of what went out and to whom.</p></div>`;
   }
   const cellHtml = (hits) => {
     if (!hits.length) return `<span class="mute">—</span>`;
-    return hits.map((c) => `<span class="yes">✓</span> ${esc(fmtShort(c.sent))} <span class="mute">· ${c.n}</span>`).join("<br>");
+    return hits.map((c) => `<span title="${esc(c.subject)}"><span class="yes">✓</span> ${esc(fmtShort(c.sent))} <span class="mute">· ${c.n}</span></span>`).join("<br>");
   };
-  const head = ["Shabbat", "Congregation", ...Object.values(FAMILY), "To you"]
+  const head = ["Week of", "Congregation", ...Object.values(FAMILY), "To you"]
     .map((h) => `<th>${esc(h)}</th>`).join("");
   const body = led.rows.map((r) => {
     const label = r.week === thisSat
@@ -384,15 +398,13 @@ Mailchimp's own records of what went out and to whom.</p></div>`;
     const got = led.sentTo.weekly || [];
     const gotEmails = new Set(got.map((p) => String(p.email_address).toLowerCase()));
     const watch = String(process.env.DESK_WATCH || "").split(/[;,]/).map((s) => s.trim()).filter(Boolean);
-    const watchHtml = watch.length
-      ? watch.map((name) => {
+    const watchHtml = !watch.length ? "" : watch.map((name) => {
           const hit = got.find((p) => fullName(p.merge_fields).toLowerCase().includes(name.toLowerCase()) ||
                                       String(p.email_address).toLowerCase() === name.toLowerCase());
           return hit
             ? `<span class="yes">${esc(name)} ✓</span>`
             : `<span class="no">${esc(name)} — not on this mailing</span>`;
-        }).join("")
-      : `<span class="mute">set the Netlify variable DESK_WATCH to name the people to watch for</span>`;
+        }).join("");
     let studentsHtml;
     if (led.students === null) studentsHtml = `<span class="mute">no "student" tag in Mailchimp</span>`;
     else if (!led.students.length) studentsHtml = `<span class="mute">no one carries the student tag</span>`;
@@ -407,7 +419,7 @@ Mailchimp's own records of what went out and to whom.</p></div>`;
     who = `<h2>The latest congregational mailing</h2>
 <div class="card">
 <p style="margin:0 0 0.6rem;">${esc(w.subject)} <span class="mute small">· ${esc(fmtWhen(w.sent))} · ${w.n} sent</span></p>
-<p class="people"><span class="mute small" style="letter-spacing:0.14em; text-transform:uppercase;">Watched</span><br>${watchHtml}</p>
+${watchHtml ? `<p class="people"><span class="mute small" style="letter-spacing:0.14em; text-transform:uppercase;">Watched</span><br>${watchHtml}</p>` : ""}
 <p class="people"><span class="mute small" style="letter-spacing:0.14em; text-transform:uppercase;">Students</span><br>${studentsHtml}</p>
 </div>`;
   }
@@ -424,7 +436,7 @@ Mailchimp's own records of what went out and to whom.</p></div>`;
   return `<div class="card scroll"><table class="ledger"><thead><tr>${head}</tr></thead><tbody>
 ${body}
 </tbody></table>
-<p class="note small" style="margin:0.9rem 0 0;">Each mark is Mailchimp's own record of a send, with the New York time and how many addresses it went to. "To you" counts the proofs, reminders, and copies that reached your inbox that week.</p></div>
+<p class="note small" style="margin:0.9rem 0 0;">Each mark is Mailchimp's own record of a send, with the New York time and how many addresses it went to; a festival bulletin of its own shows in the week of the Shabbat that follows it (hover a mark for the subject). "To you" counts the proofs, reminders, and copies that reached your inbox that week.</p></div>
 ${who}
 ${famHtml}`;
 }
@@ -441,28 +453,43 @@ function siteSection(site, thisSat) {
     verdict = `<span class="yes">This week's bulletin is live. ✓</span>`;
   } else if (site.iso === prevSat) {
     verdict = `<span class="yes">Last Shabbat's bulletin is live; this week's replaces it on its mailing day. ✓</span>`;
+  } else if (site.iso > prevSat && site.iso < thisSat) {
+    verdict = `<span class="yes">A festival bulletin of its own is live; Shabbat's replaces it on its mailing day. ✓</span>`;
+  } else if (site.iso > thisSat) {
+    verdict = `<span class="yes">A bulletin for the coming days is live. ✓</span>`;
   } else {
     const behind = Math.round((new Date(prevSat) - new Date(site.iso)) / (7 * 86400e3));
     verdict = `<span class="no">The site is ${behind} week${behind === 1 ? "" : "s"} behind.</span>`;
   }
   return `<div class="card">
-<p style="margin:0 0 0.4rem;">Live now: <strong>${esc(site.title || "(no bulletin page)")}</strong>${site.iso ? ` — Shabbat of ${esc(fmtDate(site.iso))}` : ""}</p>
+<p style="margin:0 0 0.4rem;">Live now: <strong>${esc(site.title || "(no bulletin page)")}</strong>${site.iso ? ` — ${weekday(site.iso) === 6 ? "Shabbat of " : ""}${esc(fmtDate(site.iso))}` : ""}</p>
 <p style="margin:0;">${verdict} <span class="small"><a href="${SITE}/bulletin/">bulletin page</a> &nbsp;·&nbsp; <a href="${SITE}/services.html">services page</a></span></p>
 </div>`;
 }
 
-function comingUp(cur, today, thisSat) {
+function comingUp(cur, today, thisSat, sched) {
   const lines = [];
-  const inHand = cur.id === thisSat && cur.status && cur.status !== "sent";
-  const nextSat = (cur.id === thisSat && cur.status === "sent") || today === thisSat ? addDays(thisSat, 7) : thisSat;
+  const inHand = Boolean(cur.id) && cur.status && cur.status !== "sent" && cur.id >= today;
   if (inHand) {
-    lines.push(`This week's bulletin is in hand above; it goes out on ${fmtDay(cur.send_day || addDays(cur.id, -1))}, in the morning.`);
+    lines.push(`In hand above: ${cur.title || cur.id}. It goes out on ${fmtDay(cur.send_day || addDays(cur.id, -1))}, in the morning, once approved.`);
   }
-  if (!inHand || nextSat !== thisSat) {
-    lines.push(`Next bulletin: Shabbat ${fmtDate(nextSat)}. Its proof lands here and in your inbox on ${fmtDay(addDays(nextSat, -2))}, during the afternoon or evening; it goes out on ${fmtDay(addDays(nextSat, -1))}, in the morning, once approved.`);
+  // program/schedule.py writes the next bulletins with every proof; a
+  // festival or fast too far from a Shabbat appears here on its own.
+  const list = ((sched && sched.bulletins) || [])
+    .filter((b) => b.send_day >= today && !(inHand && b.id === cur.id))
+    .slice(0, 4);
+  if (list.length) {
+    for (const b of list) {
+      lines.push(`${b.title}: proof on ${fmtDay(b.proof_day)}, out on ${fmtDay(b.send_day)}.`);
+    }
+    lines.push(`Proofs arrive during the afternoon or evening of their day, here and in your inbox; each goes out the next morning once approved.`);
+  } else {
+    const nextSat = (cur.id === thisSat && cur.status === "sent") || today === thisSat ? addDays(thisSat, 7) : thisSat;
+    if (!inHand || nextSat !== thisSat) {
+      lines.push(`Next bulletin: Shabbat ${fmtDate(nextSat)}. Its proof lands here and in your inbox on ${fmtDay(addDays(nextSat, -2))}, during the afternoon or evening; it goes out on ${fmtDay(addDays(nextSat, -1))}, in the morning, once approved.`);
+    }
   }
-  lines.push(`Festival weeks run earlier by the same rule: the proof comes the day before the first eve, and the mail goes out on the eve.`);
-  lines.push(`The family letters go out every Friday morning, and on festival eves, on their own.`);
+  lines.push(`Every festival and fast gets a bulletin: within two days of a Shabbat it rides in that Shabbat's; further away it comes on its own, proofed the day before its eve and mailed on the eve. The family letters go out on the same mornings.`);
   return `<div class="card">${lines.map((l) => `<p style="margin:0 0 0.5rem;">${esc(l)}</p>`).join("")}</div>`;
 }
 
@@ -492,7 +519,7 @@ async function desk({ flash = "", saved = false } = {}) {
   const weeks = [];
   for (let i = 0; i < 6; i++) weeks.push(addDays(thisSat, -7 * i));
 
-  const [cur, cfg] = await Promise.all([current(), mailchimpConfig()]);
+  const [cur, cfg, sched] = await Promise.all([current(), mailchimpConfig(), scheduleFile()]);
   let led;
   const [ledResult, site, notices] = await Promise.all([
     ledger(cfg, weeks).catch((e) => ({ error: e.message || String(e) })),
@@ -515,7 +542,7 @@ ${ledgerSection(led, weeks, thisSat)}
 ${siteSection(site, thisSat)}
 
 <h2>Coming up</h2>
-${comingUp(cur, today, thisSat)}
+${comingUp(cur, today, thisSat, sched)}
 
 <h2>This week's notices</h2>
 ${notices}`, { wide: true });
@@ -561,7 +588,7 @@ export default async function handler(req) {
         return desk({ flash: "That proof has been superseded by a newer one; this page now shows the latest." });
       }
       if (cur.id < nyDate(new Date()) && cur.status !== "sent") {
-        return desk({ flash: "That bulletin's Shabbat has passed; it cannot be approved or changed now." });
+        return desk({ flash: "That bulletin's day has passed; it cannot be approved or changed now." });
       }
       if (action === "approve") {
         if (cur.status !== "proofed") {

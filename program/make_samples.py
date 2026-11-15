@@ -30,11 +30,19 @@ def week_description(ctx: dict) -> str:
             lines.append(r["haftarah"])
     if ctx.get("cluster"):
         c = ctx["cluster"]
-        days = ", ".join(d.strftime("%A %d %B") for d in c["days"])
-        lines.append(f"This is a festival bulletin: {c['name']}, days: {days}; "
-                     f"eve {c['eve'].strftime('%A %d %B')}."
-                     + (f" It also covers the fast on {c['fast']['date'].strftime('%A %d %B')}."
-                        if c["fast"] else ""))
+        what = "; ".join(
+            f"{bulletin.day_name(o, c['items'])} on {o['date']:%A %d %B}"
+            + {"yomtov": " (yom tob)", "fast": " (a fast day)", "festival": "",
+               "hanukkah": " (the first day; eight nights of candles)",
+               "minor": " (a minor festive day)"}[o["kind"]]
+            for o in c["items"])
+        if ctx.get("standalone"):
+            lines.append(f"This bulletin is for a festival or fast with no Shabbat in it: "
+                         f"{c['label']} — {what}; eve {c['eve']:%A %d %B}. The teachings "
+                         f"arise from this occasion, not from a weekly parasha.")
+        else:
+            lines.append(f"This Shabbat's bulletin also covers {c['label']}: {what}; "
+                         f"the bulletin's first eve is {c['eve']:%A %d %B}.")
     if ctx["observances"]:
         lines.append("In the week ahead: " + " ".join(ctx["observances"]))
     return "\n".join(lines)

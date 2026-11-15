@@ -132,6 +132,32 @@ plus Tu BiShbat and Lag LaOmer.
 If a festival or fast falls within two days of Shabbat or another festival,
 one bulletin covers the cluster and the earliest proof date applies.
 
+In force since 15 November 2026 (Marc's order that every holiday get a
+bulletin; program/occasions.py): the rule above is applied to every
+occasion in the list, transitively — Pesah VII on a Wednesday joins Pesah
+VIII on the Thursday and the Shabbat after; the Fast of Esther on a Monday
+joins the Shabbat before it and Purim on the Tuesday. A Shabbat bulletin
+that carries a festival or fast prints its times in date order, each
+section under its own heading (Hanukkah's eight candles, Purim's two
+Megillah readings, a fast's beginning and end — Tish'a Be'Ab from sunset
+the evening before, the minor fasts from dawn), and its readings (the yom
+tob days', Purim's, Tish'a Be'Ab's; a minor fast's weekday reading only in
+a bulletin of its own). An occasion more than two days from any Shabbat
+gets a bulletin of its own, keyed by its first day: no "Weekly Bulletin"
+eyebrow, the festival's name and year for a title, no service schedule or
+Kiddush unless Marc writes bulletin/service-times/<festival>.md for it,
+its week-ahead lines free of itself, and Reflections on the festival. The
+first such bulletin in the calendar is Lag LaOmer, Tuesday 25 May 2027
+(proof Sunday the 23rd, mail Monday the 24th); 5788 brings Pesah on
+Tuesday 11 April 2028, Tzom Tammuz, Tish'a Be'Ab and Hanukkah on their
+own. Hanukkah counts by its first day only, so that it never fuses two
+Shabbatot into one bulletin; a Shabbat within two days of its first day
+carries all eight candle lightings. A Shabbat that is itself an
+intermediate day of Pesah or Sukkot inside a cluster makes that bulletin
+the festival's, named for the festival. python3 program/occasions.py
+<year> lists a year's festival bulletins; python3 program/schedule.py
+--list the next eight with their proof and mailing days.
+
 Rosh Hodesh, Purim Katan, and Pesah Sheni are announced in the preceding
 Shabbat bulletin and receive no separate bulletin.
 
@@ -152,14 +178,24 @@ sends at once. A reminder goes to Marc on Thursday evening if the proof is
 still unapproved; a proof whose mailing day has passed is not nagged about
 again — the Desk shows it, and the next proof supersedes it.
 
-Festivals and fasts follow the same two days measured from the cluster's
+Festivals and fasts follow the same two days measured from the bulletin's
 first eve: proof the day before the eve, mail on the eve. So Pesah
 beginning Thursday 22 April 2027 is proofed Tuesday the 20th and mailed
 Wednesday the 21st; Shabuot beginning Friday 11 June 2027 is proofed
-Wednesday the 9th and mailed Thursday the 10th. program/schedule.py is the
-one place this rule lives; each proof records its proof_day, send_day and
+Wednesday the 9th and mailed Thursday the 10th; Lag LaOmer, alone on
+Tuesday 25 May 2027, is proofed Sunday the 23rd and mailed Monday the
+24th. program/schedule.py is the one place this rule lives, for Shabbat
+bulletins and standalone ones alike (it asks program/occasions.py which
+bulletins exist); each proof records its proof_day, send_day and
 send_moment in current.json, and publish.py and the reminder read them
-from there. Nothing is ever published or sent without approval.
+from there. Every proof also writes bulletin/state/schedule.json, the
+next eight bulletins with their days, which the Desk shows under Coming
+up. The family letters (family.py --auto, daily at 6:00 am) go out on
+every bulletin's mailing day — Fridays and the eves of standalone
+festivals and fasts — with "Festival Times" or "Fast Times" in the
+subject and a festival sign-off in place of GOOD SHABBOS when the letter
+is not a Shabbat letter (the words live in family.festival_greeting).
+Nothing is ever published or sent without approval.
 
 (History of the schedule: Thursday proof and Thursday 6:00 pm send in the
 brief; Wednesday 6:00 am / 6:00 pm from 3 September 2026; Thursday proof
@@ -200,6 +236,14 @@ member's sky (Ari at Tufts, Misha and Gabi in Philadelphia, Mom in New
 York). Teachings come from the published state, never redrafted. Manual
 workflow only; proof by default, live at Marc's word. First used for
 Rosh Hashana 5787.
+
+Joy Schwartz (Marc's order, 15 November 2026): she is the one recipient
+of the letter addressed "Mom" and was also on the congregational Weekly
+segment. She was taken off the Weekly segment that day (the mailchimp-
+private workflow, by segment key, no address in code or logs; the segment
+went from 60 members to 59) and now receives her own letter only, every
+Shabbat and every holiday, on the bulletin's mailing morning. The Desk
+shows her under "Mom" by first name; DESK_WATCH is no longer set.
 
 Copies to Marc (his word, 9 September 2026): every live family or
 localized send also mails him one copy, its subject labeled with whose

@@ -1,8 +1,9 @@
 # The proof (build order step 7). Runs every day at 10:00 am New York —
 # both candidate UTC hours; the gate keeps the one that is 10 am today —
 # and asks program/schedule.py whether today is a proof day: the day before
-# the bulletin's first eve, so Thursday for a plain Shabbat and earlier on
-# a festival week (Marc's rule, 15 November 2026). GitHub queues these
+# a bulletin's first eve, so Thursday for a plain Shabbat, earlier on a
+# festival week, and the day before the eve of a festival or fast that has
+# a bulletin of its own (Marc's rules, 15 November 2026). GitHub queues these
 # crons hours late, which is why the nominal hour is 10 am: the proof lands
 # in Marc's hands during Thursday afternoon or evening, in time for his
 # review that night. Also runs on a Request-changes dispatch from the site,
@@ -18,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       shabbat:
-        description: "Shabbat date (YYYY-MM-DD); empty = next Saturday"
+        description: "Bulletin id (a Saturday, or a standalone festival's first day); empty = the next one"
         required: false
         default: ""
       keep_teachings:

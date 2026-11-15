@@ -1,7 +1,8 @@
 # The family emails: Ari (Tufts), Misha and Hannah (Philadelphia), Gabi
 # and Pascale (Philadelphia), Mom (NYC). Each to its own tag segment.
-# Runs daily at 6:00 am New York; family.py --auto sends only on Fridays
-# and on festival eves (never on Shabbat or yom tob itself), to the
+# Runs daily at 6:00 am New York; family.py --auto sends only on a
+# bulletin's mailing day — Fridays, and the eve of a festival or fast with
+# a bulletin of its own (program/schedule.py; never on Shabbat) — to the
 # members named in the repository variable FAMILY_ARMED.
 name: family
 
