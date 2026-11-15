@@ -120,6 +120,29 @@ Sivan 5658 / June 1898); times computed for Tufts University, Medford, MA
 (42.41° N, 71.12° W); then the summaries, the week ahead, and the week's
 Reflections.
 
+Further discussion of the Parasha (Marc's direction, 15 November 2026)
+
+Under the Torah portion's summary stands one line: "For further
+discussion of the Parasha, listen to Rabbi Joseph Dweck:" followed by
+the title of his episode on that portion, linked. The show is "The
+Parasha with Rabbi Dweck"; Marc's Spotify page for it is
+https://open.spotify.com/show/4K5FOrrlOXRepm29ENnj1S and the episodes
+come from the show's own feed, read live at build time with
+program/data/dweck-index.json as the fallback (program/dweck.py,
+refreshed weekly by the dweck-refresh workflow).
+
+The episode is matched by name, never guessed. The show writes Sephardic
+like the congregation but not identically — Nitsabim for Nitzavim, Hukat
+for Hukkat, Teruma for Terumah, Vayelekh for Vayeilech — so matching
+collapses the ways one Hebrew name is spelled in Latin letters and
+compares whole words, never fragments. Of the 54 portions, 53 have an
+episode; Vezot Habrakha has none. A portion with no episode still gets
+the line, pointing at the show itself rather than at a citation that
+does not exist. Haftarah episodes are not offered as discussion of the
+portion, and a full episode is preferred to one of the show's "in a
+Nutshell" summaries. Festival bulletins carry no such line: they have no
+portion of the week.
+
 Calendar scope
 
 Every Shabbat receives a bulletin.

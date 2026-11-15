@@ -1,0 +1,34 @@
+# Rabbi Dweck's podcast index: the fallback the bulletin uses when the
+# show's own feed cannot be reached at build time. Refreshed weekly; a
+# build reads the feed live, so this file is a safety net rather than the
+# source of truth.
+name: dweck-refresh
+
+on:
+  schedule:
+    - cron: "40 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh the index
+        run: |
+          set -o pipefail
+          python3 program/dweck.py --refresh | tee -a "$GITHUB_STEP_SUMMARY"
+          if git diff --quiet -- program/data/dweck-index.json; then
+            echo "index unchanged"
+            exit 0
+          fi
+          git config user.name "kkzz-bulletin"
+          git config user.email "shabbat@kzzhv.org"
+          git add program/data/dweck-index.json
+          git commit -m "Refresh the Dweck podcast index"
+          git pull --rebase origin main
+          git push

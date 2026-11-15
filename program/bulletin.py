@@ -26,6 +26,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import occasions
+import dweck
 from hebcal_client import fetch_events, holidays
 from zemanim import (KKZZ_LAT, KKZZ_LON, candle_lighting, dawn, format_time, habdala,
                      sunrise, sunset)
@@ -777,6 +778,15 @@ def build_context(anchor: date) -> dict:
         times_heading = TIMES_HEADING_TEXT
         reflections_heading = "Reflections on the Parasha"
 
+    # Rabbi Dweck's episode on the week's portion sits under that
+    # portion's summary (Marc, 15 November 2026). Only the parasha's own
+    # reading carries it; a festival reading is not "the Parasha".
+    if parashah:
+        for r in readings:
+            if r["name"] == parashah:
+                r["dweck"] = dweck.citation(parashah)
+                break
+
     return {
         "sat": sat, "fri": fri, "anchor": sat,
         "standalone": standalone,
@@ -1025,6 +1035,9 @@ def build_body(ctx: dict) -> list[str]:
             body.append(f"<p><strong>{r['name']}</strong>, {r['range']}.</p>")
             if r.get("torah_summary"):
                 body.append(f"<p>{r['torah_summary']}</p>")
+            if r.get("dweck"):
+                d = r["dweck"]
+                body.append(f'<p>{d["lead"]}<a href="{d["url"]}">{d["label"]}</a></p>')
             if r["haftarah"]:
                 body.append("<p>" + r["haftarah"].replace("Haftarah:", "<strong>Haftarah:</strong>", 1) + "</p>")
                 if r.get("haftarah_summary"):
@@ -1412,6 +1425,11 @@ def render_email(ctx: dict, base: str = SITE) -> tuple[Path, Path]:
             sections.append(e_p(f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>{r['name']}</strong>, {r['range']}."))
             if r.get("torah_summary"):
                 sections.append(e_p(r["torah_summary"]))
+            if r.get("dweck"):
+                d = r["dweck"]
+                sections.append(e_p(
+                    f'{d["lead"]}<a href="{d["url"]}" '
+                    f'style="color:{E_GOLD_PALE};">{d["label"]}</a>'))
             if r["haftarah"]:
                 sections.append(e_p(r["haftarah"].replace(
                     "Haftarah:", f"<strong style='color:{E_GOLD_PALE}; font-weight:500;'>Haftarah:</strong>", 1)))
@@ -1624,6 +1642,10 @@ def render_text(ctx: dict) -> str:
             lines.append(f"{r['name']}, {r['range']}.")
             if r.get("torah_summary"):
                 lines.append(r["torah_summary"])
+            if r.get("dweck"):
+                d = r["dweck"]
+                lines.append(f'{d["lead"]}{d["label"]}')
+                lines.append(d["url"])
             if r["haftarah"]:
                 lines.append(r["haftarah"])
                 if r.get("haftarah_summary"):

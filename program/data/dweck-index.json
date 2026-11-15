@@ -1,0 +1,2671 @@
+{
+ "show": "https://open.spotify.com/show/4K5FOrrlOXRepm29ENnj1S",
+ "feed": "https://anchor.fm/s/c6240efc/podcast/rss",
+ "refreshed": "2026-11-15T22:28:16.248379+00:00",
+ "episodes": [
+  {
+   "title": "Would You Wear It? | Haftarat Toledot 2026",
+   "headline": "Would You Wear It?",
+   "parasha": "Toledot",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Would-You-Wear-It---Haftarat-Toledot-2026-e3s7p7d",
+   "published": "2026-11-11T19:45:42+00:00",
+   "spans": [
+    "toledot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "The Abyss of Age | Haftarat Haye Sarah 2026",
+   "headline": "The Abyss of Age",
+   "parasha": "Haye Sarah",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/The-Abyss-of-Age--Haftarat-Haye-Sarah-2026-e3ro60n",
+   "published": "2026-11-04T19:48:00+00:00",
+   "spans": [
+    "haye",
+    "hayesara",
+    "sara"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Closing Doors In Your Life | Haftarat Vayera 2026",
+   "headline": "Closing Doors In Your Life",
+   "parasha": "Vayera",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Closing-Doors-In-Your-Life--Haftarat-Vayera-2026-e3r8qgu",
+   "published": "2026-10-28T15:59:35+00:00",
+   "spans": [
+    "bayera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beyond Your Limits | Haftarat Lekh Lekha 2026",
+   "headline": "Beyond Your Limits",
+   "parasha": "Lekh Lekha",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Beyond-Your-Limits--Haftarat-Lekh-Lekha-2026-e3qrlms",
+   "published": "2026-10-21T14:19:36+00:00",
+   "spans": [
+    "le",
+    "leha",
+    "lehleha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beautiful People | Haftarat Noah 2026",
+   "headline": "Beautiful People",
+   "parasha": "Noah",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Beautiful-People--Haftarat-Noah-2026-e3qgg4l",
+   "published": "2026-10-14T14:47:37+00:00",
+   "spans": [
+    "noa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Jews are Blind | Haftarat Bereshit 2026",
+   "headline": "Jews are Blind",
+   "parasha": "Bereshit",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Jews-are-Blind--Haftarat-Bereshit-2026-e3q3p8f",
+   "published": "2026-10-07T19:58:58+00:00",
+   "spans": [
+    "bereshit"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Multiple Interpretations | Ha'azinu 2023",
+   "headline": "Multiple Interpretations",
+   "parasha": "Ha'azinu",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Multiple-Interpretations--Haazinu-2023-e3ouvkn",
+   "published": "2026-09-16T21:17:24+00:00",
+   "spans": [
+    "hasinu"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Brazen Covenant | Nitsabim-Vayelekh 2023",
+   "headline": "Brazen Covenant",
+   "parasha": "Nitsabim-Vayelekh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Brazen-Covenant--Nitsabim-Vayelekh-2023-e3o8t1n",
+   "published": "2026-09-02T22:02:51+00:00",
+   "spans": [
+    "bayele",
+    "nisabim",
+    "nisabimbayele"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Awkward Truths | Ki Tabo 2023",
+   "headline": "Awkward Truths",
+   "parasha": "Ki Tabo",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Awkward-Truths--Ki-Tabo-2023-e3nuglr",
+   "published": "2026-08-26T20:21:32+00:00",
+   "spans": [
+    "ki",
+    "kitabo",
+    "tabo"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tetse 2023 - Never Forget",
+   "headline": "Never Forget",
+   "parasha": "Ki Tetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tetse-2023---Never-Forget-e3nl2j5",
+   "published": "2026-08-20T11:33:49+00:00",
+   "spans": [
+    "ki",
+    "kitese",
+    "tese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Stupid Superstitions | Shofetim 2025",
+   "headline": "Stupid Superstitions",
+   "parasha": "Shofetim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Stupid-Superstitions--Shofetim-2025-e3nb0ta",
+   "published": "2026-08-12T20:35:16+00:00",
+   "spans": [
+    "shofetim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Other Gods | Re'eh 2026",
+   "headline": "Other Gods",
+   "parasha": "Re'eh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Other-Gods--Reeh-2026-e3n3iep",
+   "published": "2026-08-07T08:55:44+00:00",
+   "spans": [
+    "re"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Hope & the Jewish People | Ekeb 2025",
+   "headline": "Hope & the Jewish People",
+   "parasha": "Ekeb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Hope--the-Jewish-People--Ekeb-2025-e3mnjv2",
+   "published": "2026-07-29T22:53:04+00:00",
+   "spans": [
+    "ekeb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "The Eternal Jewish System | Va'ethanan 2026",
+   "headline": "The Eternal Jewish System",
+   "parasha": "Va'ethanan",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/The-Eternal-Jewish-System--Vaethanan-2026-e3me353",
+   "published": "2026-07-23T00:48:36+00:00",
+   "spans": [
+    "baethanan"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Don't Choose Security | Debarim 2026",
+   "headline": "Don't Choose Security",
+   "parasha": "Debarim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Dont-Choose-Security--Debarim-2026-e3m6bu4",
+   "published": "2026-07-17T03:57:50+00:00",
+   "spans": [
+    "debarim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "One Nation Under God | Matot Mas'ei 2026",
+   "headline": "One Nation Under God",
+   "parasha": "Matot Mas'ei",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/One-Nation-Under-God--Matot-Masei-2026-e3lrgb8",
+   "published": "2026-07-09T11:42:27+00:00",
+   "spans": [
+    "masei",
+    "matot",
+    "matotmasei"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "A Lesson on Identity and Integrity | Pinehas 2026",
+   "headline": "A Lesson on Identity and Integrity",
+   "parasha": "Pinehas",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/A-Lesson-on-Identity-and-Integrity--Pinehas-2026-e3li3e1",
+   "published": "2026-07-02T17:33:43+00:00",
+   "spans": [
+    "pinehas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "God, Covenant, and the Bond of Love | Balak 2024",
+   "headline": "God, Covenant, and the Bond of Love",
+   "parasha": "Balak",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/God--Covenant--and-the-Bond-of-Love--Balak-2024-e3l8h9m",
+   "published": "2026-06-25T03:20:34+00:00",
+   "spans": [
+    "balak"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Hukat 2025 - Chained to the Past",
+   "headline": "Chained to the Past",
+   "parasha": "Hukat",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Hukat-2025---Chained-to-the-Past-e3kveko",
+   "published": "2026-06-18T16:24:04+00:00",
+   "spans": [
+    "hukat"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Life is Not Fair | Korah 2026",
+   "headline": "Life is Not Fair",
+   "parasha": "Korah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Life-is-Not-Fair--Korah-2026-e3kkpqv",
+   "published": "2026-06-11T05:00:37+00:00",
+   "spans": [
+    "kora"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Inferiority-Complex Dangers | Shelah 2026",
+   "headline": "Inferiority-Complex Dangers",
+   "parasha": "Shelah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Inferiority-Complex-Dangers--Shelah-2026-e3kbivg",
+   "published": "2026-06-04T19:26:59+00:00",
+   "spans": [
+    "shela"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "The Journey of Self Discovery (Part 2) | Beha'alotekha 2026",
+   "headline": "The Journey of Self Discovery (Part 2)",
+   "parasha": "Beha'alotekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/The-Journey-of-Self-Discovery-Part-2--Behaalotekha-2026-e3k0hk7",
+   "published": "2026-05-28T04:51:19+00:00",
+   "spans": [
+    "behaloteha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "The Journey of Self Discovery (Part 1) | Beha'alotekha 2026",
+   "headline": "The Journey of Self Discovery (Part 1)",
+   "parasha": "Beha'alotekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/The-Journey-of-Self-Discovery-Part-1--Behaalotekha-2026-e3k02cv",
+   "published": "2026-05-27T20:33:57+00:00",
+   "spans": [
+    "behaloteha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Privacy Issues | Naso 2026",
+   "headline": "Privacy Issues",
+   "parasha": "Naso",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Privacy-Issues--Naso-2026-e3jlphd",
+   "published": "2026-05-21T04:02:41+00:00",
+   "spans": [
+    "naso"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Torah & Tribalism | Bemidbar 2026",
+   "headline": "Torah & Tribalism",
+   "parasha": "Bemidbar",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Torah--Tribalism--Bemidbar-2026-e3jb4ct",
+   "published": "2026-05-14T01:28:19+00:00",
+   "spans": [
+    "bemidbar"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Breaking the Covenant | Behar-Behukotai 2026",
+   "headline": "Breaking the Covenant",
+   "parasha": "Behar-Behukotai",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Breaking-the-Covenant--Behar-Behukotai-2026-e3j0a2q",
+   "published": "2026-05-06T20:20:29+00:00",
+   "spans": [
+    "behar",
+    "beharbehukotai",
+    "behukotai"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Have We Lost What is Sacred? | Emor 2026",
+   "headline": "Have We Lost What is Sacred?",
+   "parasha": "Emor",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Have-We-Lost-What-is-Sacred---Emor-2026-e3iljgf",
+   "published": "2026-04-29T20:00:55+00:00",
+   "spans": [
+    "emor"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Our Higher Self | Aharei Mot-Kedoshim 2026",
+   "headline": "Our Higher Self",
+   "parasha": "Aharei Mot-Kedoshim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Our-Higher-Self--Aharei-Mot-Kedoshim-2026-e3ia9da",
+   "published": "2026-04-22T22:52:49+00:00",
+   "spans": [
+    "aharei",
+    "ahareimot",
+    "kedoshim",
+    "mot",
+    "motkedoshim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Healing Through Gratitude | Tazria-Metsora 2026",
+   "headline": "Healing Through Gratitude",
+   "parasha": "Tazria-Metsora",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Healing-Through-Gratitude--Tazria-Metsora-2026-e3hvshe",
+   "published": "2026-04-16T04:03:04+00:00",
+   "spans": [
+    "mesora",
+    "tasria",
+    "tasriamesora"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "There is no Freedom in the Bible! | Tsav-Shabbat HaGadol 2026",
+   "headline": "There is no Freedom in the Bible!",
+   "parasha": "Tsav-Shabbat HaGadol",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/There-is-no-Freedom-in-the-Bible---Tsav-Shabbat-HaGadol-2026-e3h17ri",
+   "published": "2026-03-26T21:19:08+00:00",
+   "spans": [
+    "hagadol",
+    "sab",
+    "sabshabat",
+    "shabat",
+    "shabathagadol"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tsav in a Nutshell",
+   "headline": "Tsav in a Nutshell",
+   "parasha": "Tsav in a Nutshell",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tsav-in-a-Nutshell-e3gsp9u",
+   "published": "2026-03-24T02:24:52+00:00",
+   "spans": [
+    "a",
+    "anushel",
+    "in",
+    "ina",
+    "nushel",
+    "sab",
+    "sabin"
+   ],
+   "loose": true,
+   "nutshell": true
+  },
+  {
+   "title": "Life's Inherent Violence | Vayikra 2026",
+   "headline": "Life's Inherent Violence",
+   "parasha": "Vayikra",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Lifes-Inherent-Violence--Vayikra-2026-e3gku9c",
+   "published": "2026-03-18T17:38:03+00:00",
+   "spans": [
+    "bayikra"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayikra in a Nutshell",
+   "headline": "Vayikra in a Nutshell",
+   "parasha": "Vayikra in a Nutshell",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayikra-in-a-Nutshell-e3gi9pn",
+   "published": "2026-03-17T03:10:25+00:00",
+   "spans": [
+    "a",
+    "anushel",
+    "bayikra",
+    "bayikrain",
+    "in",
+    "ina",
+    "nushel"
+   ],
+   "loose": true,
+   "nutshell": true
+  },
+  {
+   "title": "The Indestructible Jewish Heart | Vayakhel-Pekude 2026",
+   "headline": "The Indestructible Jewish Heart",
+   "parasha": "Vayakhel-Pekude",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/The-Indestructible-Jewish-Heart--Vayakhel-Pekude-2026-e3g9lff",
+   "published": "2026-03-11T19:20:41+00:00",
+   "spans": [
+    "bayahel",
+    "bayahelpekude",
+    "pekude"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayakhel-Pekude in a Nutshell",
+   "headline": "Vayakhel-Pekude in a Nutshell",
+   "parasha": "Vayakhel-Pekude in a Nutshell",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayakhel-Pekude-in-a-Nutshell-e3g7025",
+   "published": "2026-03-10T03:54:30+00:00",
+   "spans": [
+    "a",
+    "anushel",
+    "bayahel",
+    "bayahelpekude",
+    "in",
+    "ina",
+    "nushel",
+    "pekude",
+    "pekudein"
+   ],
+   "loose": true,
+   "nutshell": true
+  },
+  {
+   "title": "Changing the Course of Jewish History | Ki Tisa 2026",
+   "headline": "Changing the Course of Jewish History",
+   "parasha": "Ki Tisa",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Changing-the-Course-of-Jewish-History--Ki-Tisa-2026-e3fuplm",
+   "published": "2026-03-04T21:09:38+00:00",
+   "spans": [
+    "ki",
+    "kitisa",
+    "tisa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Are You Afraid of the Light? | Tesave 2026",
+   "headline": "Are You Afraid of the Light?",
+   "parasha": "Tesave",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Are-You-Afraid-of-the-Light---Tesave-2026-e3fispa",
+   "published": "2026-02-25T15:00:00+00:00",
+   "spans": [
+    "tesabe"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tesave in a Nutshell",
+   "headline": "Tesave in a Nutshell",
+   "parasha": "Tesave in a Nutshell",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tesave-in-a-Nutshell-e3fgelu",
+   "published": "2026-02-23T20:02:49+00:00",
+   "spans": [
+    "a",
+    "anushel",
+    "in",
+    "ina",
+    "nushel",
+    "tesabe",
+    "tesabein"
+   ],
+   "loose": true,
+   "nutshell": true
+  },
+  {
+   "title": "Are You Getting Old? | Teruma 2026",
+   "headline": "Are You Getting Old?",
+   "parasha": "Teruma",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Are-You-Getting-Old---Teruma-2026-e3f8s5a",
+   "published": "2026-02-18T15:41:03+00:00",
+   "spans": [
+    "teruma"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "What Matters Most? | Mishpatim 2026",
+   "headline": "What Matters Most?",
+   "parasha": "Mishpatim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/What-Matters-Most---Mishpatim-2026-e3evbqa",
+   "published": "2026-02-11T20:34:36+00:00",
+   "spans": [
+    "mishpatim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Yitro 2026 - Sinai and the Jewish Soul",
+   "headline": "Sinai and the Jewish Soul",
+   "parasha": "Yitro",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Yitro-2026---Sinai-and-the-Jewish-Soul-e3el7j5",
+   "published": "2026-02-04T21:22:29+00:00",
+   "spans": [
+    "yitro"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Where is God? - Beshalah 2026",
+   "headline": "Beshalah",
+   "parasha": "Where is God?",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Where-is-God----Beshalah-2026-e3ea1j1",
+   "published": "2026-01-28T09:11:18+00:00",
+   "spans": [
+    "bhere",
+    "bhereis",
+    "god",
+    "is",
+    "isgod"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Why We Bargain With Reality",
+   "headline": "Why We Bargain With Reality",
+   "parasha": "Why We Bargain With Reality",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Why-We-Bargain-With-Reality-e3duhqn",
+   "published": "2026-01-21T06:00:00+00:00",
+   "spans": [
+    "bargain",
+    "bargainbit",
+    "be",
+    "bebargain",
+    "bhy",
+    "bhybe",
+    "bit",
+    "bithreality",
+    "reality"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Va'era 2026 - Can You Let Go?",
+   "headline": "Can You Let Go?",
+   "parasha": "Va'era",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaera-2026---Can-You-Let-Go-e3dklil",
+   "published": "2026-01-14T08:39:50+00:00",
+   "spans": [
+    "baera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Freedom Isn't What You Think It Is",
+   "headline": "Freedom Isn't What You Think It Is",
+   "parasha": "Freedom Isn't What You Think It Is",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Freedom-Isnt-What-You-Think-It-Is-e3da3dc",
+   "published": "2026-01-07T08:43:14+00:00",
+   "spans": [
+    "bhat",
+    "bhatyou",
+    "fredom",
+    "fredomisnt",
+    "is",
+    "isnt",
+    "isntbhat",
+    "it",
+    "itis",
+    "think",
+    "thinkit",
+    "you",
+    "youthink"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "What Does it Mean to Be a Jew Today?",
+   "headline": "What Does it Mean to Be a Jew Today?",
+   "parasha": "What Does it Mean to Be a Jew Today?",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/What-Does-it-Mean-to-Be-a-Jew-Today-e3d198c",
+   "published": "2025-12-31T16:51:36+00:00",
+   "spans": [
+    "a",
+    "ajeb",
+    "be",
+    "bea",
+    "bhat",
+    "bhatdoes",
+    "does",
+    "doesit",
+    "it",
+    "itmean",
+    "jeb",
+    "jebtoday",
+    "mean",
+    "meanto",
+    "to",
+    "tobe",
+    "today"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Vayigash 2025 - What Happens When You Heal Your Pain?",
+   "headline": "What Happens When You Heal Your Pain?",
+   "parasha": "Vayigash",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayigash-2025---What-Happens-When-You-Heal-Your-Pain-e3cnpa6",
+   "published": "2025-12-23T11:02:50+00:00",
+   "spans": [
+    "bayigas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "When a Family Breaks (Part 2)",
+   "headline": "When a Family Breaks (Part 2)",
+   "parasha": "When a Family Breaks (Part 2)",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/When-a-Family-Breaks-Part-2-e3chaop",
+   "published": "2025-12-18T12:22:31+00:00",
+   "spans": [
+    "a",
+    "afamily",
+    "bhen",
+    "bhena",
+    "breaks",
+    "breakspart",
+    "family",
+    "familybreaks",
+    "part"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Vayesheb 2025 - When a Family Breaks",
+   "headline": "When a Family Breaks",
+   "parasha": "Vayesheb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayesheb-2025---When-a-Family-Breaks-e3c563b",
+   "published": "2025-12-10T16:27:35+00:00",
+   "spans": [
+    "bayesheb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayishlah 2025 - Wrestling with the World",
+   "headline": "Wrestling with the World",
+   "parasha": "Vayishlah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayishlah-2025---Wrestling-with-the-World-e3bqmp4",
+   "published": "2025-12-03T16:08:42+00:00",
+   "spans": [
+    "bayishla"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayetse 2025 - Selfishness or Self-development?",
+   "headline": "Selfishness or Self-development?",
+   "parasha": "Vayetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayetse-2025---Selfishness-or-Self-development-e3biv8f",
+   "published": "2025-11-28T07:21:13+00:00",
+   "spans": [
+    "bayese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Toledot 2025 - It's All Happening Now",
+   "headline": "It's All Happening Now",
+   "parasha": "Toledot",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Toledot-2025---Its-All-Happening-Now-e3b8a4k",
+   "published": "2025-11-20T18:34:00+00:00",
+   "spans": [
+    "toledot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Haye Sarah 2025 - What's Holding You Back?",
+   "headline": "What's Holding You Back?",
+   "parasha": "Haye Sarah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Haye-Sarah-2025---Whats-Holding-You-Back-e3ato7r",
+   "published": "2025-11-14T07:26:46+00:00",
+   "spans": [
+    "haye",
+    "hayesara",
+    "sara"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayera 2025 - Is God Paying Attention?",
+   "headline": "Is God Paying Attention?",
+   "parasha": "Vayera",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayera-2025---Is-God-Paying-Attention-e3aj8mc",
+   "published": "2025-11-06T10:59:36+00:00",
+   "spans": [
+    "bayera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Lekh Lekha 2025 - Be On the Other Side",
+   "headline": "Be On the Other Side",
+   "parasha": "Lekh Lekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Lekh-Lekha-2025---Be-On-the-Other-Side-e3a7ol6",
+   "published": "2025-10-29T22:34:02+00:00",
+   "spans": [
+    "le",
+    "leha",
+    "lehleha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Noah 2025 - Who is Righteous?",
+   "headline": "Who is Righteous?",
+   "parasha": "Noah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Noah-2025---Who-is-Righteous-e39t9fi",
+   "published": "2025-10-22T21:49:32+00:00",
+   "spans": [
+    "noa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bereshit 2025 - What Does it all MEAN?",
+   "headline": "What Does it all MEAN?",
+   "parasha": "Bereshit",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bereshit-2025---What-Does-it-all-MEAN-e39kr8q",
+   "published": "2025-10-16T23:27:48+00:00",
+   "spans": [
+    "bereshit"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayelekh 2025 - We Are Not Angels",
+   "headline": "We Are Not Angels",
+   "parasha": "Vayelekh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayelekh-2025---We-Are-Not-Angels-e38ncak",
+   "published": "2025-09-25T20:15:17+00:00",
+   "spans": [
+    "bayele"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tabo 2025 - The Destiny of Israel",
+   "headline": "The Destiny of Israel",
+   "parasha": "Ki Tabo",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tabo-2025---The-Destiny-of-Israel-e383qd4",
+   "published": "2025-09-11T18:43:36+00:00",
+   "spans": [
+    "ki",
+    "kitabo",
+    "tabo"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tetse 2025 - Spiritual Dangers",
+   "headline": "Spiritual Dangers",
+   "parasha": "Ki Tetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tetse-2025---Spiritual-Dangers-e37pv54",
+   "published": "2025-09-04T20:49:54+00:00",
+   "spans": [
+    "ki",
+    "kitese",
+    "tese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shofetim 2025 - Stupid Superstitions",
+   "headline": "Stupid Superstitions",
+   "parasha": "Shofetim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shofetim-2025---Stupid-Superstitions-e37eu0t",
+   "published": "2025-08-28T20:10:57+00:00",
+   "spans": [
+    "shofetim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Re'eh 2025 - Don't Get Lost in Space",
+   "headline": "Don't Get Lost in Space",
+   "parasha": "Re'eh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Reeh-2025---Dont-Get-Lost-in-Space-e375bve",
+   "published": "2025-08-21T20:08:59+00:00",
+   "spans": [
+    "re"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ekeb 2025 - Lifeline: Hope and the Jewish People",
+   "headline": "Lifeline: Hope and the Jewish People",
+   "parasha": "Ekeb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ekeb-2025---Lifeline-Hope-and-the-Jewish-People-e36s58j",
+   "published": "2025-08-14T20:14:04+00:00",
+   "spans": [
+    "ekeb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Va'ethanan 2025 - Getting God",
+   "headline": "Getting God",
+   "parasha": "Va'ethanan",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaethanan-2025---Getting-God-e36j4a0",
+   "published": "2025-08-07T20:06:48+00:00",
+   "spans": [
+    "baethanan"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Debarim 2025 - Emergent Freedom",
+   "headline": "Emergent Freedom",
+   "parasha": "Debarim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Debarim-2025---Emergent-Freedom-e369trb",
+   "published": "2025-07-31T20:08:00+00:00",
+   "spans": [
+    "debarim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Matot-Mas'e 2025 - Great Cities",
+   "headline": "Great Cities",
+   "parasha": "Matot-Mas'e",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Matot-Mase-2025---Great-Cities-e35vr5a",
+   "published": "2025-07-24T20:12:01+00:00",
+   "spans": [
+    "mase",
+    "matot",
+    "matotmase"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Pinehas 2025 - Time to Give Up Clubbing",
+   "headline": "Time to Give Up Clubbing",
+   "parasha": "Pinehas",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Pinehas-2025---Time-to-Give-Up-Clubbing-e35mkrt",
+   "published": "2025-07-17T20:17:12+00:00",
+   "spans": [
+    "pinehas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Balak 2025 - Red in Tooth and Claw",
+   "headline": "Red in Tooth and Claw",
+   "parasha": "Balak",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Balak-2025---Red-in-Tooth-and-Claw-e35douk",
+   "published": "2025-07-11T10:18:34+00:00",
+   "spans": [
+    "balak"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Hukat 2025 - Chained to the Past",
+   "headline": "Chained to the Past",
+   "parasha": "Hukat",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Hukat-2025---Chained-to-the-Past-e35308j",
+   "published": "2025-07-03T20:19:13+00:00",
+   "spans": [
+    "hukat"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Korah 2025 - The Jewish Mind",
+   "headline": "The Jewish Mind",
+   "parasha": "Korah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Korah-2025---The-Jewish-Mind-e34pcu6",
+   "published": "2025-06-26T20:38:47+00:00",
+   "spans": [
+    "kora"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shelah 2025 - Who Will You Be?",
+   "headline": "Who Will You Be?",
+   "parasha": "Shelah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shelah-2025---Who-Will-You-Be-e34fss0",
+   "published": "2025-06-19T20:21:02+00:00",
+   "spans": [
+    "shela"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beha'alotekha 2025 - Petulance and Professionals",
+   "headline": "Petulance and Professionals",
+   "parasha": "Beha'alotekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behaalotekha-2025---Petulance-and-Professionals-e3448re",
+   "published": "2025-06-11T19:21:48+00:00",
+   "spans": [
+    "behaloteha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Naso 2025 - Physical Spirituality",
+   "headline": "Physical Spirituality",
+   "parasha": "Naso",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Naso-2025---Physical-Spirituality-e33rv42",
+   "published": "2025-06-05T20:42:26+00:00",
+   "spans": [
+    "naso"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bemidbar 2025 - Reductio Ad Absurdum",
+   "headline": "Reductio Ad Absurdum",
+   "parasha": "Bemidbar",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bemidbar-2025---Reductio-Ad-Absurdum-e33hs4f",
+   "published": "2025-05-29T20:09:11+00:00",
+   "spans": [
+    "bemidbar"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Behar-Behukoati 2025: Let Go",
+   "headline": "Behar-Behukoati : Let Go",
+   "parasha": "Behar-Behukoati : Let Go",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behar-Behukoati-2025-Let-Go-e337qr8",
+   "published": "2025-05-22T20:11:05+00:00",
+   "spans": [
+    "behar",
+    "beharbehukoati",
+    "behukoati",
+    "behukoatilet",
+    "go",
+    "let",
+    "letgo"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Emor 2025 - Say NO.",
+   "headline": "Say NO.",
+   "parasha": "Emor",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Emor-2025---Say-NO-e32tdv5",
+   "published": "2025-05-15T20:14:18+00:00",
+   "spans": [
+    "emor"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ahare Mot-Kedoshim 2025: What is Holiness?",
+   "headline": "Ahare Mot-Kedoshim : What is Holiness?",
+   "parasha": "Ahare Mot-Kedoshim : What is Holiness?",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ahare-Mot-Kedoshim-2025-What-is-Holiness-e32j4j6",
+   "published": "2025-05-08T20:14:42+00:00",
+   "spans": [
+    "ahare",
+    "aharemot",
+    "bhat",
+    "bhatis",
+    "holines",
+    "is",
+    "isholines",
+    "kedoshim",
+    "kedoshimbhat",
+    "mot",
+    "motkedoshim"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Tzaria-Metsora 2025 - Watch Your Language",
+   "headline": "Watch Your Language",
+   "parasha": "Tzaria-Metsora",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tzaria-Metsora-2025---Watch-Your-Language-e328fdc",
+   "published": "2025-05-01T14:49:45+00:00",
+   "spans": [
+    "mesora",
+    "saria",
+    "sariamesora"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shemini 2025 - Holding Boundaries",
+   "headline": "Holding Boundaries",
+   "parasha": "Shemini",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shemini-2025---Holding-Boundaries-e31vge4",
+   "published": "2025-04-24T20:26:54+00:00",
+   "spans": [
+    "shemini"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayikra 2025 - Good Service",
+   "headline": "Good Service",
+   "parasha": "Vayikra",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayikra-2025---Good-Service-e312or2",
+   "published": "2025-04-03T20:16:58+00:00",
+   "spans": [
+    "bayikra"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Pekude 2025 - God's Accounts",
+   "headline": "God's Accounts",
+   "parasha": "Pekude",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Pekude-2025---Gods-Accounts-e30orf0",
+   "published": "2025-03-27T21:11:05+00:00",
+   "spans": [
+    "pekude"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayakhel 2025 - Making Room for God",
+   "headline": "Making Room for God",
+   "parasha": "Vayakhel",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayakhel-2025---Making-Room-for-God-e30eto7",
+   "published": "2025-03-20T21:15:10+00:00",
+   "spans": [
+    "bayahel"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tesaveh 2025 - What Do You Need to Be Ok?",
+   "headline": "What Do You Need to Be Ok?",
+   "parasha": "Tesaveh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tesaveh-2025---What-Do-You-Need-to-Be-Ok-e2vqdna",
+   "published": "2025-03-06T21:19:52+00:00",
+   "spans": [
+    "tesabe"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Teruma 2025 - Indestructible People",
+   "headline": "Indestructible People",
+   "parasha": "Teruma",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Teruma-2025---Indestructible-People-e2vgoel",
+   "published": "2025-02-28T09:59:25+00:00",
+   "spans": [
+    "teruma"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Mishpatim 2025 - We Shall Fight on the Beaches",
+   "headline": "We Shall Fight on the Beaches",
+   "parasha": "Mishpatim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Mishpatim-2025---We-Shall-Fight-on-the-Beaches-e2v5f92",
+   "published": "2025-02-20T21:06:07+00:00",
+   "spans": [
+    "mishpatim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Yitro 2025 - Live With Courage",
+   "headline": "Live With Courage",
+   "parasha": "Yitro",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Yitro-2025---Live-With-Courage-e2urfp3",
+   "published": "2025-02-13T21:49:19+00:00",
+   "spans": [
+    "yitro"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Behsalah 2025 - Things Do Matter",
+   "headline": "Things Do Matter",
+   "parasha": "Behsalah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behsalah-2025---Things-Do-Matter-e2uh92f",
+   "published": "2025-02-06T21:20:09+00:00",
+   "spans": [
+    "behsala"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bo 2025 - Attention Please!",
+   "headline": "Attention Please!",
+   "parasha": "Bo",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bo-2025---Attention-Please-e2u74n4",
+   "published": "2025-01-30T21:21:49+00:00",
+   "spans": [
+    "bo"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Va'era 2025 - The Responsibility of Power",
+   "headline": "The Responsibility of Power",
+   "parasha": "Va'era",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaera-2025---The-Responsibility-of-Power-e2ttb72",
+   "published": "2025-01-23T21:12:43+00:00",
+   "spans": [
+    "baera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayhi 2025 - Legacy",
+   "headline": "Legacy",
+   "parasha": "Vayhi",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayhi-2025---Legacy-e2t9j46",
+   "published": "2025-01-09T21:11:25+00:00",
+   "spans": [
+    "bayhi"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayigash 2025 - Ezekiel, Jung and Integration",
+   "headline": "Ezekiel, Jung and Integration",
+   "parasha": "Vayigash",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayigash-2025---Ezekiel--Jung-and-Integration-e2t0d6d",
+   "published": "2025-01-02T21:18:53+00:00",
+   "spans": [
+    "bayigas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Mikets/Hanuka 2024 - The Struggle to Be",
+   "headline": "The Struggle to Be",
+   "parasha": "Mikets/Hanuka",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/MiketsHanuka-2024---The-Struggle-to-Be-e2sp7kd",
+   "published": "2024-12-26T21:16:30+00:00",
+   "spans": [
+    "hanuka",
+    "mikes",
+    "mikeshanuka"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayesheb 2024 - The School of Hard Knocks",
+   "headline": "The School of Hard Knocks",
+   "parasha": "Vayesheb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayesheb-2024---The-School-of-Hard-Knocks-e2shu5n",
+   "published": "2024-12-19T21:14:11+00:00",
+   "spans": [
+    "bayesheb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayishlah 2024 - Beauty and Barricades",
+   "headline": "Beauty and Barricades",
+   "parasha": "Vayishlah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayishlah-2024---Beauty-and-Barricades-e2s8rp4",
+   "published": "2024-12-12T21:15:15+00:00",
+   "spans": [
+    "bayishla"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayetse 2024 - There and Back Again",
+   "headline": "There and Back Again",
+   "parasha": "Vayetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayetse-2024---There-and-Back-Again-e2rviu1",
+   "published": "2024-12-06T13:24:52+00:00",
+   "spans": [
+    "bayese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Toledot 2024 - Trust the Process",
+   "headline": "Trust the Process",
+   "parasha": "Toledot",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Toledot-2024---Trust-the-Process-e2rkkcb",
+   "published": "2024-11-28T17:37:40+00:00",
+   "spans": [
+    "toledot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Haye Sarah 2024 - At Home and On the Road",
+   "headline": "At Home and On the Road",
+   "parasha": "Haye Sarah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Haye-Sarah-2024---At-Home-and-On-the-Road-e2rasph",
+   "published": "2024-11-21T21:07:38+00:00",
+   "spans": [
+    "haye",
+    "hayesara",
+    "sara"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayera 2024 - How You See It",
+   "headline": "How You See It",
+   "parasha": "Vayera",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayera-2024---How-You-See-It-e2r0chr",
+   "published": "2024-11-14T21:16:19+00:00",
+   "spans": [
+    "bayera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Lekh Lekha 2024 - The Land and the Covenant",
+   "headline": "The Land and the Covenant",
+   "parasha": "Lekh Lekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Lekh-Lekha-2024---The-Land-and-the-Covenant-e2qng55",
+   "published": "2024-11-08T12:48:21+00:00",
+   "spans": [
+    "le",
+    "leha",
+    "lehleha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bereshit-Noah 2024 - The Grace of Noah",
+   "headline": "The Grace of Noah",
+   "parasha": "Bereshit-Noah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bereshit-Noah-2024---The-Grace-of-Noah-e2qd2kr",
+   "published": "2024-10-31T17:07:59+00:00",
+   "spans": [
+    "bereshit",
+    "bereshitnoa",
+    "noa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Nitsabim-Vayelekh 2024 - Stand Tall (Special Rosh Hashana Episode)",
+   "headline": "Stand Tall (Special Rosh Hashana Episode)",
+   "parasha": "Nitsabim-Vayelekh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Nitsabim-Vayelekh-2024---Stand-Tall-Special-Rosh-Hashana-Episode-e2otj92",
+   "published": "2024-09-26T20:03:47+00:00",
+   "spans": [
+    "bayele",
+    "nisabim",
+    "nisabimbayele"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shofetim 2024 - Get After What's Right!",
+   "headline": "Get After What's Right!",
+   "parasha": "Shofetim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shofetim-2024---Get-After-Whats-Right-e2o31dt",
+   "published": "2024-09-06T12:44:20+00:00",
+   "spans": [
+    "shofetim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Re'eh 2024 - Special Moments",
+   "headline": "Special Moments",
+   "parasha": "Re'eh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Reeh-2024---Special-Moments-e2npagh",
+   "published": "2024-08-29T21:18:12+00:00",
+   "spans": [
+    "re"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ekeb 2024 - What is Our Priority?",
+   "headline": "What is Our Priority?",
+   "parasha": "Ekeb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ekeb-2024---What-is-Our-Priority-e2ngi3m",
+   "published": "2024-08-22T20:08:05+00:00",
+   "spans": [
+    "ekeb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Va'ethanan 2024 - Who's the God?",
+   "headline": "Who's the God?",
+   "parasha": "Va'ethanan",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaethanan-2024---Whos-the-God-e2n7v0e",
+   "published": "2024-08-15T20:01:52+00:00",
+   "spans": [
+    "baethanan"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Debarim 2024 - How Far Will You Go?",
+   "headline": "How Far Will You Go?",
+   "parasha": "Debarim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Debarim-2024---How-Far-Will-You-Go-e2mvmlg",
+   "published": "2024-08-08T20:27:14+00:00",
+   "spans": [
+    "debarim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Matot-Mas'ei 2024 - How We Got Here",
+   "headline": "How We Got Here",
+   "parasha": "Matot-Mas'ei",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Matot-Masei-2024---How-We-Got-Here-e2mnig3",
+   "published": "2024-08-01T20:27:01+00:00",
+   "spans": [
+    "masei",
+    "matot",
+    "matotmasei"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Pinehas 2024 - Does it Matter?",
+   "headline": "Does it Matter?",
+   "parasha": "Pinehas",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Pinehas-2024---Does-it-Matter-e2mf2sp",
+   "published": "2024-07-25T20:09:54+00:00",
+   "spans": [
+    "pinehas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Balak 2024 - God's Surprise",
+   "headline": "God's Surprise",
+   "parasha": "Balak",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Balak-2024---Gods-Surprise-e2m6kn8",
+   "published": "2024-07-18T20:17:49+00:00",
+   "spans": [
+    "balak"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Korah 2024 - Thinking With Emotions",
+   "headline": "Thinking With Emotions",
+   "parasha": "Korah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Korah-2024---Thinking-With-Emotions-e2llmiu",
+   "published": "2024-07-04T20:15:51+00:00",
+   "spans": [
+    "kora"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shelah 2024 - Know Who You Are",
+   "headline": "Know Who You Are",
+   "parasha": "Shelah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shelah-2024---Know-Who-You-Are-e2ld1ld",
+   "published": "2024-06-27T20:21:36+00:00",
+   "spans": [
+    "shela"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beha'alotekha 2024 - What is in Your Control?",
+   "headline": "What is in Your Control?",
+   "parasha": "Beha'alotekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behaalotekha-2024---What-is-in-Your-Control-e2l4ecf",
+   "published": "2024-06-20T20:23:24+00:00",
+   "spans": [
+    "behaloteha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bemidbar 2024 - What Will You Do With Your Name?",
+   "headline": "What Will You Do With Your Name?",
+   "parasha": "Bemidbar",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bemidbar-2024---What-Will-You-Do-With-Your-Name-e2kjcag",
+   "published": "2024-06-06T20:09:27+00:00",
+   "spans": [
+    "bemidbar"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Behukotai 2024 - Red in Tooth and Claw",
+   "headline": "Red in Tooth and Claw",
+   "parasha": "Behukotai",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behukotai-2024---Red-in-Tooth-and-Claw-e2kadku",
+   "published": "2024-05-30T20:26:47+00:00",
+   "spans": [
+    "behukotai"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Behar 2024 - God as Landlord",
+   "headline": "God as Landlord",
+   "parasha": "Behar",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behar-2024---God-as-Landlord-e2k28u9",
+   "published": "2024-05-24T09:25:22+00:00",
+   "spans": [
+    "behar"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Emor 2024 - God the Person",
+   "headline": "God the Person",
+   "parasha": "Emor",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Emor-2024---God-the-Person-e2jog8m",
+   "published": "2024-05-16T20:08:00+00:00",
+   "spans": [
+    "emor"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Kedoshim 2024 - Sacred vs Profane",
+   "headline": "Sacred vs Profane",
+   "parasha": "Kedoshim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Kedoshim-2024---Sacred-vs-Profane-e2jfgs2",
+   "published": "2024-05-09T20:11:57+00:00",
+   "spans": [
+    "kedoshim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shemini 2024 - The Mistakes We Make",
+   "headline": "The Mistakes We Make",
+   "parasha": "Shemini",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shemini-2024---The-Mistakes-We-Make-e2i00qg",
+   "published": "2024-04-04T20:17:00+00:00",
+   "spans": [
+    "shemini"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tsav-Parah 2024 - Golden Youth",
+   "headline": "Golden Youth",
+   "parasha": "Tsav-Parah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tsav-Parah-2024---Golden-Youth-e2hmqq2",
+   "published": "2024-03-28T21:15:02+00:00",
+   "spans": [
+    "para",
+    "sab",
+    "sabpara"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayikra 2024 - Rock or Soul?",
+   "headline": "Rock or Soul?",
+   "parasha": "Vayikra",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayikra-2024---Rock-or-Soul-e2hdbf2",
+   "published": "2024-03-21T21:37:10+00:00",
+   "spans": [
+    "bayikra"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Pekude 2024 - What Really Counts",
+   "headline": "What Really Counts",
+   "parasha": "Pekude",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Pekude-2024---What-Really-Counts-e2h3ige",
+   "published": "2024-03-14T21:09:17+00:00",
+   "spans": [
+    "pekude"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tisa (2022) - Bringing God In",
+   "headline": "Bringing God In",
+   "parasha": "Ki Tisa ()",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tisa-2022---Bringing-God-In-e2geuni",
+   "published": "2024-02-29T14:54:42+00:00",
+   "spans": [
+    "ki",
+    "kitisa",
+    "tisa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tetsave 2022 - Stability of Mind: A Lesson From the Kohen Gadol",
+   "headline": "Stability of Mind: A Lesson From the Kohen Gadol",
+   "parasha": "Tetsave",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tetsave-2022---Stability-of-Mind-A-Lesson-From-the-Kohen-Gadol-e2g6070",
+   "published": "2024-02-23T09:47:59+00:00",
+   "spans": [
+    "tesabe"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Teruma 2024 - It's All in Your Head",
+   "headline": "It's All in Your Head",
+   "parasha": "Teruma",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Teruma-2024---Its-All-in-Your-Head-e2fr1e3",
+   "published": "2024-02-15T19:11:27+00:00",
+   "spans": [
+    "teruma"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Mishpatim 2024 - On the Line",
+   "headline": "On the Line",
+   "parasha": "Mishpatim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Mishpatim-2024---On-the-Line-e2fhu32",
+   "published": "2024-02-08T21:10:11+00:00",
+   "spans": [
+    "mishpatim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Yitro 2024 - Context, context context",
+   "headline": "Context, context context",
+   "parasha": "Yitro",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Yitro-2024---Context--context-context-e2f89gl",
+   "published": "2024-02-01T21:07:54+00:00",
+   "spans": [
+    "yitro"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beshalah 2024 - Fundamentally Free",
+   "headline": "Fundamentally Free",
+   "parasha": "Beshalah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Beshalah-2024---Fundamentally-Free-e2euklk",
+   "published": "2024-01-25T21:04:07+00:00",
+   "spans": [
+    "beshala"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bo 2024 - Rock Bottom",
+   "headline": "Rock Bottom",
+   "parasha": "Bo",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bo-2024---Rock-Bottom-e2ekj20",
+   "published": "2024-01-18T21:07:41+00:00",
+   "spans": [
+    "bo"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Va'era 2024 - Reptile King",
+   "headline": "Reptile King",
+   "parasha": "Va'era",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaera-2024---Reptile-King-e2eavlp",
+   "published": "2024-01-11T21:20:37+00:00",
+   "spans": [
+    "baera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shemot 2024 - Freedom of Thought",
+   "headline": "Freedom of Thought",
+   "parasha": "Shemot",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shemot-2024---Freedom-of-Thought-e2e0t88",
+   "published": "2024-01-04T21:04:58+00:00",
+   "spans": [
+    "shemot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayhi 2023 - Integrated Integrity",
+   "headline": "Integrated Integrity",
+   "parasha": "Vayhi",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayhi-2023---Integrated-Integrity-e2dot2u",
+   "published": "2023-12-28T19:46:00+00:00",
+   "spans": [
+    "bayhi"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "*Special* Bereshit 2023 - It's All Done",
+   "headline": "It's All Done",
+   "parasha": "*Special* Bereshit",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Special-Bereshit-2023---Its-All-Done-e2dhtbp",
+   "published": "2023-12-21T21:37:46+00:00",
+   "spans": [
+    "bereshit",
+    "spekial",
+    "spekialbereshit"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayigash 2023 - Hardships and Deep Shifts",
+   "headline": "Hardships and Deep Shifts",
+   "parasha": "Vayigash",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayigash-2023---Hardships-and-Deep-Shifts-e2dhssl",
+   "published": "2023-12-21T21:26:51+00:00",
+   "spans": [
+    "bayigas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Mikets 2023 - Identity Politics",
+   "headline": "Identity Politics",
+   "parasha": "Mikets",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Mikets-2023---Identity-Politics-e2d8quq",
+   "published": "2023-12-14T20:38:24+00:00",
+   "spans": [
+    "mikes"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayesheb 2023 - Hanuka and Yosef - A Study for Our Times",
+   "headline": "Hanuka and Yosef - A Study for Our Times",
+   "parasha": "Vayesheb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayesheb-2023---Hanuka-and-Yosef---A-Study-for-Our-Times-e2cvggv",
+   "published": "2023-12-07T22:09:18+00:00",
+   "spans": [
+    "bayesheb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayishlah 2023 - Our Name is Israel",
+   "headline": "Our Name is Israel",
+   "parasha": "Vayishlah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayishlah-2023---Our-Name-is-Israel-e2cl59v",
+   "published": "2023-11-30T21:55:41+00:00",
+   "spans": [
+    "bayishla"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayetse 2023 - Heavenly Days",
+   "headline": "Heavenly Days",
+   "parasha": "Vayetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayetse-2023---Heavenly-Days-e2cb29r",
+   "published": "2023-11-23T21:36:41+00:00",
+   "spans": [
+    "bayese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Toledot 2023 - More Than Meets the Eye",
+   "headline": "More Than Meets the Eye",
+   "parasha": "Toledot",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Toledot-2023---More-Than-Meets-the-Eye-e2c10q4",
+   "published": "2023-11-16T15:03:06+00:00",
+   "spans": [
+    "toledot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Haye Sarah 2023 - The Existential Shifts of Loss",
+   "headline": "The Existential Shifts of Loss",
+   "parasha": "Haye Sarah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Haye-Sarah-2023---The-Existential-Shifts-of-Loss-e2blksk",
+   "published": "2023-11-08T17:03:51+00:00",
+   "spans": [
+    "haye",
+    "hayesara",
+    "sara"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayera 2023 - The Dangers of Giving",
+   "headline": "The Dangers of Giving",
+   "parasha": "Vayera",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayera-2023---The-Dangers-of-Giving-e2bdmms",
+   "published": "2023-11-02T21:11:50+00:00",
+   "spans": [
+    "bayera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Lekh-Lekha 2023 - The Sanctity of Specificity",
+   "headline": "The Sanctity of Specificity",
+   "parasha": "Lekh-Lekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Lekh-Lekha-2023---The-Sanctity-of-Specificity-e2b3r4r",
+   "published": "2023-10-26T20:06:55+00:00",
+   "spans": [
+    "le",
+    "leha",
+    "lehleha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Noah 2023 - Harmony and Leadership",
+   "headline": "Harmony and Leadership",
+   "parasha": "Noah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Noah-2023---Harmony-and-Leadership-e2aq0o9",
+   "published": "2023-10-19T18:59:13+00:00",
+   "spans": [
+    "noa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Succot - 2 Points on Happiness",
+   "headline": "2 Points on Happiness",
+   "parasha": "Succot",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Succot---2-Points-on-Happiness-e29tpm0",
+   "published": "2023-09-28T20:11:58+00:00",
+   "spans": [
+    "sukot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ha'azinu 2023 - Multiple Interpretations",
+   "headline": "Multiple Interpretations",
+   "parasha": "Ha'azinu",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Haazinu-2023---Multiple-Interpretations-e29k56m",
+   "published": "2023-09-21T20:22:32+00:00",
+   "spans": [
+    "hasinu"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Torah Reading for Rosh Hashana: Precious Judgment",
+   "headline": "Torah Reading for Rosh Hashana: Precious Judgment",
+   "parasha": "Torah Reading for Rosh Hashana: Precious Judgment",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Torah-Reading-for-Rosh-Hashana-Precious-Judgment-e29b579",
+   "published": "2023-09-14T20:09:35+00:00",
+   "spans": [
+    "for",
+    "foros",
+    "hashana",
+    "hashanaprekious",
+    "judgment",
+    "prekious",
+    "prekiousjudgment",
+    "reading",
+    "readingfor",
+    "ros",
+    "roshashana",
+    "tora",
+    "torahreading"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "NItsabim-Vayelekh 2023 - Brazen Covenant",
+   "headline": "Brazen Covenant",
+   "parasha": "NItsabim-Vayelekh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/NItsabim-Vayelekh-2023---Brazen-Covenant-e291tdc",
+   "published": "2023-09-07T20:09:29+00:00",
+   "spans": [
+    "bayele",
+    "nisabim",
+    "nisabimbayele"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tabo 2023 - Awkward Truths",
+   "headline": "Awkward Truths",
+   "parasha": "Ki Tabo",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tabo-2023---Awkward-Truths-e28p5p7",
+   "published": "2023-08-31T20:28:12+00:00",
+   "spans": [
+    "ki",
+    "kitabo",
+    "tabo"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tetse 2023 - Things Matter!",
+   "headline": "Things Matter!",
+   "parasha": "Ki Tetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tetse-2023---Things-Matter-e28g4p6",
+   "published": "2023-08-24T20:15:25+00:00",
+   "spans": [
+    "ki",
+    "kitese",
+    "tese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shofetim 2023 - Get With the Times",
+   "headline": "Get With the Times",
+   "parasha": "Shofetim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shofetim-2023---Get-With-the-Times-e287o7s",
+   "published": "2023-08-17T20:10:08+00:00",
+   "spans": [
+    "shofetim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Re'eh 2023 - Live Your Life and Mean It!",
+   "headline": "Live Your Life and Mean It!",
+   "parasha": "Re'eh",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Reeh-2023---Live-Your-Life-and-Mean-It-e27vjbn",
+   "published": "2023-08-10T20:25:45+00:00",
+   "spans": [
+    "re"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ekeb 2023 - You Don't Deserve It",
+   "headline": "You Don't Deserve It",
+   "parasha": "Ekeb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ekeb-2023---You-Dont-Deserve-It-e27nebh",
+   "published": "2023-08-03T22:18:07+00:00",
+   "spans": [
+    "ekeb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Va'ethanan 2023 - Unconditional Love",
+   "headline": "Unconditional Love",
+   "parasha": "Va'ethanan",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaethanan-2023---Unconditional-Love-e27fv8i",
+   "published": "2023-07-28T14:39:35+00:00",
+   "spans": [
+    "baethanan"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Debarim 2023 - Moses and His Lessons for Us",
+   "headline": "Moses and His Lessons for Us",
+   "parasha": "Debarim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Debarim-2023---Moses-and-His-Lessons-for-Us-e276a0u",
+   "published": "2023-07-20T20:16:25+00:00",
+   "spans": [
+    "debarim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Matot-Mas'ei 2023 - Probing the Depths",
+   "headline": "Probing the Depths",
+   "parasha": "Matot-Mas'ei",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Matot-Masei-2023---Probing-the-Depths-e26uckb",
+   "published": "2023-07-14T09:01:23+00:00",
+   "spans": [
+    "masei",
+    "matot",
+    "matotmasei"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Pinehas 2023 - Natural Woman",
+   "headline": "Natural Woman",
+   "parasha": "Pinehas",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Pinehas-2023---Natural-Woman-e26lmsh",
+   "published": "2023-07-07T08:35:21+00:00",
+   "spans": [
+    "pinehas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Hukat-Balak 2023 - Times They are a Changin'",
+   "headline": "Times They are a Changin'",
+   "parasha": "Hukat-Balak",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Hukat-Balak-2023---Times-They-are-a-Changin-e26c2cm",
+   "published": "2023-06-29T20:13:57+00:00",
+   "spans": [
+    "balak",
+    "hukat",
+    "hukatbalak"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Korah 2023 - Hurt people, hurt people.",
+   "headline": "Hurt people, hurt people.",
+   "parasha": "Korah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Korah-2023---Hurt-people--hurt-people-e262oau",
+   "published": "2023-06-22T20:12:40+00:00",
+   "spans": [
+    "kora"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beha'alotekha 2023 - Wise Journeys",
+   "headline": "Wise Journeys",
+   "parasha": "Beha'alotekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behaalotekha-2023---Wise-Journeys-e25f3io",
+   "published": "2023-06-08T18:07:55+00:00",
+   "spans": [
+    "behaloteha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Naso 2023 - Live Your Full Life",
+   "headline": "Live Your Full Life",
+   "parasha": "Naso",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Naso-2023---Live-Your-Full-Life-e251tim",
+   "published": "2023-06-01T12:31:35+00:00",
+   "spans": [
+    "naso"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bemidbar 2023 - E Pluribus Unum - Out of the Many, One",
+   "headline": "E Pluribus Unum - Out of the Many, One",
+   "parasha": "Bemidbar",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bemidbar-2023---E-Pluribus-Unum---Out-of-the-Many--One-e24a3oo",
+   "published": "2023-05-18T20:03:07+00:00",
+   "spans": [
+    "bemidbar"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Behar 2022 - Control Freakery",
+   "headline": "Control Freakery",
+   "parasha": "Behar",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Behar-2022---Control-Freakery-e23uldr",
+   "published": "2023-05-12T13:31:37+00:00",
+   "spans": [
+    "behar"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Emor 2023 - The Jewish Festivals and Our Humanity",
+   "headline": "The Jewish Festivals and Our Humanity",
+   "parasha": "Emor",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Emor-2023---The-Jewish-Festivals-and-Our-Humanity-e23gpm0",
+   "published": "2023-05-04T20:24:28+00:00",
+   "spans": [
+    "emor"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ahare-Kedoshim 2023: Self-Care as the Highest Jewish Ideal",
+   "headline": "Ahare-Kedoshim : Self-Care as the Highest Jewish Ideal",
+   "parasha": "Ahare-Kedoshim : Self-Care as the Highest Jewish Ideal",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ahare-Kedoshim-2023-Self-Care-as-the-Highest-Jewish-Ideal-e2352p8",
+   "published": "2023-04-27T19:18:39+00:00",
+   "spans": [
+    "ahare",
+    "aharekedoshim",
+    "as",
+    "asthe",
+    "highest",
+    "highestjebis",
+    "ideal",
+    "jebis",
+    "jebishideal",
+    "kare",
+    "kareas",
+    "kedoshim",
+    "kedoshimself",
+    "self",
+    "selfkare",
+    "the",
+    "thehighest"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Tazria-Metsora 2023 Healing the Soul",
+   "headline": "Tazria-Metsora  Healing the Soul",
+   "parasha": "Tazria-Metsora  Healing the Soul",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tazria-Metsora-2023-Healing-the-Soul-e22o8tn",
+   "published": "2023-04-20T20:18:51+00:00",
+   "spans": [
+    "healing",
+    "healingthe",
+    "mesora",
+    "mesorahealing",
+    "soul",
+    "tasria",
+    "tasriamesora",
+    "the",
+    "thesoul"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Shemini 2022 - Why Kosher",
+   "headline": "Why Kosher",
+   "parasha": "Shemini",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shemini-2022---Why-Kosher-e22c5t1",
+   "published": "2023-04-14T13:57:50+00:00",
+   "spans": [
+    "shemini"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tsav-Shabbat HaGadol 2023- Sacrifice and Freedom",
+   "headline": "Tsav-Shabbat HaGadol - Sacrifice and Freedom",
+   "parasha": "Tsav-Shabbat HaGadol - Sacrifice and Freedom",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tsav-Shabbat-HaGadol-2023--Sacrifice-and-Freedom-e21drjt",
+   "published": "2023-03-30T20:07:42+00:00",
+   "spans": [
+    "and",
+    "andfredom",
+    "fredom",
+    "hagadol",
+    "hagadolsakrifike",
+    "sab",
+    "sabshabat",
+    "sakrifike",
+    "sakrifikeand",
+    "shabat",
+    "shabathagadol"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Vayikra 2023 - Bring in the Blood and Guts",
+   "headline": "Bring in the Blood and Guts",
+   "parasha": "Vayikra",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayikra-2023---Bring-in-the-Blood-and-Guts-e2125ud",
+   "published": "2023-03-24T15:09:50+00:00",
+   "spans": [
+    "bayikra"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayakhel-Pekude 2023 - Sacred Creativity",
+   "headline": "Sacred Creativity",
+   "parasha": "Vayakhel-Pekude",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayakhel-Pekude-2023---Sacred-Creativity-e20hecf",
+   "published": "2023-03-16T09:51:08+00:00",
+   "spans": [
+    "bayahel",
+    "bayahelpekude",
+    "pekude"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Ki Tisa 2023 - Finding Favour",
+   "headline": "Finding Favour",
+   "parasha": "Ki Tisa",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Ki-Tisa-2023---Finding-Favour-e204nq6",
+   "published": "2023-03-09T21:31:33+00:00",
+   "spans": [
+    "ki",
+    "kitisa",
+    "tisa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Tetsave 2023 - Remember it Well",
+   "headline": "Remember it Well",
+   "parasha": "Tetsave",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Tetsave-2023---Remember-it-Well-e1vp2nh",
+   "published": "2023-03-02T21:10:37+00:00",
+   "spans": [
+    "tesabe"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Teruma 2023 - Torah Must Move!",
+   "headline": "Torah Must Move!",
+   "parasha": "Teruma",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Teruma-2023---Torah-Must-Move-e1veb8m",
+   "published": "2023-02-23T21:15:59+00:00",
+   "spans": [
+    "teruma"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Mishpatim 2023 - The Sacred Standard",
+   "headline": "The Sacred Standard",
+   "parasha": "Mishpatim",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Mishpatim-2023---The-Sacred-Standard-e1v36tp",
+   "published": "2023-02-16T21:11:02+00:00",
+   "spans": [
+    "mishpatim"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Yitro 2023 - Torah is not for Angels!",
+   "headline": "Torah is not for Angels!",
+   "parasha": "Yitro",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Yitro-2023---Torah-is-not-for-Angels-e1unrhj",
+   "published": "2023-02-09T21:36:30+00:00",
+   "spans": [
+    "yitro"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Beshalah 2023 - Secure Attachment",
+   "headline": "Secure Attachment",
+   "parasha": "Beshalah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Beshalah-2023---Secure-Attachment-e1ucife",
+   "published": "2023-02-02T21:22:43+00:00",
+   "spans": [
+    "beshala"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bo 2023 - Say What You Mean",
+   "headline": "Say What You Mean",
+   "parasha": "Bo",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bo-2023---Say-What-You-Mean-e1u27kc",
+   "published": "2023-01-26T21:12:25+00:00",
+   "spans": [
+    "bo"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Va'era 2023 - Be the Change",
+   "headline": "Be the Change",
+   "parasha": "Va'era",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vaera-2023---Be-the-Change-e1tntv2",
+   "published": "2023-01-19T21:22:22+00:00",
+   "spans": [
+    "baera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Shemot 2023 - Latitude Without a Net",
+   "headline": "Latitude Without a Net",
+   "parasha": "Shemot",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Shemot-2023---Latitude-Without-a-Net-e1tdhkf",
+   "published": "2023-01-12T21:04:30+00:00",
+   "spans": [
+    "shemot"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayigash 2022 - How to Be Jewish",
+   "headline": "How to Be Jewish",
+   "parasha": "Vayigash",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayigash-2022---How-to-Be-Jewish-e1ssat9",
+   "published": "2022-12-29T21:08:34+00:00",
+   "spans": [
+    "bayigas"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Mikets 2022 - Spy Games",
+   "headline": "Spy Games",
+   "parasha": "Mikets",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Mikets-2022---Spy-Games-e1sk3v0",
+   "published": "2022-12-22T21:17:51+00:00",
+   "spans": [
+    "mikes"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayesheb 2022 - Integrity for the Win",
+   "headline": "Integrity for the Win",
+   "parasha": "Vayesheb",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayesheb-2022---Integrity-for-the-Win-e1sa632",
+   "published": "2022-12-15T15:35:56+00:00",
+   "spans": [
+    "bayesheb"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayishlah 2022 - Israel is Our Name",
+   "headline": "Israel is Our Name",
+   "parasha": "Vayishlah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayishlah-2022---Israel-is-Our-Name-e1rvpp8",
+   "published": "2022-12-08T22:07:57+00:00",
+   "spans": [
+    "bayishla"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayetse 2022 - Kiss the Sky",
+   "headline": "Kiss the Sky",
+   "parasha": "Vayetse",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayetse-2022---Kiss-the-Sky-e1rk4df",
+   "published": "2022-12-01T21:31:54+00:00",
+   "spans": [
+    "bayese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Toledot 2022 Esav's Legacy",
+   "headline": "Toledot  Esav's Legacy",
+   "parasha": "Toledot  Esav's Legacy",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Toledot-2022-Esavs-Legacy-e1r90ot",
+   "published": "2022-11-24T21:21:22+00:00",
+   "spans": [
+    "esabs",
+    "esabslegaky",
+    "legaky",
+    "toledot",
+    "toledotesabs"
+   ],
+   "loose": true,
+   "nutshell": false
+  },
+  {
+   "title": "Haye Sarah 2022 - If Everything is Special....",
+   "headline": "If Everything is Special....",
+   "parasha": "Haye Sarah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Haye-Sarah-2022---If-Everything-is-Special-e1queq7",
+   "published": "2022-11-17T21:18:29+00:00",
+   "spans": [
+    "haye",
+    "hayesara",
+    "sara"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Vayera 2022 - A Difficult Truth",
+   "headline": "A Difficult Truth",
+   "parasha": "Vayera",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Vayera-2022---A-Difficult-Truth-e1qimf1",
+   "published": "2022-11-10T21:40:40+00:00",
+   "spans": [
+    "bayera"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Lekh Lekha 2022 - Freedom Before Covenant",
+   "headline": "Freedom Before Covenant",
+   "parasha": "Lekh Lekha",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Lekh-Lekha-2022---Freedom-Before-Covenant-e1q7uhq",
+   "published": "2022-11-04T11:36:02+00:00",
+   "spans": [
+    "le",
+    "leha",
+    "lehleha"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Noah 2022 - God Binds Himself for the World",
+   "headline": "God Binds Himself for the World",
+   "parasha": "Noah",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Noah-2022---God-Binds-Himself-for-the-World-e1pssbb",
+   "published": "2022-10-28T13:01:12+00:00",
+   "spans": [
+    "noa"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
+  {
+   "title": "Bereshit 2022 - Create Yourself!",
+   "headline": "Create Yourself!",
+   "parasha": "Bereshit",
+   "haftarah": false,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/Bereshit-2022---Create-Yourself-e1psm3j",
+   "published": "2022-10-28T10:25:12+00:00",
+   "spans": [
+    "bereshit"
+   ],
+   "loose": false,
+   "nutshell": false
+  }
+ ]
+}
