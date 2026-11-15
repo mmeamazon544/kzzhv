@@ -1,0 +1,32 @@
+# Point the Proof segment (proofs, "awaiting approval" reminders, Marc's
+# copies of the family letters) at a different mailbox. The address never
+# appears in code, inputs, or logs: it arrives via the PROOF_ADDRESS
+# repository secret, set just before a run and deleted right after.
+# Manually triggered; a dry run unless apply=true.
+name: mailchimp-repoint-proof
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "true = make the change; anything else only reports"
+        required: true
+        default: "false"
+
+permissions:
+  contents: read
+
+jobs:
+  repoint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          PROOF_ADDRESS: ${{ secrets.PROOF_ADDRESS }}
+        run: |
+          set -o pipefail
+          APPLY=""
+          [ "${{ inputs.apply }}" = "true" ] && APPLY="--apply"
+          python3 program/mailchimp_repoint_proof.py $APPLY | tee -a "$GITHUB_STEP_SUMMARY"
