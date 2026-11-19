@@ -7,4 +7,4 @@ Sha'ar HaShamayim, London (Lauderdale Road)
 Sha'ar HaShamayim, London (Bevis Marks)
 Mikveh Israel, Philadelphia
 Kippur defaults to New York; Shabbat Bereshit defaults to London. -->
-Poughkeepsie
+Poughkeepsie, no services this week
