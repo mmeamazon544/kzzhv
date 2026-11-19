@@ -223,6 +223,17 @@ BISHBAT!, HAPPY LAG LAOMER! (approved by Marc 15 November 2026; the
 words live in family.festival_greeting).
 Nothing is ever published or sent without approval.
 
+Change requests (19 November 2026): when Marc presses Request changes,
+the content step edits the files it can and returns two things, kept in
+current.json and shown both in the proof email's banner and on the Desk's
+This-week card: "ask" — a plain question for Marc (a time or name he did
+not give, an assumption it made), which he answers by pressing Request
+changes again; and "note" — what cannot be done from the proof cycle
+(layout, program behaviour), for Claude. A scheduled refresh of the same
+bulletin carries both forward; only a new change request replaces them.
+Before this date both were lumped under "bring it to Claude", which is
+how a question about the 5 December service times was mislabeled.
+
 Proof mailbox (Marc's order, 15 November 2026): everything the program
 sends Marc — the proof, the "awaiting approval" reminder and his copy of
 each family letter — goes to the congregation's own Gmail mailbox, not

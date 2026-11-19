@@ -159,6 +159,9 @@ export function page(title, body, opts = {}) {
   .small { font-size:0.86rem; }
   .status { font-size:1.08rem; margin:0.4rem 0 0.8rem; }
   .flash { border-left:3px solid #e6c780; padding:0.6rem 1rem; background:#240a1c; margin:1.2rem 0; }
+  .ask { border:1px solid #c79f50; padding:0.7rem 1rem 0.8rem; background:#3a1230; margin:1.2rem 0; color:#f1dccc; line-height:1.5; }
+  .ask .eyebrow { display:block; color:#e6c780; letter-spacing:0.18em; text-transform:uppercase; font-size:0.66rem; margin-bottom:0.3rem; }
+  .ask .small { display:block; margin-top:0.4rem; font-style:italic; }
   .card { border:1px solid #5a2a48; background:#1d0816; padding:1.2rem 1.4rem 1.4rem; }
   .actions form { display:inline-block; margin:0 1.2rem 0 0; vertical-align:top; }
   .actions button { margin-top:0.6rem; }

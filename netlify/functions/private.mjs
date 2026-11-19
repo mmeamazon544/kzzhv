@@ -342,12 +342,14 @@ ${canChange ? `<form method="POST">
   <p class="note small">Service times, announcements, the banner, greetings, and the teachings change from here; a fresh proof follows in about ten minutes, here and in your inbox. Page design and layout go to Claude directly.</p>
 </form>` : ""}`;
   }
-  const note = cur.note ? `<p class="note">Not changed from the last proof cycle — bring it to Claude: ${esc(cur.note)}</p>` : "";
+  const ask = cur.ask ? `<div class="ask"><span class="eyebrow">A question for you</span>${esc(cur.ask)}<span class="small mute">Answer it in Request changes below; a fresh proof follows.</span></div>` : "";
+  const note = cur.note ? `<p class="note">Not possible from the proof cycle — tell Claude: ${esc(cur.note)}</p>` : "";
   return `<div class="card">
 <p class="mute small" style="margin:0 0 0.2rem; letter-spacing:0.18em; text-transform:uppercase; font-size:0.66rem;">${weekday(cur.id) === 6 ? `Bulletin for Shabbat ${esc(fmtDate(cur.id))}` : `Festival bulletin for ${esc(fmtDay(cur.id))} ${esc(cur.id.slice(0, 4))}`}</p>
 <p style="margin:0; font-size:1.25rem; color:#e6c780;">${esc(cur.title || cur.id)}</p>
 <p class="status ${s.cls}">${esc(s.text)}</p>
 ${flash ? `<div class="flash">${esc(flash)}</div>` : ""}
+${ask}
 ${note}
 ${actions}
 <p class="small" style="margin-top:1.4rem;">

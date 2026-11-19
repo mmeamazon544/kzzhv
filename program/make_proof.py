@@ -63,6 +63,7 @@ CHANGES_SCHEMA = {
                 "additionalProperties": False,
             },
         },
+        "ask_marc": {"type": "string"},
         "not_done": {"type": "string"},
     },
     "required": ["edits", "not_done"],
@@ -88,10 +89,12 @@ def path_allowed(rel: str) -> bool:
                for d in CONTENT_DIRS)
 
 
-def apply_instructions(instructions: str) -> str:
-    """Edit the content files to match Marc's change request. Returns a
-    plain-English note of whatever the request asked for that these files
-    cannot carry (layout, templates, program behavior), '' when nothing."""
+def apply_instructions(instructions: str) -> tuple[str, str]:
+    """Edit the content files to match Marc's change request. Returns
+    (ask, note): a plain question the request left open for Marc (a time,
+    a name, an assumption to confirm), and a note of whatever these files
+    cannot carry (layout, templates, program behavior) for Claude. Either
+    is '' when there is nothing."""
     import teachings as t
 
     files = editable_files()
@@ -113,14 +116,17 @@ one, following the format of its siblings.
 Rules:
 - Never invent facts. If the request needs a time, name, text, or
   greeting Marc did not supply and the files do not contain, do not
-  guess — put that part in not_done, asking him plainly for it.
+  guess — put a plain question for him in ask_marc (he answers it by
+  pressing Request changes again). If you had to assume something
+  (a usual schedule, a default), say so there too, as a question.
 - Requests about the divrei torah / teachings / reflections are handled
   by a separate drafting step that also sees his instructions; do not
   list those in not_done and do not try to act on them here.
 - Anything about layout, design, typography, templates, the program's
   behavior, or publishing cannot be done from here: describe it briefly
   and plainly in not_done (it will be shown to Marc so he can bring it
-  to Claude). If everything is handled, not_done is an empty string.
+  to Claude). ask_marc is for Marc; not_done is for Claude. If
+  everything is handled, both are empty strings.
 
 {listing}"""
     try:
@@ -134,9 +140,9 @@ Rules:
         # The proof must still arrive: the teachings drafting sees the
         # instructions regardless; only the file edits are lost.
         print(f"change-request applier failed: {e}")
-        return ("the automatic change step failed this round, so nothing in the "
-                "times, announcements, banner, or greetings was edited. "
-                "Tell Claude what should change.")
+        return ("", "the automatic change step failed this round, so nothing in the "
+                    "times, announcements, banner, or greetings was edited. "
+                    "Tell Claude what should change.")
     for e in out.get("edits", []):
         rel = e["path"].strip()
         if not path_allowed(rel):
@@ -144,13 +150,16 @@ Rules:
             continue
         (ROOT / rel).write_text(e["content"])
         print(f"change request edited {rel}")
+    ask = out.get("ask_marc", "").strip()
     note = out.get("not_done", "").strip()
+    if ask:
+        print(f"change request, question for Marc: {ask}")
     if note:
         print(f"change request, not done from here: {note}")
-    return note
+    return ask, note
 
 
-def banner(bulletin_id: str, rev: str, title: str, note: str = "") -> str:
+def banner(bulletin_id: str, rev: str, title: str, note: str = "", ask: str = "") -> str:
     approve, changes = proof_links.links(bulletin_id, rev)
     png = f"{RAW}/bulletin/state/{bulletin_id}/proof.png"
     pdf = f"{RAW}/bulletin/state/{bulletin_id}/proof.pdf"
@@ -158,10 +167,18 @@ def banner(bulletin_id: str, rev: str, title: str, note: str = "") -> str:
            "text-transform:uppercase; font-size:13px; padding:12px 22px; "
            "text-decoration:none; margin:6px 10px 6px 0;")
     note_html = ""
+    if ask:
+        note_html += (f'\n  <div style="font-family:Georgia,serif; font-size:13px; '
+                      f'color:#f1dccc; background-color:#3a1230; border:1px solid #c79f50; '
+                      f'padding:10px 14px; margin-top:12px; max-width:520px; text-align:left;">'
+                      f'<span style="color:#e6c780; letter-spacing:2px; text-transform:uppercase; '
+                      f'font-size:11px;">A question for you</span><br>{ask}<br>'
+                      f'<span style="color:#9a7273; font-size:11px;">Answer it with Request changes; '
+                      f'a fresh proof follows.</span></div>')
     if note:
-        note_html = (f'\n  <div style="font-family:Georgia,serif; font-size:12px; '
-                     f'color:#e6c780; padding-top:10px; max-width:520px;">'
-                     f'Not changed from this proof cycle — bring it to Claude: {note}</div>')
+        note_html += (f'\n  <div style="font-family:Georgia,serif; font-size:12px; '
+                      f'color:#e6c780; padding-top:10px; max-width:520px;">'
+                      f'Not possible from the proof cycle — tell Claude: {note}</div>')
     return f"""<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#240a1c; border-bottom:3px solid #c79f50;">
 <tr><td align="center" style="padding:18px 20px;">
   <div style="font-family:Georgia,serif; font-size:12px; letter-spacing:3px; color:#c79f50; text-transform:uppercase;">Proof — not yet published</div>
@@ -209,12 +226,14 @@ def send_only() -> None:
     state = ROOT / "bulletin" / "state" / bulletin_id
     email_html = (state / "email.html").read_text()
     note = current.get("note", "")
+    ask = current.get("ask", "")
     proof_html = re.sub(
         r"(<body[^>]*>)",
-        r"\1\n" + banner(bulletin_id, rev, current["subject"], note),
+        lambda m: m.group(1) + "\n" + banner(bulletin_id, rev, current["subject"], note, ask),
         email_html, count=1)
     approve, changes = proof_links.links(bulletin_id, rev)
-    note_text = f"Not changed from this proof cycle — bring it to Claude: {note}\n" if note else ""
+    note_text = (f"A QUESTION FOR YOU (answer it with Request changes): {ask}\n" if ask else "") \
+        + (f"Not possible from the proof cycle — tell Claude: {note}\n" if note else "")
     proof_text = (f"PROOF — approve: {approve}\nrequest changes: {changes}\n{note_text}\n"
                   + (state / "email.txt").read_text())
     cid = mailchimp_send(f"PROOF: {current['subject']}", proof_html, proof_text, proof=True)
@@ -239,7 +258,16 @@ def main() -> None:
                  "or fast with a bulletin of its own (program/occasions.py)")
     rev = datetime.now(ZoneInfo("America/New_York")).strftime("%Y%m%dT%H%M%S")
 
-    note = apply_instructions(instructions) if instructions else ""
+    ask, note = apply_instructions(instructions) if instructions else ("", "")
+    if not instructions:
+        # A scheduled refresh keeps the open question and the note of the
+        # last change request for this same bulletin; only a new change
+        # request replaces them.
+        cur_path = ROOT / "bulletin" / "state" / "current.json"
+        if cur_path.exists():
+            prev = json.loads(cur_path.read_text())
+            if prev.get("id") == bulletin_id:
+                ask, note = prev.get("ask", ""), prev.get("note", "")
 
     ctx = bulletin.build_context(sat)
     week = week_description(ctx)
@@ -287,6 +315,8 @@ def main() -> None:
         "proof_day": when["proof_day"], "send_day": when["send_day"],
         "send_moment": when["send_moment"],
     }
+    if ask:
+        current["ask"] = ask
     if note:
         current["note"] = note
     (ROOT / "bulletin" / "state" / "current.json").write_text(
