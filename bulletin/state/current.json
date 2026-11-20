@@ -1,7 +1,7 @@
 {
  "id": "2026-11-21",
  "rev": "20261119T174308",
- "status": "approved",
+ "status": "published",
  "title": "Shabbat Vayetze",
  "subject": "Shabbat Vayetze \u00b7 20\u201321 November 2026",
  "proofed_at": "20261119T174308",
@@ -9,5 +9,6 @@
  "send_day": "2026-11-20",
  "send_moment": "2026-11-20T06:00:00-05:00",
  "approved_at": "2026-11-19T17:53:02.249003-05:00",
- "ask": "One thing to confirm: for December 5, I've assumed the usual Shabbat morning schedule (Berakhot 10:00 am through Kiddush 12:30 pm). If the Shabbat Hannukah service has different times, or anything extra you want listed, send me the times and I'll set up a schedule for that week."
+ "ask": "One thing to confirm: for December 5, I've assumed the usual Shabbat morning schedule (Berakhot 10:00 am through Kiddush 12:30 pm). If the Shabbat Hannukah service has different times, or anything extra you want listed, send me the times and I'll set up a schedule for that week.",
+ "published_at": "2026-11-20T13:55:12.213010-05:00"
 }
