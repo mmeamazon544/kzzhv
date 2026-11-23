@@ -1,8 +1,21 @@
 {
  "show": "https://open.spotify.com/show/4K5FOrrlOXRepm29ENnj1S",
  "feed": "https://anchor.fm/s/c6240efc/podcast/rss",
- "refreshed": "2026-11-16T13:58:59.237151+00:00",
+ "refreshed": "2026-11-23T16:27:55.276613+00:00",
  "episodes": [
+  {
+   "title": "The Danger of Life's Plateaus | Haftarat Vayetse 2026",
+   "headline": "The Danger of Life's Plateaus",
+   "parasha": "Vayetse",
+   "haftarah": true,
+   "link": "https://podcasters.spotify.com/pod/show/joseph-dweck/episodes/The-Danger-of-Lifes-Plateaus--Haftarat-Vayetse-2026-e3sl4u6",
+   "published": "2026-11-18T21:57:46+00:00",
+   "spans": [
+    "bayese"
+   ],
+   "loose": false,
+   "nutshell": false
+  },
   {
    "title": "Would You Wear It? | Haftarat Toledot 2026",
    "headline": "Would You Wear It?",
