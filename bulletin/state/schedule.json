@@ -1,15 +1,6 @@
 {
- "written": "2026-11-19",
+ "written": "2026-11-26",
  "bulletins": [
-  {
-   "id": "2026-11-21",
-   "shabbat": true,
-   "cluster": "",
-   "title": "Shabbat 21 November",
-   "proof_day": "2026-11-19",
-   "send_day": "2026-11-20",
-   "send_moment": "2026-11-20T06:00:00-05:00"
-  },
   {
    "id": "2026-11-28",
    "shabbat": true,
@@ -72,6 +63,15 @@
    "proof_day": "2027-01-07",
    "send_day": "2027-01-08",
    "send_moment": "2027-01-08T06:00:00-05:00"
+  },
+  {
+   "id": "2027-01-16",
+   "shabbat": true,
+   "cluster": "",
+   "title": "Shabbat 16 January",
+   "proof_day": "2027-01-14",
+   "send_day": "2027-01-15",
+   "send_moment": "2027-01-15T06:00:00-05:00"
   }
  ]
 }

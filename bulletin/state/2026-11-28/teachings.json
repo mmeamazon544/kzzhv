@@ -1,0 +1,72 @@
+{
+ "plan": {
+  "halakhic_topic": "Kindling the first Hanukkah light on erev Shabbat (Friday, 4 December) and the second on Motsa'ei Shabbat: the hour of lighting when sunset is also the onset of Shabbat, the order of Hanukkah lamp before Shabbat candles, the lighting in the synagogue beside the lighting at home, and the Western Sephardic order on Saturday night (Hanukkah lamp and Habdalah) as recorded in Keter Shem Tob",
+  "kst_queries": [
+   "Lighting the Hanukka on Ngereb Shabbat and Motsa'ei Shabbat",
+   "Lighting the Hanukka in the synagogue vs. at home",
+   "Process of lighting the Hanukka, part I"
+  ],
+  "sefaria_refs_halakha": [
+   "Mishneh Torah, Scroll of Esther and Hanukkah 3:3",
+   "Mishneh Torah, Scroll of Esther and Hanukkah 4:1",
+   "Mishneh Torah, Scroll of Esther and Hanukkah 4:5",
+   "Mishneh Torah, Scroll of Esther and Hanukkah 4:7",
+   "Mishneh Torah, Scroll of Esther and Hanukkah 4:12",
+   "Mishneh Torah, Scroll of Esther and Hanukkah 4:13"
+  ],
+  "aggadic_topic": "\"And Jacob was left alone\" (Gen. 32:25): the midrashic reading that he had gone back across the ford for some small jars left behind, and that it was over those little vessels that he wrestled until dawn \u2014 nothing a person has honestly acquired is too small to be worth returning for, and in the week Hanukkah begins, a single small flask overlooked by everyone else turns out to be the thing that gives light for eight days",
+  "sefaria_refs_aggada": [
+   "Genesis 32:25",
+   "Rashi on Genesis 32:25:1",
+   "Chullin 91a",
+   "Bereshit Rabbah 77:1",
+   "Bereshit Rabbah 77:2",
+   "Radak on Genesis 32:25:1"
+  ]
+ },
+ "halakha_html": "<p>The Rambam rules that the Hanukkah lamp is kindled at sunset \u2014 not earlier, not later \u2014 and that one who has missed the hour may still light while there are passersby in the street, about half an hour.<sup>1</sup> This year the first light falls on Friday, when sunset is also the coming in of Shabbat. The Hanukkah lamp is kindled first, before the Shabbat candles, with oil enough to burn well into the night. The Rambam also rules that when a person can afford only one, the oil for the Hanukkah lamp comes before the wine for kiddush, because it makes the miracle known.<sup>2</sup></p><p>Communities differ over when the blessings are said. In London and Amsterdam all three blessings are recited on the first night before anything is kindled, and the two blessings on the nights after; in the Land of Israel, in the Sephardic East and in the cities of the Maghreb one says the blessing for kindling, begins to light, and says the rest while lighting.<sup>3</sup> The Sephardic order is to kindle the new light of that night first, then turn back and light the lights of the nights before.<sup>4</sup></p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Scroll.of.Esther.and.Hanukkah.4:5\">Mishneh Torah, Scroll of Esther and Hanukkah 4:5</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Mishneh.Torah,.Scroll.of.Esther.and.Hanukkah.4:13\">Mishneh Torah, Scroll of Esther and Hanukkah 4:13</a> &nbsp; 3. Keter Shem Tob, vol. 2, p. 522, se'if 13 &nbsp; 4. Keter Shem Tob, vol. 2, p. 521, se'if 10</p>",
+ "aggada_html": "<p>Jacob was left alone, and the Torah does not say why. Rashi says he had forgotten some small jars and went back over the ford to fetch them.<sup>1</sup> The midrash fills in the scene: the one who wrestled with him first appeared as a herdsman, and the two crossed their flocks and went back together to see whether anything had been left behind.<sup>2</sup> Two sages, finishing their business at the gates of Tyre, turned back in the same way and found a bundle of silk; they said they had the practice from Jacob. In the week Hanukkah begins, a small flask nobody counted gives light for eight days.</p>\n<p style=\"font-size:12px; opacity:0.75;\">1. <a href=\"https://www.sefaria.org/Rashi.on.Genesis.32:25:1\">Rashi on Genesis 32:25</a> &nbsp; 2. <a href=\"https://www.sefaria.org/Bereshit.Rabbah.77:2\">Bereshit Rabbah 77:2</a></p>",
+ "halakha_citations": [
+  {
+   "display": "Mishneh Torah, Scroll of Esther and Hanukkah 4:5",
+   "sefaria_ref": "Mishneh Torah, Scroll of Esther and Hanukkah 4:5",
+   "kst": false
+  },
+  {
+   "display": "Mishneh Torah, Scroll of Esther and Hanukkah 4:13",
+   "sefaria_ref": "Mishneh Torah, Scroll of Esther and Hanukkah 4:13",
+   "kst": false
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, p. 522, se'if 13",
+   "sefaria_ref": null,
+   "kst": true
+  },
+  {
+   "display": "Keter Shem Tob, vol. 2, p. 521, se'if 10",
+   "sefaria_ref": null,
+   "kst": true
+  }
+ ],
+ "aggada_citations": [
+  {
+   "display": "Rashi on Genesis 32:25",
+   "sefaria_ref": "Rashi on Genesis 32:25:1",
+   "kst": false
+  },
+  {
+   "display": "Bereshit Rabbah 77:2",
+   "sefaria_ref": "Bereshit Rabbah 77:2",
+   "kst": false
+  }
+ ],
+ "reading_summaries": [
+  {
+   "reading": "Shabbat Vayishlah",
+   "torah_summary": "Jacob comes home. He sends messengers ahead to Esau, divides his camp in fear, prays, and sends droves of animals as a gift. Alone at the ford of the Yabbok he wrestles until dawn with a man the tradition reads as an angel, is given the name Israel, and goes on limping. Esau runs to meet him, embraces him, and they weep. Then the dark chapter at Shechem and Dinah, the return to Bethel and the burying of the alien gods, Rachel's death as Benjamin is born, Isaac's burial, and the generations of Esau in Seir.",
+   "haftarah_summary": "Obadiah, the shortest book in the Prophets, speaks about Edom, the people descended from Esau. They live high in the clefts of the rock and think no one can bring them down; the Eternal says otherwise. The charge is specific: on the day Jerusalem fell, Edom stood aside, looked on with pleasure, took spoil, and cut down those escaping. The prophet promises that the house of Jacob will be restored and will hold its own land again, naming even the exiles in Sepharad \u2014 a verse Spanish Jews long read as their own. Dominion belongs to the Eternal."
+  }
+ ],
+ "parashah_summary": "Jacob comes home. He sends messengers ahead to Esau, divides his camp in fear, prays, and sends droves of animals as a gift. Alone at the ford of the Yabbok he wrestles until dawn with a man the tradition reads as an angel, is given the name Israel, and goes on limping. Esau runs to meet him, embraces him, and they weep. Then the dark chapter at Shechem and Dinah, the return to Bethel and the burying of the alien gods, Rachel's death as Benjamin is born, Isaac's burial, and the generations of Esau in Seir.",
+ "haftarah_summary": "Obadiah, the shortest book in the Prophets, speaks about Edom, the people descended from Esau. They live high in the clefts of the rock and think no one can bring them down; the Eternal says otherwise. The charge is specific: on the day Jerusalem fell, Edom stood aside, looked on with pleasure, took spoil, and cut down those escaping. The prophet promises that the house of Jacob will be restored and will hold its own land again, naming even the exiles in Sepharad \u2014 a verse Spanish Jews long read as their own. Dominion belongs to the Eternal."
+}
