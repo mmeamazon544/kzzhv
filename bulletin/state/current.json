@@ -1,7 +1,7 @@
 {
  "id": "2026-11-28",
  "rev": "20261126T183245",
- "status": "published",
+ "status": "sent",
  "title": "Shabbat Vayishlah",
  "subject": "Shabbat Vayishlah \u00b7 27\u201328 November 2026",
  "proofed_at": "20261126T183245",
@@ -9,5 +9,7 @@
  "send_day": "2026-11-27",
  "send_moment": "2026-11-27T06:00:00-05:00",
  "approved_at": "2026-11-26T18:50:23.809765-05:00",
- "published_at": "2026-11-27T14:43:41.875199-05:00"
+ "published_at": "2026-11-27T14:43:41.875199-05:00",
+ "sent_at": "2026-11-27T14:43:47.803990-05:00",
+ "dry_run": false
 }
